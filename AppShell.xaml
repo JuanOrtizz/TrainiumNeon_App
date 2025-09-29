@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="TrainiumNeon.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:TrainiumNeon.Views"
+    Title="TrainiumNeon">
+
+    <TabBar>
+        <ShellContent Title="Inicio" Icon="inicio.png" ContentTemplate="{DataTemplate local:MenuPrincipal}" />
+        <ShellContent Title="Estadisticas" Icon="estadisticas.png" ContentTemplate="{DataTemplate local:Estadisticas}" />
+        <ShellContent Title="Rutinas" Icon="rutinas.png" ContentTemplate="{DataTemplate local:Rutinas}" />
+        <ShellContent Title="Perfil" Icon="perfil.png" ContentTemplate="{DataTemplate local:Perfil}" />
+    </TabBar>
+
+</Shell>
