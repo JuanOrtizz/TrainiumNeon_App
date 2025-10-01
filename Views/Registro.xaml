@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrainiumNeon.Views.Registro"
+             NavigationPage.HasNavigationBar="False"
+             >
+    
+    <Grid
+        x:Name="RootLayout"
+        BackgroundColor="#3D4245"
+        RowDefinitions="2*,8*"
+        ColumnDefinitions="*"
+        RowSpacing="20"
+        >
+
+        <Border
+            StrokeShape="RoundRectangle 0,0, 100, 100"
+            StrokeThickness="0"
+            >
+            <Grid 
+               Grid.Row="0"
+               BackgroundColor="#00A7B3"
+               >
+                <VerticalStackLayout
+                    Padding="10"
+                    Spacing="20"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+
+                    <Label Text="Registrate"
+                       FontSize="36"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"/>
+
+                </VerticalStackLayout>
+            </Grid>
+
+        </Border>
+
+        <Grid 
+           Grid.Row="1"
+           Padding="30"
+           
+           >
+            <VerticalStackLayout
+                Padding="10"
+                Spacing="30"
+                VerticalOptions="Start">
+
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                    <Grid
+                        Padding="10"
+                        RowDefinitions="*"
+                        ColumnDefinitions="1*, 9*"
+                        RowSpacing="200"
+                        BackgroundColor="#f0f0f0"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Fill"
+                        HeightRequest="50"
+                        >
+
+                        <Image
+                            Grid.Column="0"
+                            Source="nombre_registro.png"
+                            WidthRequest="20"
+                            HeightRequest="20"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            />
+
+                        <Entry
+                            Grid.Column="1"
+                            Placeholder="Nombre Completo"
+                            PlaceholderColor="Black"
+                            FontSize="18"
+                            MaxLength="25"
+                            HeightRequest="50"
+                            BackgroundColor="Transparent"
+                        />
+
+                    </Grid>
+
+                </Border>
+
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                    <Grid
+                        Padding="10"
+                        RowDefinitions="*"
+                        ColumnDefinitions="1*, 9*"
+                        RowSpacing="200"
+                        BackgroundColor="#f0f0f0"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Fill"
+                        HeightRequest="50"
+                        >
+
+                        <Image
+                            Grid.Column="0"
+                            Source="email.png"
+                            WidthRequest="20"
+                            HeightRequest="20"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            />
+
+                        <Entry
+                            Grid.Column="1"
+                            Placeholder="Email"
+                            PlaceholderColor="Black"
+                            FontSize="18"
+                            IsPassword="True"
+                            MaxLength="254"
+                            HeightRequest="50"
+                            BackgroundColor="Transparent"
+                        />
+
+                    </Grid>
+
+                </Border>
+
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                    <Grid
+                        Padding="10"
+                        RowDefinitions="*"
+                        ColumnDefinitions="1*, 9*"
+                        RowSpacing="200"
+                        BackgroundColor="#f0f0f0"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Fill"
+                        HeightRequest="50"
+                        >
+
+                        <Image
+                            Grid.Column="0"
+                            Source="contrasenia.png"
+                            WidthRequest="20"
+                            HeightRequest="20"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            />
+
+                        <Entry
+                            Grid.Column="1"
+                            Placeholder="Contraseña"
+                            PlaceholderColor="Black"
+                            FontSize="18"
+                            IsPassword="True"
+                            MaxLength="25"
+                            HeightRequest="50"
+                            BackgroundColor="Transparent"
+                        />
+
+                    </Grid>
+
+                </Border>
+
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                    <Grid
+                        Padding="10"
+                        RowDefinitions="*"
+                        ColumnDefinitions="1*, 9*"
+                        RowSpacing="200"
+                        BackgroundColor="#f0f0f0"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Fill"
+                        HeightRequest="50"
+                        >
+
+                        <Image
+                            Grid.Column="0"
+                            Source="contrasenia.png"
+                            WidthRequest="20"
+                            HeightRequest="20"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            />
+
+                        <Entry
+                            Grid.Column="1"
+                            Placeholder="Confirmar Contraseña"
+                            PlaceholderColor="Black"
+                            FontSize="18"
+                            IsPassword="True"
+                            MaxLength="25"
+                            HeightRequest="50"
+                            BackgroundColor="Transparent"
+                        />
+
+                    </Grid>
+
+                </Border>
+
+
+                <VerticalStackLayout
+                    Spacing="20"
+                    >
+
+                    <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                        <Button
+                        Text="Registrarse"
+                        FontAttributes="Bold"
+                        BackgroundColor="#00CDDB"
+                        FontSize="18"
+                        HeightRequest="50"
+                        TextColor="Black"
+                        Command="{Binding RegistrarseCommand}"
+                    />
+                    </Border>
+
+                    <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    >
+
+                        <Button
+                        Text="Iniciar Sesión"
+                        FontAttributes="Bold"
+                        BackgroundColor="#C4EEF2"
+                        FontSize="18"
+                        HeightRequest="50"
+                        TextColor="Black"
+                        Command="{Binding IniciarSesionCommand}"
+                    />
+                    </Border>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </Grid>
+
+
+    </Grid>
+
+
+</ContentPage>
