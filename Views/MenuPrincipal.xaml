@@ -2,12 +2,121 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.MenuPrincipal"
-             Title="MenuPrincipal">
+             >
+    
+    <Grid
+        BackgroundColor="#1A2745"
+        RowDefinitions="1*, Auto, 8*"
+        RowSpacing="30"
+        ColumnDefinitions="*"
+        Padding="30, 40"
+        >
 
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+        <VerticalStackLayout
+            Grid.Row="0"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            >
+
+            <Label
+                FontSize="24"
+                >
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="¡Hola " TextColor="White"/>
+                        <Span Text="{Binding Nombre}" TextColor="#00F0FF" FontAttributes="Bold"/>
+                        <Span Text="!" TextColor="White"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+        </VerticalStackLayout>
+
+        <Border
+            StrokeShape="RoundRectangle 10"
+            StrokeThickness="0"
+            Grid.Row="1"
+            HorizontalOptions="Fill"
+            VerticalOptions="Start"
+            BackgroundColor="#00CDDB"
+            Padding="20"
+            >
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="16">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Tu rutina seleccionada es: " TextColor="Black"/>
+                        <Span Text="{Binding NombreRutina}" TextColor="Black" FontAttributes="Bold"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            
+        </Border>
+
+        <Border
+            StrokeShape="RoundRectangle 10"
+            StrokeThickness="0"
+            Grid.Row="2"
+            HorizontalOptions="Fill"
+            VerticalOptions="Start"
+            >
+
+            <Grid
+                RowDefinitions="Auto, Auto ,8*"
+                RowSpacing="10"
+                ColumnDefinitions="*"
+                BackgroundColor="#C0EBF0"
+                Padding="20"
+                >
+
+                <Label
+                    Grid.Row="0"
+                    Text="Estos son tus ejercicios del día"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    TextColor="#005A61"
+                    />
+
+                <BoxView
+                    Grid.Row="1"
+                    HeightRequest="1"  
+                    BackgroundColor="Black"
+                    HorizontalOptions="Fill" 
+                    />
+
+                <CollectionView 
+                    ItemsSource="{Binding Ejercicios}"
+                    SelectionMode="Single"
+                    Grid.Row="2"
+                    >
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout
+                                Margin="5">
+                                <Label 
+                                    FontAttributes="Bold" 
+                                    FontSize="14"
+                                    >
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Nombre}" TextColor="Black"/>
+                                            <Span Text=" x" TextColor="Black"/>
+                                            <Span Text="{Binding Series}" TextColor="Black" FontAttributes="Bold"/>
+                                            <Span Text="{Binding Repeticiones}" TextColor="Black"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </Grid>
+        </Border>
+        
+    </Grid>
+    
 </ContentPage>
