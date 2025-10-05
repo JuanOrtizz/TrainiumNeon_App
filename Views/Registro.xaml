@@ -6,9 +6,8 @@
              >
     
     <Grid
-        x:Name="RootLayout"
         BackgroundColor="#3D4245"
-        RowDefinitions="2*,8*"
+        RowDefinitions="3*,7*"
         ColumnDefinitions="*"
         RowSpacing="20"
         >
@@ -25,26 +24,32 @@
                     Padding="10"
                     Spacing="20"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center">
+                    VerticalOptions="Center"
+                    >
 
-                    <Label Text="Registrate"
-                       FontSize="36"
+                    <Label Text="¡Unite a Trainium!"
+                       FontSize="32"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
+                       HorizontalTextAlignment="Center"
+                       />
+                    
+                    <Label Text="Registrate"
+                        FontSize="24"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        />
 
                 </VerticalStackLayout>
             </Grid>
-
         </Border>
 
         <Grid 
            Grid.Row="1"
-           Padding="30"
-           
+           Padding="30, 40"
            >
             <VerticalStackLayout
-                Padding="10"
                 Spacing="30"
                 VerticalOptions="Start">
 
@@ -77,11 +82,11 @@
                             Grid.Column="1"
                             Placeholder="Nombre Completo"
                             PlaceholderColor="Black"
-                            FontSize="18"
-                            MaxLength="25"
+                            FontSize="16"
+                            MaxLength="100"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
@@ -116,12 +121,11 @@
                             Grid.Column="1"
                             Placeholder="Email"
                             PlaceholderColor="Black"
-                            FontSize="18"
-                            IsPassword="True"
+                            FontSize="16"
                             MaxLength="254"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
@@ -156,7 +160,7 @@
                             Grid.Column="1"
                             Placeholder="Contraseña"
                             PlaceholderColor="Black"
-                            FontSize="18"
+                            FontSize="16"
                             IsPassword="True"
                             MaxLength="25"
                             HeightRequest="50"
@@ -196,12 +200,12 @@
                             Grid.Column="1"
                             Placeholder="Confirmar Contraseña"
                             PlaceholderColor="Black"
-                            FontSize="18"
+                            FontSize="16"
                             IsPassword="True"
                             MaxLength="25"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
@@ -241,7 +245,7 @@
                         HeightRequest="50"
                         TextColor="Black"
                         Command="{Binding IniciarSesionCommand}"
-                    />
+                        />
                     </Border>
 
                 </VerticalStackLayout>
@@ -249,8 +253,6 @@
             </VerticalStackLayout>
         </Grid>
 
-
     </Grid>
-
 
 </ContentPage>
