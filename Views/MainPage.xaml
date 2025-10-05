@@ -28,7 +28,7 @@
                     >
 
                     <Label Text="¡Bienvenido!"
-                       FontSize="36"
+                       FontSize="32"
                        TextColor="White"
                        FontAttributes="Bold"
                        HorizontalTextAlignment="Center"
@@ -83,8 +83,7 @@
                             Grid.Column="1"
                             Placeholder="Email"
                             PlaceholderColor="Black"
-                            FontSize="18"
-                            IsPassword="True"
+                            FontSize="16"
                             MaxLength="254"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
@@ -122,7 +121,7 @@
                             Grid.Column="1"
                             Placeholder="Contraseña"
                             PlaceholderColor="Black"
-                            FontSize="18"
+                            FontSize="16"
                             IsPassword="True"
                             MaxLength="25"
                             HeightRequest="50"
