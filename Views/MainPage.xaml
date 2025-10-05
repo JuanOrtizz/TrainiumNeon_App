@@ -24,34 +24,35 @@
                     Padding="10"
                     Spacing="20"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center">       
+                    VerticalOptions="Center"
+                    >
 
                     <Label Text="¡Bienvenido!"
                        FontSize="36"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
-    
+                       HorizontalTextAlignment="Center"
+                       />
+
                     <Label Text="Inicia Sesión"
-                       FontSize="28"
+                       FontSize="24"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
+                       HorizontalTextAlignment="Center"
+                       />
 
                 </VerticalStackLayout>
             </Grid>
-
         </Border>
 
         <Grid 
            Grid.Row="1"
-           Padding="30"
-           
+           Padding="30,40"
            >
             <VerticalStackLayout
-                Padding="10"
                 Spacing="30"
-                VerticalOptions="Start">
+                VerticalOptions="Start"
+                >
 
                 <Border
                     StrokeShape="RoundRectangle 5"
@@ -87,7 +88,7 @@
                             MaxLength="254"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
@@ -97,7 +98,6 @@
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
-
                     <Grid
                         Padding="10"
                         RowDefinitions="*"
@@ -127,47 +127,45 @@
                             MaxLength="25"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
-
                 </Border>
-
 
                 <VerticalStackLayout
                     Spacing="20"
                     >
 
                     <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
+                        >
 
                         <Button
-                        Text="Ingresar"
-                        FontAttributes="Bold"
-                        BackgroundColor="#00CDDB"
-                        FontSize="18"
-                        HeightRequest="50"
-                        TextColor="Black"
-                        Command="{Binding IniciarSesionCommand}"
-                    />
+                            Text="Ingresar"
+                            FontAttributes="Bold"
+                            BackgroundColor="#00CDDB"
+                            FontSize="18"
+                            HeightRequest="50"
+                            TextColor="Black"
+                            Command="{Binding IniciarSesionCommand}"
+                            />
                     </Border>
 
                     <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
+                        >
 
                         <Button
-                        Text="Crear Cuenta"
-                        FontAttributes="Bold"
-                        BackgroundColor="#C4EEF2"
-                        FontSize="18"
-                        HeightRequest="50"
-                        TextColor="Black"
-                        Command="{Binding RegistroCommand}"
-                    />
+                            Text="Crear Cuenta"
+                            FontAttributes="Bold"
+                            BackgroundColor="#C4EEF2"
+                            FontSize="18"
+                            HeightRequest="50"
+                            TextColor="Black"
+                            Command="{Binding RegistroCommand}"
+                            />
                     </Border>
 
                 </VerticalStackLayout>
@@ -175,8 +173,6 @@
             </VerticalStackLayout>
         </Grid>
 
-
     </Grid>
-    
     
 </ContentPage>
