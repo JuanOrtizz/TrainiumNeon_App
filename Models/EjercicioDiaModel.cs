@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TrainiumNeon.Models
 {
-    //Clase para representar la relacion * a * entre EjercicioModel y DiaModel (Un ejericicio puede estar en muchos dias con diferentes series y repeticiones)
+    //Clase para representar la relacion entre EjercicioModel y DiaModel (Un ejericicio puede estar en muchos dias con diferentes series y repeticiones)
     public class EjercicioDiaModel
     {
         public int Id { get; set; }
