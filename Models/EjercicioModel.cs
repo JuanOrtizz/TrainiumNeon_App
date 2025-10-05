@@ -8,7 +8,7 @@ namespace TrainiumNeon.Models
 {
     public class EjercicioModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Nombre { get; set; }
         public string GrupoMuscular { get; set; }
         public string? ImagenUrl { get; set; }
