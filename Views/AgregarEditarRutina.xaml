@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TrainiumNeon.ViewModels"
+             x:Class="TrainiumNeon.Views.AgregarEditarRutina"
+             Shell.NavBarIsVisible="True"
+             Shell.BackgroundColor="#1A2745"
+             Shell.TitleColor="White"
+             >
+
+    <Grid
+        Padding="40, 10, 40,30"
+        RowDefinitions="Auto, Auto, 8*"
+        RowSpacing="30"
+        BackgroundColor="#1A2745"
+        >
+
+        <Grid
+            Grid.Row="0"
+            RowDefinitions="*,*"
+            ColumnDefinitions="6*, 4*"
+            RowSpacing="30"
+            ColumnSpacing="20"
+            >
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                FontSize="24"
+                >
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White"/>
+                        <Span Text=" Rutina" FontAttributes="Bold" TextColor="White"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="1"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="0"
+                >
+                <Button
+                    Text="{Binding Titulo}"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    BackgroundColor="#00CDDB"
+                    TextColor="White"
+                    />
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="0"
+               
+                HeightRequest="50"
+                BackgroundColor="White"
+                Padding="5, 0"
+                >
+
+                <Entry
+                    Text="Nombre de la rutina"
+                    Placeholder="Coloca el nombre de la rutina"
+                    PlaceholderColor="DarkGray"
+                    FontSize="16"
+                    MaxLength="50"
+                    BackgroundColor="Transparent"
+                    />
+
+            </Border>
+
+        </Grid>
+
+        <Grid
+            Grid.Row="1"
+            ColumnDefinitions="Auto, *"
+            RowDefinitions="*"
+            RowSpacing="20"
+            ColumnSpacing="30"
+            >
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Stroke="#00F0FF"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                >
+
+                <Label
+                    TextColor="White"
+                    Text="Tu Rutina"
+                    VerticalOptions="Center"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Padding="10"
+                    />
+                
+            </Border>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                BackgroundColor="#00CDDB"
+                CornerRadius="50"
+                Text="Agregar Ejercicio"
+                FontAttributes="Bold"
+                FontSize="18"
+                Command="{Binding NavegarAgregarEjercicioCommand}"
+                />
+
+        </Grid>
+
+        <Border
+            Grid.Row="2"
+            StrokeShape="RoundRectangle 10"
+            StrokeThickness="0"
+            BackgroundColor="#C4EEF2"
+            >
+
+            <Grid
+                Padding="20"
+                RowDefinitions="Auto,Auto, 9*"
+                RowSpacing="20"
+                >
+
+                <Border
+                    Grid.Row="0"
+                    StrokeShape="RoundRectangle 10"
+                    HorizontalOptions="Center"
+                    Padding="5"
+                    Stroke="#00CDDB"
+                    StrokeThickness="2"
+                    >
+
+                    <HorizontalStackLayout
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Spacing="40"
+                        >
+
+                        <Label
+                            Text="◀"
+                            FontSize="18"
+                            TextColor="#00CDDB"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            >
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding VolverDiaAnteriorCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <Label
+                            Text="{Binding DiaActualSeleccionado}"
+                            FontSize="18"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            TextColor="Black"/>
+
+                        <Label
+                             Text="▶"
+                             FontSize="18"
+                             TextColor="#00CDDB"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             >
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding VolverDiaAnteriorCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                    </HorizontalStackLayout>
+                </Border>
+
+
+                <BoxView
+                    Grid.Row="1"
+                    HeightRequest="1"  
+                    BackgroundColor="Black"
+                    HorizontalOptions="Fill" />
+
+                <CollectionView 
+                    Grid.Row="2"
+                    ItemsSource="{Binding Ejercicios}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="0"
+                                BackgroundColor="#00CDDB"
+                                Margin="0, 5, 0, 5"
+                                >
+
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicio}"
+                                    CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
+                                <Label 
+                                   Padding="10"
+                                   FontSize="16"
+                                   >
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Nombre}" />
+                                            <Span Text=" (PR " />
+                                            <Span Text="{Binding PersonalRecord}" />
+                                            <Span Text="Kg)" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Border>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</ContentPage>
