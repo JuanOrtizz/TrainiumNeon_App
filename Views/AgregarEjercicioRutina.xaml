@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrainiumNeon.Views.AgregarEjercicioRutina"
+             >
+    <Grid
+        Padding="30,40"
+        RowDefinitions="Auto,Auto, Auto, Auto"
+        RowSpacing="30"
+        BackgroundColor="#1A2745"
+        >
+
+        <Label
+            Grid.Row="0"
+            FontAttributes="Bold"
+            FontSize="24"
+            TextColor="White"
+            Text="Agregar Ejercicio"
+            />
+
+        <Grid
+            Grid.Row="1"
+            RowDefinitions="*"
+            ColumnDefinitions="Auto, *"
+            ColumnSpacing="10"
+            >
+
+            <Border
+                Grid.Column="0"
+                Stroke="#00F0FF"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                >
+                <Label
+                    TextColor="White"
+                    Text="Seleccionar Día"
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    Padding="10,0"
+                    />
+
+            </Border>
+
+            <Border
+                 Grid.Column="1"
+                 StrokeShape="RoundRectangle 5"
+                 StrokeThickness="0"
+                 HeightRequest="50"
+                 BackgroundColor="White"
+                 Padding="5, 0"
+                 >
+
+                <Picker
+                    Title="Elegí una opción"
+                    FontSize="16"
+                    ItemsSource="{Binding Dias}"
+                    SelectedItem="{Binding DiaSeleccionado}"
+                    >
+
+                </Picker>
+            </Border>
+
+        </Grid>
+
+        <Grid
+            Grid.Row="2"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="10"
+            RowDefinitions="*,*,*,*"
+            RowSpacing="30"
+            >
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Stroke="#00F0FF"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                >
+
+                <Label
+                    TextColor="White"
+                    Text="Filtrar por grupo muscular"
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    Padding="10"
+                    FontAttributes="Bold"
+                    />
+
+            </Border>
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="1"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="0"
+                HeightRequest="50"
+                BackgroundColor="White"
+                Padding="5, 0"
+                >
+
+                <Picker
+                    ItemsSource="{Binding GruposMusculares}"
+                    SelectedItem="{Binding GrupoMuscularSeleccionado}"
+                    FontSize="16"
+                    />
+
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="0"
+                HeightRequest="50"
+                BackgroundColor="White"
+                Padding="5, 0"
+                >
+
+                <Picker
+                    ItemsSource="{Binding Ejericios}"
+                    SelectedItem="{Binding EjercicioSeleccionado}"
+                    FontSize="16"
+                    />
+
+            </Border>
+
+            <Border
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="0"
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HeightRequest="50"
+                BackgroundColor="White"
+                Padding="5, 0"
+                >
+
+                <Entry
+                    Placeholder="Colocá las series "
+                    PlaceholderColor="Black"
+                    FontSize="16"
+                    MaxLength="2"
+                    BackgroundColor="Transparent"
+                    />
+
+            </Border>
+
+            <Border
+               StrokeShape="RoundRectangle 5"
+               StrokeThickness="0"
+               Grid.Row="3"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
+               HeightRequest="50"
+               BackgroundColor="White"
+               Padding="5, 0"
+               >
+
+                <Entry
+                   Placeholder="Colocá las repeticiones (por serie)"
+                   PlaceholderColor="Black"
+                   FontSize="16"
+                   MaxLength="2"
+                   BackgroundColor="Transparent"
+                   />
+
+            </Border>
+            
+        </Grid>
+
+        <Button
+            CornerRadius="5"
+            Grid.Row="3"
+            Text="Agregar/Editar"
+            FontAttributes="Bold"
+            BackgroundColor="#C4EEF2"
+            FontSize="18"
+            HeightRequest="50"
+            TextColor="Black"
+            />
+
+    </Grid>
+
+</ContentPage>
