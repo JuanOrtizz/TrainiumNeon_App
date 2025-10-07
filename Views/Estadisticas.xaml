@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.Estadisticas"
+             xmlns:vm="clr-namespace:TrainiumNeon.ViewModels"
              >
 
     <Grid
@@ -29,7 +30,7 @@
 
             <Grid
                 Grid.Row="1"
-                ColumnDefinitions="4*,6*"
+                ColumnDefinitions="Auto,*"
                 ColumnSpacing="10"
                 >
 
@@ -45,6 +46,7 @@
                         VerticalOptions="Center"
                         FontSize="16"
                         Padding="10,0,10,0"
+                        FontAttributes="Bold"
                         />
 
                 </Border>
@@ -55,11 +57,12 @@
                     StrokeThickness="0"
                     HeightRequest="50"
                     BackgroundColor="White"
-                    Padding="5, 0, 5, 0"
+                    Padding="5, 0"
                     >
                     
                     <Picker
                     Title="Elegí una opción"
+                    FontSize="16"
                      >
 
                         <Picker.Items>
@@ -75,7 +78,7 @@
 
             <Grid
                 Grid.Row="2"
-                ColumnDefinitions="7*,3*"
+                ColumnDefinitions="Auto,*"
                 ColumnSpacing="10"
                 >
 
@@ -92,6 +95,7 @@
                         VerticalOptions="Center"
                         FontSize="16"
                         Padding="10"
+                        FontAttributes="Bold"
                         />
 
                 </Border>
@@ -102,12 +106,13 @@
                     StrokeThickness="0"
                     HeightRequest="50"
                     BackgroundColor="White"
-                    Padding="5, 0, 5, 0"
+                    Padding="5, 0"
                     >
 
                     <Picker
-                        ItemsSource="{Binding Musculos}"
-                        SelectedItem="{Binding MusculoSeleccionado}"
+                        ItemsSource="{Binding GruposMusculares}"
+                        SelectedItem="{Binding GrupoMuscularSeleccionado}"
+                        FontSize="16"
                         />
 
                 </Border>
@@ -132,7 +137,7 @@
                     Grid.Row="0"
                     Text="Ejercicios"
                     FontAttributes="Bold"
-                    FontSize="16"
+                    FontSize="20"
                     TextColor="#005A61"
                     />
 
@@ -156,7 +161,7 @@
 
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer 
-                                        Command="{Binding VerDetallesEjercicio}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicio}"
                                         CommandParameter="{Binding .}" />   
                                 </Border.GestureRecognizers>
 
