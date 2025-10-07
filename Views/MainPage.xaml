@@ -135,37 +135,27 @@
                     Spacing="20"
                     >
 
-                    <Border
-                        StrokeShape="RoundRectangle 5"
-                        StrokeThickness="0"
-                        >
+                    <Button
+                        CornerRadius="5"
+                        Text="Ingresar"
+                        FontAttributes="Bold"
+                        BackgroundColor="#00CDDB"
+                        FontSize="18"
+                        HeightRequest="50"
+                        TextColor="Black"
+                        Command="{Binding IniciarSesionCommand}"
+                        />
 
-                        <Button
-                            Text="Ingresar"
-                            FontAttributes="Bold"
-                            BackgroundColor="#00CDDB"
-                            FontSize="18"
-                            HeightRequest="50"
-                            TextColor="Black"
-                            Command="{Binding IniciarSesionCommand}"
-                            />
-                    </Border>
-
-                    <Border
-                        StrokeShape="RoundRectangle 5"
-                        StrokeThickness="0"
-                        >
-
-                        <Button
-                            Text="Crear Cuenta"
-                            FontAttributes="Bold"
-                            BackgroundColor="#C4EEF2"
-                            FontSize="18"
-                            HeightRequest="50"
-                            TextColor="Black"
-                            Command="{Binding RegistroCommand}"
-                            />
-                    </Border>
+                    <Button
+                        CornerRadius="5"
+                        Text="Crear Cuenta"
+                        FontAttributes="Bold"
+                        BackgroundColor="#C4EEF2"
+                        FontSize="18"
+                        HeightRequest="50"
+                        TextColor="Black"
+                        Command="{Binding RegistroCommand}"
+                        />
 
                 </VerticalStackLayout>
 

@@ -216,12 +216,8 @@
                     Spacing="20"
                     >
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Registrarse"
                         FontAttributes="Bold"
                         BackgroundColor="#00CDDB"
@@ -230,14 +226,9 @@
                         TextColor="Black"
                         Command="{Binding RegistrarseCommand}"
                     />
-                    </Border>
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Iniciar Sesión"
                         FontAttributes="Bold"
                         BackgroundColor="#C4EEF2"
@@ -246,7 +237,6 @@
                         TextColor="Black"
                         Command="{Binding IniciarSesionCommand}"
                         />
-                    </Border>
 
                 </VerticalStackLayout>
 

@@ -30,7 +30,7 @@
 
             <Grid
                 Grid.Row="1"
-                ColumnDefinitions="7*,3*"
+                ColumnDefinitions="Auto,*"
                 ColumnSpacing="10"
                 >
 
@@ -45,7 +45,8 @@
                         Text="Seleccionar rutina actual"
                         VerticalOptions="Center"
                         FontSize="16"
-                        Padding="10"
+                        Padding="10,0"
+                        FontAttributes="Bold"
                         />
 
                 </Border>
@@ -56,12 +57,13 @@
                     StrokeThickness="0"
                     HeightRequest="50"
                     BackgroundColor="White"
-                    Padding="5, 0, 5, 0"
+                    Padding="5, 0"
                     >
 
                     <Picker
                         ItemsSource="{Binding Rutinas}"
                         SelectedItem="{Binding RutinaSeleccionada}"
+                        FontSize="16"
                         />
 
                 </Border>
@@ -86,7 +88,7 @@
                 <Label 
                     Grid.Row="0"
                     Grid.Column="0"
-                    Text="Ejercicios"
+                    Text="Rutinas"
                     FontAttributes="Bold"
                     FontSize="20"
                     TextColor="#005A61"

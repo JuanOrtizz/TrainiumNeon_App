@@ -66,22 +66,16 @@
 
             </Border>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+            <Button
+                CornerRadius="5"
                 Grid.Row="3"
-                >
-
-                <Button
-                    Text="Cambiar Datos"
-                    FontAttributes="Bold"
-                    BackgroundColor="#C4EEF2"
-                    FontSize="18"
-                    HeightRequest="50"
-                    TextColor="Black"
-                    />
-
-            </Border>
+                Text="Cambiar Datos"
+                FontAttributes="Bold"
+                BackgroundColor="#C4EEF2"
+                FontSize="18"
+                HeightRequest="50"
+                TextColor="Black"
+                />
 
         </Grid>
 
@@ -140,22 +134,18 @@
 
             </Border>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+
+            <Button
+                CornerRadius="5"
                 Grid.Row="3"
-                >
+                Text="Cambiar Contraseña"
+                FontAttributes="Bold"
+                BackgroundColor="#C4EEF2"
+                FontSize="18"
+                HeightRequest="50"
+                TextColor="Black"
+                />
 
-                <Button
-                    Text="Cambiar Contraseña"
-                    FontAttributes="Bold"
-                    BackgroundColor="#C4EEF2"
-                    FontSize="18"
-                    HeightRequest="50"
-                    TextColor="Black"
-                    />
-
-            </Border>
             
         </Grid>
 
