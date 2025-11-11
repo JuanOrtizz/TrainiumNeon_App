@@ -47,52 +47,69 @@
 
         <Grid 
            Grid.Row="1"
-           Padding="30, 40"
+           Padding="30, 20"
            >
             <VerticalStackLayout
-                Spacing="30"
+                Spacing="20"
                 VerticalOptions="Start">
-
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                
+                <VerticalStackLayout
+                    Spacing="5"
                     >
-
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
 
-                        <Image
-                            Grid.Column="0"
-                            Source="nombre_registro.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Nombre Completo"
-                            PlaceholderColor="Black"
-                            FontSize="16"
-                            MaxLength="100"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
-                            />
+                            >
 
-                    </Grid>
+                            <Image
+                                Grid.Column="0"
+                                Source="nombre_registro.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
 
-                </Border>
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Nombre Completo"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="100"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
 
-                <Border
+                        </Grid>
+
+                    </Border>
+                    
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -131,7 +148,20 @@
 
                 </Border>
 
-                <Border
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -171,7 +201,20 @@
 
                 </Border>
 
-                <Border
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -211,6 +254,14 @@
 
                 </Border>
 
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
 
                 <VerticalStackLayout
                     Spacing="20"
