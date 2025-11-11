@@ -54,82 +54,106 @@
                 VerticalOptions="Start"
                 >
 
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                <VerticalStackLayout
+                    Spacing="5">
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
 
-                        <Image
-                            Grid.Column="0"
-                            Source="email.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Email"
-                            PlaceholderColor="Black"
-                            FontSize="16"
-                            MaxLength="254"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
-                            />
+                            >
 
-                    </Grid>
+                            <Image
+                                Grid.Column="0"
+                                Source="email.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
 
-                </Border>
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Email"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="254"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
 
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                        </Grid>
+
+                    </Border>
+
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5">
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
-
-                        <Image
-                            Grid.Column="0"
-                            Source="contrasenia.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Contraseña"
-                            PlaceholderColor="Black"
-                            FontSize="16"
-                            IsPassword="True"
-                            MaxLength="25"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
-                            />
+                            >
 
-                    </Grid>
-                </Border>
+                            <Image
+                                Grid.Column="0"
+                                Source="contrasenia.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
+
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Contraseña"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                IsPassword="True"
+                                MaxLength="25"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
+
+                        </Grid>
+                    </Border>
+
+                <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+            </VerticalStackLayout>
 
                 <VerticalStackLayout
                     Spacing="20"
