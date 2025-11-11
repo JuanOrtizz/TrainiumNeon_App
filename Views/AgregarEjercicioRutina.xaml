@@ -2,11 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.AgregarEjercicioRutina"
+             Shell.NavBarIsVisible="True"
              >
     <Grid
-        Padding="30,40"
+        Padding="30, 10, 30, 30"
         RowDefinitions="Auto,Auto, Auto, Auto"
-        RowSpacing="30"
+        RowSpacing="20"
         BackgroundColor="#1A2745"
         >
 
@@ -67,7 +68,7 @@
             ColumnDefinitions="Auto,*"
             ColumnSpacing="10"
             RowDefinitions="*,*,*,*"
-            RowSpacing="30"
+            RowSpacing="20"
             >
 
             <Border
@@ -107,66 +108,102 @@
 
             </Border>
 
-            <Border
+            <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
-                HeightRequest="50"
-                BackgroundColor="White"
-                Padding="5, 0"
                 >
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Picker
-                    ItemsSource="{Binding Ejericios}"
-                    SelectedItem="{Binding EjercicioSeleccionado}"
-                    FontSize="16"
+                    <Picker
+                        ItemsSource="{Binding Ejericios}"
+                        SelectedItem="{Binding EjercicioSeleccionado}"
+                        FontSize="16"
+                        />
+
+                </Border>
+                
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+            <VerticalStackLayout
                 Grid.Row="2"
                 Grid.Column="0"
-                Grid.ColumnSpan="2"
-                HeightRequest="50"
-                BackgroundColor="White"
-                Padding="5, 0"
+                Grid.ColumnSpan="2"                
                 >
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Placeholder="Colocá las series "
-                    PlaceholderColor="Black"
-                    FontSize="16"
-                    MaxLength="2"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Placeholder="Colocá las series "
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="2"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+                
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
-            <Border
-               StrokeShape="RoundRectangle 5"
-               StrokeThickness="0"
-               Grid.Row="3"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               HeightRequest="50"
-               BackgroundColor="White"
-               Padding="5, 0"
-               >
+            <VerticalStackLayout
+                Spacing="5"
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="2">
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                   Placeholder="Colocá las repeticiones (por serie)"
-                   PlaceholderColor="Black"
-                   FontSize="16"
-                   MaxLength="2"
-                   BackgroundColor="Transparent"
-                   />
+                    <Entry
+                        Placeholder="Colocá las repeticiones (por serie)"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="2"
+                        BackgroundColor="Transparent"
+                        />
 
-            </Border>
+                </Border>
+
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
+                    />
+
+            </VerticalStackLayout>
             
         </Grid>
 

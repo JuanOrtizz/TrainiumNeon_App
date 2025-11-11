@@ -1,3 +1,4 @@
+using TrainiumNeon.ViewModels;
 namespace TrainiumNeon.Views;
 
 public partial class AgregarEjercicioRutina : ContentPage
