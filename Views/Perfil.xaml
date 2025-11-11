@@ -14,7 +14,7 @@
         <Grid
             Grid.Row="0"
             RowDefinitions="*,*,*,*"
-            RowSpacing="30"
+            RowSpacing="20"
             >
 
             <Label
@@ -27,44 +27,70 @@
                 VerticalOptions="Center"
                 />
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+            <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="1"
-                HeightRequest="50"
-                BackgroundColor="White"
-                Padding="5, 0"
                 >
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Text="Nombre del usuario"
-                    Placeholder="Coloca tu nombre"
-                    PlaceholderColor="Black"
-                    FontSize="16"
-                    MaxLength="100"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Text="Nombre del usuario"
+                        Placeholder="Coloca tu nombre"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="100"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+            <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="2"
-                HeightRequest="50"
-                BackgroundColor="White"
-                Padding="5, 0"
                 >
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Text="email@usuario.com"
-                    PlaceholderColor="Black"
-                    FontSize="16"
-                    MaxLength="254"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Text="email@usuario.com"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="254"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
             <Button
                 CornerRadius="5"
@@ -82,7 +108,7 @@
         <Grid
             Grid.Row="1"
             RowDefinitions="*,*,*,*"
-            RowSpacing="30"
+            RowSpacing="20"
             >
 
             <Label
@@ -94,46 +120,71 @@
                 HorizontalOptions="Start"
                 VerticalOptions="Center"/>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+            <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="1"
-                BackgroundColor="White"
-                HeightRequest="50"
-                Padding="5, 0"
                 >
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    BackgroundColor="White"
+                    HeightRequest="50"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Placeholder="Nueva Contraseña"
-                    PlaceholderColor="Black"
-                    FontSize="16"
-                    IsPassword="True"
-                    MaxLength="25"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Placeholder="Nueva Contraseña"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        IsPassword="True"
+                        MaxLength="25"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
-            <Border
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+             <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="2"
-                BackgroundColor="White"
-                HeightRequest="50"
-                Padding="5, 0"
                 >
+                 
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    BackgroundColor="White"
+                    HeightRequest="50"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Placeholder="Confirmar Nueva Contraseña"
-                    PlaceholderColor="Black"
-                    FontSize="16"
-                    IsPassword="True"
-                    MaxLength="25"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Placeholder="Confirmar Nueva Contraseña"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        IsPassword="True"
+                        MaxLength="25"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+                 
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
-
+            </VerticalStackLayout>
 
             <Button
                 CornerRadius="5"
@@ -146,7 +197,6 @@
                 TextColor="Black"
                 />
 
-            
         </Grid>
 
     </Grid>
