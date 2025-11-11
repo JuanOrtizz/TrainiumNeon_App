@@ -47,10 +47,10 @@
 
         <Grid 
            Grid.Row="1"
-           Padding="30,40"
+           Padding="30,20"
            >
             <VerticalStackLayout
-                Spacing="30"
+                Spacing="20"
                 VerticalOptions="Start"
                 >
 
