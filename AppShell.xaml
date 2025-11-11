@@ -9,6 +9,9 @@
     TabBarBackgroundColor="Black"
     TabBarForegroundColor="#00A7B3"
     TabBarUnselectedColor="White"
+    ForegroundColor="White"
+    BackgroundColor="#1A2745"
+    NavBarHasShadow="False"
     >
 
     <TabBar>
