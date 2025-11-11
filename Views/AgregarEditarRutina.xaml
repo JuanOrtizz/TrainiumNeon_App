@@ -4,8 +4,6 @@
              xmlns:vm="clr-namespace:TrainiumNeon.ViewModels"
              x:Class="TrainiumNeon.Views.AgregarEditarRutina"
              Shell.NavBarIsVisible="True"
-             Shell.BackgroundColor="#1A2745"
-             Shell.TitleColor="White"
              >
 
     <Grid
@@ -53,28 +51,41 @@
                     />
             </Border>
 
-            <Border
+            <VerticalStackLayout
+                Spacing="5"
                 Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
-               
-                HeightRequest="50"
-                BackgroundColor="White"
-                Padding="5, 0"
                 >
+                
+                <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+               
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
 
-                <Entry
-                    Text="Nombre de la rutina"
-                    Placeholder="Coloca el nombre de la rutina"
-                    PlaceholderColor="DarkGray"
-                    FontSize="16"
-                    MaxLength="50"
-                    BackgroundColor="Transparent"
+                    <Entry
+                        Text="Nombre de la rutina"
+                        Placeholder="Coloca el nombre de la rutina"
+                        PlaceholderColor="DarkGray"
+                        FontSize="16"
+                        MaxLength="50"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
                     />
 
-            </Border>
+            </VerticalStackLayout>
 
         </Grid>
 
