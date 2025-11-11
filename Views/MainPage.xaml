@@ -24,126 +24,143 @@
                     Padding="10"
                     Spacing="20"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center">       
+                    VerticalOptions="Center"
+                    >
 
                     <Label Text="¡Bienvenido!"
-                       FontSize="36"
+                       FontSize="32"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
-    
+                       HorizontalTextAlignment="Center"
+                       />
+
                     <Label Text="Inicia Sesión"
-                       FontSize="28"
+                       FontSize="24"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
+                       HorizontalTextAlignment="Center"
+                       />
 
                 </VerticalStackLayout>
             </Grid>
-
         </Border>
 
         <Grid 
            Grid.Row="1"
-           Padding="30"
-           
+           Padding="30,20"
            >
             <VerticalStackLayout
-                Padding="10"
-                Spacing="30"
-                VerticalOptions="Start">
+                Spacing="20"
+                VerticalOptions="Start"
+                >
 
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                <VerticalStackLayout
+                    Spacing="5">
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
 
-                        <Image
-                            Grid.Column="0"
-                            Source="email.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Email"
-                            PlaceholderColor="Black"
-                            FontSize="18"
-                            IsPassword="True"
-                            MaxLength="254"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
+                            >
+
+                            <Image
+                                Grid.Column="0"
+                                Source="email.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
+
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Email"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="254"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
+
+                        </Grid>
+
+                    </Border>
+
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
                         />
 
-                    </Grid>
+                </VerticalStackLayout>
 
-                </Border>
-
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                <VerticalStackLayout
+                    Spacing="5">
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
-
-                        <Image
-                            Grid.Column="0"
-                            Source="contrasenia.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Contraseña"
-                            PlaceholderColor="Black"
-                            FontSize="18"
-                            IsPassword="True"
-                            MaxLength="25"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
+                            >
+
+                            <Image
+                                Grid.Column="0"
+                                Source="contrasenia.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
+
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Contraseña"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                IsPassword="True"
+                                MaxLength="25"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
+
+                        </Grid>
+                    </Border>
+
+                <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
                         />
 
-                    </Grid>
-
-                </Border>
-
+            </VerticalStackLayout>
 
                 <VerticalStackLayout
                     Spacing="20"
                     >
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Ingresar"
                         FontAttributes="Bold"
                         BackgroundColor="#00CDDB"
@@ -151,15 +168,10 @@
                         HeightRequest="50"
                         TextColor="Black"
                         Command="{Binding IniciarSesionCommand}"
-                    />
-                    </Border>
+                        />
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Crear Cuenta"
                         FontAttributes="Bold"
                         BackgroundColor="#C4EEF2"
@@ -167,16 +179,13 @@
                         HeightRequest="50"
                         TextColor="Black"
                         Command="{Binding RegistroCommand}"
-                    />
-                    </Border>
+                        />
 
                 </VerticalStackLayout>
 
             </VerticalStackLayout>
         </Grid>
 
-
     </Grid>
-    
     
 </ContentPage>

@@ -6,9 +6,8 @@
              >
     
     <Grid
-        x:Name="RootLayout"
         BackgroundColor="#3D4245"
-        RowDefinitions="2*,8*"
+        RowDefinitions="3*,7*"
         ColumnDefinitions="*"
         RowSpacing="20"
         >
@@ -25,69 +24,92 @@
                     Padding="10"
                     Spacing="20"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center">
+                    VerticalOptions="Center"
+                    >
 
-                    <Label Text="Registrate"
-                       FontSize="36"
+                    <Label Text="¡Unite a Trainium!"
+                       FontSize="32"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"/>
+                       HorizontalTextAlignment="Center"
+                       />
+                    
+                    <Label Text="Registrate"
+                        FontSize="24"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        />
 
                 </VerticalStackLayout>
             </Grid>
-
         </Border>
 
         <Grid 
            Grid.Row="1"
-           Padding="30"
-           
+           Padding="30, 20"
            >
             <VerticalStackLayout
-                Padding="10"
-                Spacing="30"
+                Spacing="20"
                 VerticalOptions="Start">
-
-                <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                
+                <VerticalStackLayout
+                    Spacing="5"
                     >
-
-                    <Grid
-                        Padding="10"
-                        RowDefinitions="*"
-                        ColumnDefinitions="1*, 9*"
-                        RowSpacing="200"
-                        BackgroundColor="#f0f0f0"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill"
-                        HeightRequest="50"
+                    
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
                         >
 
-                        <Image
-                            Grid.Column="0"
-                            Source="nombre_registro.png"
-                            WidthRequest="20"
-                            HeightRequest="20"
+                        <Grid
+                            Padding="10"
+                            RowDefinitions="*"
+                            ColumnDefinitions="1*, 9*"
+                            RowSpacing="200"
+                            BackgroundColor="#f0f0f0"
                             VerticalOptions="Center"
-                            HorizontalOptions="Center"
-                            />
-
-                        <Entry
-                            Grid.Column="1"
-                            Placeholder="Nombre Completo"
-                            PlaceholderColor="Black"
-                            FontSize="18"
-                            MaxLength="25"
+                            HorizontalOptions="Fill"
                             HeightRequest="50"
-                            BackgroundColor="Transparent"
+                            >
+
+                            <Image
+                                Grid.Column="0"
+                                Source="nombre_registro.png"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
+
+                            <Entry
+                                Grid.Column="1"
+                                Placeholder="Nombre Completo"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="100"
+                                HeightRequest="50"
+                                BackgroundColor="Transparent"
+                                />
+
+                        </Grid>
+
+                    </Border>
+                    
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
                         />
 
-                    </Grid>
+                </VerticalStackLayout>
 
-                </Border>
-
-                <Border
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -116,18 +138,30 @@
                             Grid.Column="1"
                             Placeholder="Email"
                             PlaceholderColor="Black"
-                            FontSize="18"
-                            IsPassword="True"
+                            FontSize="16"
                             MaxLength="254"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
                 </Border>
 
-                <Border
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -156,7 +190,7 @@
                             Grid.Column="1"
                             Placeholder="Contraseña"
                             PlaceholderColor="Black"
-                            FontSize="18"
+                            FontSize="16"
                             IsPassword="True"
                             MaxLength="25"
                             HeightRequest="50"
@@ -167,7 +201,20 @@
 
                 </Border>
 
-                <Border
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                    Spacing="5"
+                    >
+                    
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="0"
                     >
@@ -196,28 +243,32 @@
                             Grid.Column="1"
                             Placeholder="Confirmar Contraseña"
                             PlaceholderColor="Black"
-                            FontSize="18"
+                            FontSize="16"
                             IsPassword="True"
                             MaxLength="25"
                             HeightRequest="50"
                             BackgroundColor="Transparent"
-                        />
+                            />
 
                     </Grid>
 
                 </Border>
 
+                    <Label
+                        Text="Error"
+                        FontSize="14"
+                        TextColor="Red"
+                        IsVisible="True"
+                        />
+
+                </VerticalStackLayout>
 
                 <VerticalStackLayout
                     Spacing="20"
                     >
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Registrarse"
                         FontAttributes="Bold"
                         BackgroundColor="#00CDDB"
@@ -226,14 +277,9 @@
                         TextColor="Black"
                         Command="{Binding RegistrarseCommand}"
                     />
-                    </Border>
 
-                    <Border
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    >
-
-                        <Button
+                    <Button
+                        CornerRadius="5"
                         Text="Iniciar Sesión"
                         FontAttributes="Bold"
                         BackgroundColor="#C4EEF2"
@@ -241,16 +287,13 @@
                         HeightRequest="50"
                         TextColor="Black"
                         Command="{Binding IniciarSesionCommand}"
-                    />
-                    </Border>
+                        />
 
                 </VerticalStackLayout>
 
             </VerticalStackLayout>
         </Grid>
 
-
     </Grid>
-
 
 </ContentPage>

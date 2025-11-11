@@ -2,11 +2,170 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.Rutinas"
-             Title="Rutinas">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             >
+
+    <Grid
+        Padding="30,40"
+        RowDefinitions="Auto,*"
+        RowSpacing="50"
+        BackgroundColor="#1A2745"
+        >
+
+        <Grid
+            Grid.Row="0"
+            RowDefinitions="*,*"
+            ColumnSpacing="20"
+            RowSpacing="20"
+            >
+
+            <Label
+                Grid.Row="0"
+                Text="Tus Rutinas"
+                TextColor="White"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                />
+
+            <Grid
+                Grid.Row="1"
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="10"
+                >
+
+                <Border
+                    Grid.Column="0"
+                    Stroke="#00F0FF"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="2"
+                    >
+                    <Label
+                        TextColor="White"
+                        Text="Seleccionar rutina actual"
+                        VerticalOptions="Center"
+                        FontSize="16"
+                        Padding="10,0"
+                        FontAttributes="Bold"
+                        />
+
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
+
+                    <Picker
+                        ItemsSource="{Binding Rutinas}"
+                        SelectedItem="{Binding RutinaSeleccionada}"
+                        FontSize="16"
+                        />
+
+                </Border>
+            </Grid>
+
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            StrokeShape="RoundRectangle 10"
+            StrokeThickness="0"
+            BackgroundColor="#C4EEF2"
+            >
+
+            <Grid
+                Padding="20"
+                RowDefinitions="Auto,Auto, 9*"
+                ColumnDefinitions="8*, 2*"
+                RowSpacing="20"
+                >
+
+                <Label 
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Rutinas"
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    TextColor="#005A61"
+                    VerticalOptions="Center"
+                    />
+                
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="#00A7B3"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    StrokeThickness="2"
+                    >
+
+                    <ImageButton
+                        Source="agregar.png"
+                        HorizontalOptions="Center"
+                        Padding="10"
+                        Command="{Binding AgregarRutinaCommand}"
+                        />
+
+                </Border>
+
+                <BoxView
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    HeightRequest="1"  
+                    BackgroundColor="Black"
+                    HorizontalOptions="Fill" />
+
+                <CollectionView 
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    ItemsSource="{Binding Rutinas}"
+                    >
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="0"
+                                BackgroundColor="#00CDDB"
+                                Margin="0, 5, 0, 5"
+                                >
+
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding EditarRutinaCommand}"
+                                        CommandParameter="{Binding .}" 
+                                        />
+                                </Border.GestureRecognizers>
+
+                                <Label 
+                                    Padding="10"
+                                    FontSize="16"
+                                    >
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Id}" />
+                                            <Span Text="- "/>
+                                            <Span Text="{Binding Nombre}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Border>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+    
 </ContentPage>

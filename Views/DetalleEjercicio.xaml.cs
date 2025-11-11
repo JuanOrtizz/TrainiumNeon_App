@@ -1,15 +1,14 @@
+namespace TrainiumNeon.Views;
 using TrainiumNeon.Services;
 using TrainiumNeon.ViewModels;
 
-namespace TrainiumNeon.Views;
-
-public partial class Estadisticas : ContentPage
+public partial class DetalleEjercicio : ContentPage
 {
-	public Estadisticas()
+	public DetalleEjercicio()
 	{
 		InitializeComponent();
         //Temporal hasta que agregue DI
         var apiService = new ApiEjerciciosService(new HttpClient());
-        BindingContext = new EstadisticasViewModel(apiService);
+        BindingContext = new DetalleEjercicioViewModel(apiService);
     }
 }

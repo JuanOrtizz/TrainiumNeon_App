@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrainiumNeon.Views.DetalleEjercicio"
+             Shell.NavBarIsVisible="True"
+             >
+
+    <Grid
+        Padding="30,20"
+        RowDefinitions="Auto,Auto, Auto"
+        RowSpacing="50"
+        BackgroundColor="#1A2745">
+
+        <Grid
+            Grid.Row="0"
+            RowDefinitions="*,*"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="20"
+            >
+
+            <Border
+                StrokeShape="RoundRectangle 5"
+                HeightRequest="150"
+                WidthRequest="150"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                >
+                
+                <Image
+                    Source="{Binding ImagenUrl}"
+                    />
+
+            </Border>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                Text="{Binding Nombre}"
+                FontSize="18"
+                TextColor="White"
+                FontAttributes="Bold"
+                />
+
+            <Label
+                x:Name="LabelGrupoMuscular"
+                Grid.Row="1"
+                Grid.Column="1"
+                FontSize="16">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Grupo Muscular: " TextColor="White" FontAttributes="Bold"/>
+                        <Span Text="{Binding BindingContext.GrupoMuscular, Source={x:Reference LabelGrupoMuscular}}" TextColor="#00F0FF" FontAttributes="Bold"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            
+        </Grid>
+
+        <Label
+            Grid.Row="1"
+            FontSize="18"
+            HorizontalOptions="Center"
+            >
+            
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Incluido en " 
+                          TextColor="White"/>
+                    <Span Text="{Binding AparicionesEnRutinas}" 
+                          TextColor="#00CDDB"/>
+                    <Span Text=" rutina/s" 
+                          TextColor="White"/>
+                </FormattedString>
+            </Label.FormattedText>
+            
+        </Label>
+
+        <Grid
+            Grid.Row="2"
+            RowDefinitions="Auto, Auto, Auto"
+            RowSpacing="20">
+
+            <Label
+                Grid.Row="0"
+                Text="Personal Record (PR)"
+                FontSize="20"
+                FontAttributes="Bold"
+                TextColor="White"
+                />
+            
+            <VerticalStackLayout
+                Spacing="5"
+                Grid.Row="1"
+                >
+                
+                <Border
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="0"
+                    HeightRequest="50"
+                    Padding="5,0,5,0"
+                    >
+            
+                    <Entry
+                        Grid.Row="1"
+                        Placeholder="Ingresa tu Personal Record"
+                        Text="{Binding PersonalRecord}"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="3"
+                        BackgroundColor="Transparent"
+                        />
+
+                </Border>
+                <Label
+                    Text="Error"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="True"
+                    />
+
+            </VerticalStackLayout>
+
+            <Button
+                CornerRadius="5"
+                Grid.Row="2"
+                Text="Guardar"
+                FontAttributes="Bold"
+                BackgroundColor="#C4EEF2"
+                FontSize="18"
+                HeightRequest="50"
+                TextColor="Black"
+                />
+
+        </Grid>
+    </Grid>
+</ContentPage>
