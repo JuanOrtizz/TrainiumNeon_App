@@ -35,6 +35,7 @@
                 <Label
                     TextColor="White"
                     Text="Seleccionar Día"
+                    FontAttributes="Bold"
                     VerticalOptions="Center"
                     FontSize="16"
                     Padding="10,0"
@@ -45,14 +46,16 @@
             <Border
                  Grid.Column="1"
                  StrokeShape="RoundRectangle 5"
-                 StrokeThickness="0"
+                 StrokeThickness="2"
+                 Stroke="Gray"
                  HeightRequest="50"
                  BackgroundColor="White"
                  Padding="5, 0"
                  >
-
+                
                 <Picker
-                    Title="Elegí una opción"
+                    Title="Elegí un Día"
+                    TextColor="Black"
                     FontSize="16"
                     ItemsSource="{Binding Dias}"
                     SelectedItem="{Binding DiaSeleccionado}"
@@ -94,13 +97,16 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
+                StrokeThickness="2"
+                Stroke="Gray"
                 HeightRequest="50"
                 BackgroundColor="White"
                 Padding="5, 0"
                 >
 
                 <Picker
+                    Title="Elegí un Grupo Muscular"
+                    TextColor="Black"
                     ItemsSource="{Binding GruposMusculares}"
                     SelectedItem="{Binding GrupoMuscularSeleccionado}"
                     FontSize="16"
@@ -117,14 +123,37 @@
                 
                 <Border
                     StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                    StrokeThickness="2"
+                    Stroke="Gray"
                     HeightRequest="50"
                     BackgroundColor="White"
                     Padding="5, 0"
                     >
 
+                    <Border.Triggers>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference EjercicioSeleccionadoPicker}, Path=IsFocused}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="#00F0FF" />
+                        </DataTrigger>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnEjercicioSeleccionado}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="Red" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    
                     <Picker
-                        ItemsSource="{Binding Ejericios}"
+                        x:Name="EjercicioSeleccionadoPicker"
+                        Title="Elegí un Ejercicio"
+                        TextColor="Black"
+                        TitleColor="Black"
+                        ItemsSource="{Binding Ejercicios}"
+                        ItemDisplayBinding="{Binding Nombre}"
                         SelectedItem="{Binding EjercicioSeleccionado}"
                         FontSize="16"
                         />
@@ -132,10 +161,10 @@
                 </Border>
                 
                 <Label
-                    Text="Error"
+                    Text="{Binding ErrorEjercicioSeleccionado}"
                     FontSize="14"
                     TextColor="Red"
-                    IsVisible="True"
+                    IsVisible="{Binding HayErrorEnEjercicioSeleccionado}"
                     />
 
             </VerticalStackLayout>
@@ -147,27 +176,49 @@
                 >
                 <Border
                     StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                    StrokeThickness="2"
+                    Stroke="Gray"
                     HeightRequest="50"
                     BackgroundColor="White"
                     Padding="5, 0"
                     >
 
+                    <Border.Triggers>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference SeriesEntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="#00F0FF" />
+                        </DataTrigger>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnSeries}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="Red" />
+                        </DataTrigger>
+                    </Border.Triggers>
+
                     <Entry
+                        x:Name="SeriesEntry"
                         Placeholder="Colocá las series "
                         PlaceholderColor="Black"
                         FontSize="16"
                         MaxLength="2"
                         BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Text="{Binding Series}"
+                        TextColor="Black"
                         />
 
                 </Border>
                 
                 <Label
-                    Text="Error"
+                    Text="{Binding ErrorSeries}"
                     FontSize="14"
                     TextColor="Red"
-                    IsVisible="True"
+                    IsVisible="{Binding HayErrorEnSeries}"
                     />
 
             </VerticalStackLayout>
@@ -180,27 +231,49 @@
                 
                 <Border
                     StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                    StrokeThickness="2"
+                    Stroke="Gray"
                     HeightRequest="50"
                     BackgroundColor="White"
                     Padding="5, 0"
                     >
 
+                    <Border.Triggers>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference RepeticionesEntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="#00F0FF" />
+                        </DataTrigger>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnRepeticiones}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="Red" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    
                     <Entry
+                        x:Name="RepeticionesEntry"
                         Placeholder="Colocá las repeticiones (por serie)"
                         PlaceholderColor="Black"
                         FontSize="16"
                         MaxLength="2"
                         BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Text="{Binding Repeticiones}"
+                        TextColor="Black"
                         />
 
                 </Border>
 
                 <Label
-                    Text="Error"
+                    Text="{Binding ErrorRepeticiones}"
                     FontSize="14"
                     TextColor="Red"
-                    IsVisible="True"
+                    IsVisible="{Binding HayErrorEnRepeticiones}"
                     />
 
             </VerticalStackLayout>
@@ -216,6 +289,7 @@
             FontSize="18"
             HeightRequest="50"
             TextColor="Black"
+            Command="{Binding GuardarEjercicioCommand}"
             />
 
     </Grid>
