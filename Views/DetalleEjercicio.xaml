@@ -99,12 +99,31 @@
                 <Border
                     BackgroundColor="White"
                     StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
+                    StrokeThickness="2"
+                    Stroke="Gray"
                     HeightRequest="50"
                     Padding="5,0,5,0"
                     >
-            
+                    <Border.Triggers>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference PREntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="#00F0FF" />
+                        </DataTrigger>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnPersonalRecord}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="Red" />
+                        </DataTrigger>
+                    </Border.Triggers>
+
+
                     <Entry
+                        x:Name="PREntry"
                         Grid.Row="1"
                         Placeholder="Ingresa tu Personal Record"
                         Text="{Binding PersonalRecord}"
@@ -112,14 +131,17 @@
                         FontSize="16"
                         MaxLength="3"
                         BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        TextColor="Black"
                         />
 
                 </Border>
+                
                 <Label
-                    Text="Error"
+                    Text="{Binding ErrorPersonalRecord}"
                     FontSize="14"
                     TextColor="Red"
-                    IsVisible="True"
+                    IsVisible="{Binding HayErrorEnPersonalRecord}"
                     />
 
             </VerticalStackLayout>
@@ -133,6 +155,7 @@
                 FontSize="18"
                 HeightRequest="50"
                 TextColor="Black"
+                Command="{Binding GuardarPersonalRecordCommand}"
                 />
 
         </Grid>
