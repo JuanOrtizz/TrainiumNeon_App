@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TrainiumNeon.Models
+﻿namespace TrainiumNeon.Models
 {
     //Clase para representar la relacion entre EjercicioModel y DiaModel (Un ejericicio puede estar en muchos dias con diferentes series y repeticiones)
     public class EjercicioDiaModel
