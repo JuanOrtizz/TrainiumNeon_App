@@ -4,9 +4,9 @@ namespace TrainiumNeon.Views;
 
 public partial class AgregarEditarRutina : ContentPage
 {
-	public AgregarEditarRutina()
+	public AgregarEditarRutina(AgregarEditarRutinaViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = new AgregarEditarRutinaViewModel();
+		BindingContext = vm;
 	}
 }

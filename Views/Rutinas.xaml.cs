@@ -4,9 +4,9 @@ namespace TrainiumNeon.Views;
 
 public partial class Rutinas : ContentPage
 {
-	public Rutinas()
+	public Rutinas(RutinasViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = new RutinasViewModel();
+		BindingContext = vm;
 	}
 }
