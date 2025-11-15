@@ -63,6 +63,8 @@
                     <Picker
                     Title="Elegí una opción"
                     FontSize="16"
+                    TextColor="Black"
+                    TitleColor="Black"
                      >
 
                         <Picker.Items>
@@ -112,6 +114,7 @@
                     <Picker
                         ItemsSource="{Binding GruposMusculares}"
                         SelectedItem="{Binding GrupoMuscularSeleccionado}"
+                        TextColor="Black"
                         FontSize="16"
                         />
 
@@ -147,42 +150,70 @@
                     BackgroundColor="Black"
                     HorizontalOptions="Fill" />
 
-                <CollectionView 
+                <Grid
                     Grid.Row="2"
-                    ItemsSource="{Binding Ejercicios}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
+                    >
+                    <CollectionView 
+                        ItemsSource="{Binding Ejercicios}"
+                        >
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
                                 StrokeShape="RoundRectangle 10"
                                 StrokeThickness="0"
                                 BackgroundColor="#00CDDB"
                                 Margin="0, 5, 0, 5"
                                 >
 
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer 
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicio}"
-                                        CommandParameter="{Binding .}" />   
-                                </Border.GestureRecognizers>
+                                        CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
 
-                                <Label 
-                                   Padding="10"
-                                   FontSize="16"
-                                   >
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{Binding Nombre}" />
-                                            <Span Text=" (PR " />
-                                            <Span Text="{Binding PersonalRecord}" />
-                                            <Span Text="Kg)" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                            </Border>
-                              
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                                    <Label 
+                                       Padding="10"
+                                       FontSize="16"
+                                       >
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Nombre}" TextColor="Black" />
+                                                <Span Text=" (PR " TextColor="Black"/>
+                                                <Span Text="{Binding PersonalRecord}" TextColor="Black" />
+                                                <Span Text="Kg)" TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </Border>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Border
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0"
+                        >
+                        <Grid 
+                            IsVisible="{Binding IsBusy}"
+                            BackgroundColor="#60000000"
+                            VerticalOptions="Fill"
+                            HorizontalOptions="Fill"
+                            >
+
+                            <ActivityIndicator 
+                                IsRunning="True"
+                                Color="White"
+                                Scale="1.5"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                />
+
+                        </Grid>
+                    </Border>
+
+                    
+                </Grid>
 
             </Grid>
         </Border>

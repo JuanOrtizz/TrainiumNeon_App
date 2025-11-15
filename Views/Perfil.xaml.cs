@@ -4,9 +4,9 @@ namespace TrainiumNeon.Views;
 
 public partial class Perfil : ContentPage
 {
-	public Perfil()
+	public Perfil(PerfilViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = new PerfilViewModel();
+        BindingContext = vm;
 	}
 }

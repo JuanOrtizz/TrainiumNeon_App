@@ -41,13 +41,14 @@
                 StrokeThickness="0"
                 >
                 <Button
-                    Text="{Binding Titulo}"
+                    Text="Guardar"
                     HorizontalOptions="End"
                     VerticalOptions="Center"
                     FontSize="18"
                     FontAttributes="Bold"
                     BackgroundColor="#00CDDB"
                     TextColor="White"
+                    Command="{Binding GuardarRutinaCommand}"
                     />
             </Border>
 
@@ -60,29 +61,48 @@
                 
                 <Border
                     StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-               
+                    StrokeThickness="2"
+                    Stroke="Gray"
                     HeightRequest="50"
                     BackgroundColor="White"
                     Padding="5, 0"
                     >
+                    
+                    <Border.Triggers>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference NombreRutinaEntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="#00F0FF" />
+                        </DataTrigger>
+                        <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnNombreRutina}"
+                                Value="True"
+                                >
+                            <Setter Property="Stroke" Value="Red" />
+                        </DataTrigger>
+                    </Border.Triggers>
 
                     <Entry
-                        Text="Nombre de la rutina"
+                        x:Name="NombreRutinaEntry"
+                        Text="{Binding NombreRutina}"
                         Placeholder="Coloca el nombre de la rutina"
-                        PlaceholderColor="DarkGray"
+                        PlaceholderColor="Black"
                         FontSize="16"
                         MaxLength="50"
                         BackgroundColor="Transparent"
+                        TextColor="Black"
                         />
 
                 </Border>
 
                 <Label
-                    Text="Error"
+                    Text="{Binding ErrorNombreRutina}"
                     FontSize="14"
                     TextColor="Red"
-                    IsVisible="True"
+                    IsVisible="{Binding HayErrorEnNombreRutina}"
                     />
 
             </VerticalStackLayout>
@@ -122,6 +142,7 @@
                 BackgroundColor="#00CDDB"
                 CornerRadius="50"
                 Text="Agregar Ejercicio"
+                TextColor="White"
                 FontAttributes="Bold"
                 FontSize="18"
                 Command="{Binding NavegarAgregarEjercicioCommand}"
@@ -190,7 +211,6 @@
 
                     </HorizontalStackLayout>
                 </Border>
-
 
                 <BoxView
                     Grid.Row="1"
