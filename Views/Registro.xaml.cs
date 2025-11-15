@@ -4,9 +4,10 @@ namespace TrainiumNeon.Views;
 
 public partial class Registro : ContentPage
 {
-	public Registro()
+	public Registro(RegistroViewModel vm)
 	{
 		InitializeComponent();
-        BindingContext = new RegistroViewModel(this.Navigation);
+        BindingContext = vm;
+        vm.SetNavigation(Navigation);
     }
 }
