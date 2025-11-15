@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 using TrainiumNeon.Views;
@@ -14,11 +9,14 @@ namespace TrainiumNeon.ViewModels
 {
     public class EstadisticasViewModel : INotifyPropertyChanged
     {
-        //Variable para el servicio de la API de ejercicios
-        private readonly ApiEjerciciosService _apiEjercicioService;
-
-        //Variable para la lista de ejercicios
+        // Servicio
+        private readonly IApiEjerciciosService _apiEjercicioService;
+        // Propiedades privadas
         private ObservableCollection<EjercicioModel> _ejercicios;
+        private ObservableCollection<string> _gruposMusculares;
+        private string _grupoMuscularSeleccionado;
+        private bool _isBusy;
+        // Propiedades publicas
         public ObservableCollection<EjercicioModel> Ejercicios
         {
             get => _ejercicios;
@@ -27,64 +25,91 @@ namespace TrainiumNeon.ViewModels
                 if (_ejercicios != value)
                 {
                     _ejercicios = value;
-                    OnPropertyChanged(nameof(Ejercicios));
+                    OnPropertyChanged();
                 }
             }
         }
-
-        //Lista para los timos de musculos (puede ser un enum)
-        public ObservableCollection<string> Musculos { get; set; } = new ObservableCollection<string>
+        public ObservableCollection<string> GruposMusculares
         {
-            "Todos", "Pecho", "Espalda", "Hombro", "Bíceps", "Tríceps", "Pierna", "Core"
-        };
-
-        //Variable para filtrar por musculos por un Picker en la View
-        private string _musculoSeleccionado;
-        public string MusculoSeleccionado
-        {
-            get => _musculoSeleccionado;
+            get => _gruposMusculares;
             set
             {
-                if(_musculoSeleccionado != value)
+                if (_gruposMusculares != value)
                 {
-                    _musculoSeleccionado = value;
+                    _gruposMusculares = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string GrupoMuscularSeleccionado
+        {
+            get => _grupoMuscularSeleccionado;
+            set
+            {
+                if(_grupoMuscularSeleccionado != value)
+                {
+                    _grupoMuscularSeleccionado = value;
                     _ = CargarEjerciciosAsync();
                 }
             } 
         }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        //Comando para navegar y ver detalles del ejercicio
+        //Comando
         public Command VerDetallesEjercicio { get; }
 
-        public EstadisticasViewModel(ApiEjerciciosService apiEjerciciosService)
+        // Constructor
+        public EstadisticasViewModel(IApiEjerciciosService apiEjerciciosService)
         {
+            // Inicializa servicio por DI
             _apiEjercicioService = apiEjerciciosService;
+            //Inicializan grupos musculares al cargar la pantalla
+            GruposMusculares = ObtenerGruposMusculares();
+            // Inicializa comando
             VerDetallesEjercicio = new Command<EjercicioModel>(async (ejercicio) => await NavegarDetallesEjercicio(ejercicio));
-            _musculoSeleccionado = Musculos[0];
+            // Inicializa grupo muscular seleccionado por defecto (Todos)
+            _grupoMuscularSeleccionado = GruposMusculares[0];
+            // Inicializa coleccion de ejercicios
             Ejercicios = new ObservableCollection<EjercicioModel>();
+            // Se cargan todos los ejericicos al cargar la pantalla
             _ = CargarEjerciciosAsync();
         }
 
+        // Task privada para navegar a detalles de ejercicio
         private async Task NavegarDetallesEjercicio(EjercicioModel ejercicio)
         {
             await Shell.Current.GoToAsync($"{nameof(DetalleEjercicio)}?idEjercicio={ejercicio.Id}");
         }
 
+        // Task privada para cargar ejercicios desde API
         private async Task CargarEjerciciosAsync()
         {
             try
             {
+                // Indica que se esta cargando y muestra el spinner
+                IsBusy = true;
                 List<EjercicioModel> listaEjerciciosApi;
 
-                if(MusculoSeleccionado == "Todos")
+                if (GrupoMuscularSeleccionado == "Todos")
                 {
                     listaEjerciciosApi = (List<EjercicioModel>)await _apiEjercicioService.GetEjerciciosAsync();
                 }
                 else
                 {
-                    listaEjerciciosApi = (List<EjercicioModel>)await _apiEjercicioService.GetEjerciciosByGrupoMuscularAsync(MusculoSeleccionado);
+                    listaEjerciciosApi = (List<EjercicioModel>)await _apiEjercicioService.GetEjerciciosByGrupoMuscularAsync(GrupoMuscularSeleccionado);
                 }
-
+                // Asigna la lista obtenida a la coleccion observable
                 Ejercicios = new ObservableCollection<EjercicioModel>(listaEjerciciosApi);
 
             }
@@ -93,8 +118,26 @@ namespace TrainiumNeon.ViewModels
                 // Mostrar mensaje de error al usuario
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
+            finally
+            {
+                // Al terminar deja de mostrar el spinner
+                IsBusy = false;
+            }
         }
 
+        // Metodo privado para obtener los grupos musculares desde el enum
+        private ObservableCollection<string> ObtenerGruposMusculares()
+        {
+            ObservableCollection<string> coleccionGM = new ObservableCollection<string>();
+
+            foreach(var gm in Enum.GetValues(typeof(GrupoMuscularEnum)).Cast<GrupoMuscularEnum>())
+            {
+                coleccionGM.Add(gm.ToString());
+            }
+            return coleccionGM;
+        }
+
+        // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
