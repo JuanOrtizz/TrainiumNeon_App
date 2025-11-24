@@ -9,4 +9,12 @@ public partial class Perfil : ContentPage
 		InitializeComponent();
         BindingContext = vm;
 	}
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is PerfilViewModel vm)
+            await vm.CargarDatosUsuarioAsync();
+    }
+
 }

@@ -3,37 +3,85 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.Perfil"
              >
-
-    <Grid>
-        <Grid
+    <ScrollView>
+        <Grid>
+            <Grid
             Padding="30,40"
-            RowDefinitions="Auto,Auto"
-            RowSpacing="50"
+            RowDefinitions="Auto,Auto, Auto"
+            RowSpacing="30"
             BackgroundColor="#1A2745"
             >
 
-            <Grid
-                Grid.Row="0"
+                <Grid
+                    Grid.Row="0"
+                    RowDefinitions="Auto, Auto"
+                    ColumnDefinitions="*, Auto"
+                    RowSpacing="20">
+
+
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Text="Tu Perfil"
+                        TextColor="White"
+                        FontSize="24"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        />
+
+                    <Border
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Stroke="#00F0FF"
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="2"
+                        Padding="10"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        >
+                            <Label
+                            Text="Permitir notificaciones"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            />
+                        
+                    </Border>
+
+                    <Switch
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        IsToggled="{Binding NotificacionesActivas, Mode=TwoWay}"
+                        OnColor="#00CDDB"
+                        Scale="1.2"
+                        ThumbColor="White"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+                
+                <Grid
+                Grid.Row="1"
                 RowDefinitions="*,*,*,*"
                 RowSpacing="20"
                 >
 
-                <Label
+                    <Label
                     Grid.Row="0"
-                    Text="Tu Perfil"
+                    Text="Tus datos"
                     TextColor="White"
-                    FontSize="24"
+                    FontSize="20"
                     FontAttributes="Bold"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     />
 
-                <VerticalStackLayout
+                    <VerticalStackLayout
                     Spacing="5"
                     Grid.Row="1"
                     >
 
-                    <Border
+                        <Border
                         StrokeShape="RoundRectangle 5"
                         StrokeThickness="2"
                         Stroke="Gray"
@@ -42,24 +90,24 @@
                         Padding="5, 0"
                         >
 
-                        <Border.Triggers>
-                            <DataTrigger
+                            <Border.Triggers>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding Source={x:Reference NombreEntry}, Path=IsFocused}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
+                                    <Setter Property="Stroke" Value="#00F0FF" />
+                                </DataTrigger>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding HayErrorEnNuevoNombre}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                                    <Setter Property="Stroke" Value="Red" />
+                                </DataTrigger>
+                            </Border.Triggers>
 
-                        <Entry
+                            <Entry
                             x:Name="NombreEntry"
                             Placeholder="Coloca tu nuevo nombre"
                             PlaceholderColor="Black"
@@ -70,23 +118,23 @@
                             TextColor="Black"
                             />
 
-                    </Border>
+                        </Border>
 
-                    <Label
+                        <Label
                         Text="{Binding ErrorNuevoNombre}"
                         FontSize="14"
                         TextColor="Red"
                         IsVisible="{Binding HayErrorEnNuevoNombre}"
                         />
 
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                <VerticalStackLayout
+                    <VerticalStackLayout
                     Spacing="5"
                     Grid.Row="2"
                     >
 
-                    <Border
+                        <Border
                         StrokeShape="RoundRectangle 5"
                         StrokeThickness="2"
                         Stroke="Gray"
@@ -95,24 +143,24 @@
                         Padding="5, 0"
                         >
 
-                        <Border.Triggers>
-                            <DataTrigger
+                            <Border.Triggers>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding Source={x:Reference EmailEntry}, Path=IsFocused}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
+                                    <Setter Property="Stroke" Value="#00F0FF" />
+                                </DataTrigger>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding HayErrorEnNuevoEmail}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                                    <Setter Property="Stroke" Value="Red" />
+                                </DataTrigger>
+                            </Border.Triggers>
 
-                        <Entry
+                            <Entry
                             x:Name="EmailEntry"
                             PlaceholderColor="Black"
                             FontSize="16"
@@ -123,18 +171,18 @@
                             TextColor="Black"
                             />
 
-                    </Border>
+                        </Border>
 
-                    <Label
+                        <Label
                         Text="{Binding ErrorNuevoEmail}"
                         FontSize="14"
                         TextColor="Red"
                         IsVisible="{Binding HayErrorEnNuevoEmail}"
                         />
 
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                <Button
+                    <Button
                     x:Name="BtnCambiarDatos"
                     CornerRadius="5"
                     Grid.Row="3"
@@ -147,34 +195,34 @@
                     Command="{Binding CambiarDatosPersonalesCommand}"
                     IsEnabled="{Binding PuedeActualizar}"
                     >
-                    <Button.Triggers>
-                        <DataTrigger
+                        <Button.Triggers>
+                            <DataTrigger
                             TargetType="Button"
                             Binding="{Binding PuedeActualizar}"
                             Value="False">
-                            <Setter Property="BackgroundColor" Value="#8A8A8A" />
-                            <Setter Property="TextColor" Value="#E0E0E0" />
-                        </DataTrigger>
+                                <Setter Property="BackgroundColor" Value="#8A8A8A" />
+                                <Setter Property="TextColor" Value="#E0E0E0" />
+                            </DataTrigger>
 
-                        <DataTrigger
+                            <DataTrigger
                             TargetType="Button"
                             Binding="{Binding PuedeActualizar}"
                             Value="True">
-                            <Setter Property="BackgroundColor" Value="#00CDDB" />
-                            <Setter Property="TextColor" Value="White" />
-                        </DataTrigger>
-                    </Button.Triggers>
-                </Button>
+                                <Setter Property="BackgroundColor" Value="#00CDDB" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
 
-            </Grid>
+                </Grid>
 
-            <Grid
-                Grid.Row="1"
+                <Grid
+                Grid.Row="2"
                 RowDefinitions="*,*,*,*"
                 RowSpacing="20"
                 >
 
-                <Label
+                    <Label
                     Text="Cambia tu Contraseña"
                     Grid.Row="0"
                     FontSize="20"
@@ -183,35 +231,35 @@
                     HorizontalOptions="Start"
                     VerticalOptions="Center"/>
 
-                <VerticalStackLayout
+                    <VerticalStackLayout
                     Spacing="5"
                     Grid.Row="1"
                     >
 
-                    <Border
+                        <Border
                         StrokeShape="RoundRectangle 5"
                         StrokeThickness="2"
                         Stroke="Gray"
                         >
 
-                        <Border.Triggers>
-                            <DataTrigger
+                            <Border.Triggers>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding Source={x:Reference NuevaContraseniaEntry}, Path=IsFocused}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
+                                    <Setter Property="Stroke" Value="#00F0FF" />
+                                </DataTrigger>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding HayErrorEnNuevaContrasenia}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                                    <Setter Property="Stroke" Value="Red" />
+                                </DataTrigger>
+                            </Border.Triggers>
 
-                        <Grid
+                            <Grid
                             Padding="10"
                             RowDefinitions="*"
                             ColumnDefinitions="9*, 1*"
@@ -222,7 +270,7 @@
                             HeightRequest="50"
                             >
 
-                            <Entry
+                                <Entry
                                 x:Name="NuevaContraseniaEntry"
                                 Grid.Column="0"
                                 Placeholder="Confirmar Contraseña"
@@ -236,7 +284,7 @@
                                 TextColor="Black"
                                 />
 
-                            <Image
+                                <Image
                                 Grid.Column="2"
                                 Source="{Binding IconoNuevaContrasenia}"
                                 WidthRequest="25"
@@ -244,52 +292,52 @@
                                 VerticalOptions="Center"
                                 HorizontalOptions="Center"
                                 >
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding CambiarEstadoNuevaContraseniaCommand}" />
-                                </Image.GestureRecognizers>
-                            </Image>
-                        </Grid>
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding CambiarEstadoNuevaContraseniaCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Grid>
 
-                    </Border>
+                        </Border>
 
-                    <Label
+                        <Label
                         Text="{Binding ErrorNuevaContrasenia}"
                         FontSize="14"
                         TextColor="Red"
                         IsVisible="{Binding HayErrorEnNuevaContrasenia}"
                         />
 
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                <VerticalStackLayout
+                    <VerticalStackLayout
                     Spacing="5"
                     Grid.Row="2"
                     >
 
-                    <Border
+                        <Border
                         StrokeShape="RoundRectangle 5"
                         StrokeThickness="2"
                         Stroke="Gray"
                         >
 
-                        <Border.Triggers>
-                            <DataTrigger
+                            <Border.Triggers>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding Source={x:Reference ConfirmarNuevaContraseniaEntry}, Path=IsFocused}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
+                                    <Setter Property="Stroke" Value="#00F0FF" />
+                                </DataTrigger>
+                                <DataTrigger
                                     TargetType="Border"
                                     Binding="{Binding HayErrorEnConfirmarNuevaContrasenia}"
                                     Value="True"
                                     >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                                    <Setter Property="Stroke" Value="Red" />
+                                </DataTrigger>
+                            </Border.Triggers>
 
-                        <Grid
+                            <Grid
                             Padding="10"
                             RowDefinitions="*"
                             ColumnDefinitions="9*, 1*"
@@ -300,7 +348,7 @@
                             HeightRequest="50"
                             >
 
-                            <Entry
+                                <Entry
                                 x:Name="ConfirmarNuevaContraseniaEntry"
                                 Grid.Column="0"
                                 Placeholder="Confirmar Nueva Contraseña"
@@ -314,7 +362,7 @@
                                 TextColor="Black"
                                 />
 
-                            <Image
+                                <Image
                                     Grid.Column="2"
                                     Source="{Binding IconoConfirmarNuevaContrasenia}"
                                     WidthRequest="25"
@@ -322,29 +370,29 @@
                                     VerticalOptions="Center"
                                     HorizontalOptions="Center"
                                     >
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding CambiarEstadoConfirmarNuevaContraseniaCommand}" />
-                                </Image.GestureRecognizers>
-                            </Image>
-                        </Grid>
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding CambiarEstadoConfirmarNuevaContraseniaCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Grid>
 
-                    </Border>
+                        </Border>
 
-                    <Label
+                        <Label
                         Text="{Binding ErrorConfirmarNuevaContrasenia}"
                         FontSize="14"
                         TextColor="Red"
                         IsVisible="{Binding HayErrorEnConfirmarNuevaContrasenia}"
                         />
 
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                <VerticalStackLayout
+                    <VerticalStackLayout
                     Grid.Row="3"
                     Spacing="20"
                     >
 
-                    <Button
+                        <Button
                         CornerRadius="5"
                         Text="Cambiar Contraseña"
                         FontAttributes="Bold"
@@ -355,7 +403,7 @@
                         Command="{Binding CambiarContraseniaCommand}"
                         />
 
-                    <Button
+                        <Button
                         CornerRadius="5"
                         Text="Cerrar Sesión"
                         FontAttributes="Bold"
@@ -365,27 +413,28 @@
                         TextColor="White"
                         Command="{Binding CerrarSesionCommand}"
                         />
-                </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                </Grid>
 
             </Grid>
 
-        </Grid>
-
-        <Grid
+            <Grid
             IsVisible="{Binding IsBusy}"
             BackgroundColor="#40000000"
             VerticalOptions="Fill"
             HorizontalOptions="Fill"
             ZIndex="999">
 
-            <ActivityIndicator
+                <ActivityIndicator
                 IsRunning="True"
                 Scale="1.5"
                 Color="#00F0FF"
                 VerticalOptions="Center"
                 HorizontalOptions="Center"/>
-        </Grid>
+            </Grid>
 
-    </Grid>
+        </Grid>
+    </ScrollView>
 
 </ContentPage>
