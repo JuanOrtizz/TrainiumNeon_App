@@ -15,9 +15,5 @@ namespace TrainiumNeon.Models
         //Propiedades para contraseña con seguridad (Hash y Salt)
         public byte[] ContraseniaHash { get; set; }
         public byte[] ContraseniaSalt { get; set; }
-
-        //Propiedad para la lista de rutinas
-        [Ignore]
-        public ICollection<RutinaModel> Rutinas { get; set; }
     }
 }

@@ -14,11 +14,9 @@ namespace TrainiumNeon.Models
         [Ignore]
         public EjercicioModel Ejercicio { get; set; } // Objeto ejercicio al que pertenece el ejercicio del dia
 
-        // Propiedades para la relacion con el dia
+        // Propiedad para la relacion con el dia
         [Indexed]
-        public int IdDia { get; set; } // va a ser la FK en la DB
-        [Ignore]
-        public DiaModel Dia { get; set; } // Objeto dia al que pertenece el ejercicio del dia
+        public int IdDia { get; set; } // FK en la DB
 
         //Propiedades para series y repeticiones por dia del ejercicio
         public int Series { get; set; }

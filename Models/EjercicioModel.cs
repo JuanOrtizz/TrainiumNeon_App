@@ -9,12 +9,8 @@ namespace TrainiumNeon.Models
         [MaxLength(100), Unique]
         public string Nombre { get; set; }
         // Propiedad para la relacion con el grupo muscular
-        //public int IdGrupoMuscular { get; set; }
-        public string GrupoMuscular { get; set; }
-        //[Ignore]
-        //public GrupoMuscularModel GrupoMuscular { get; set; }
+        public int IdGrupoMuscular { get; set; } // FK en la DB
         public string? ImagenUrl { get; set; }
- 
         public int PersonalRecord { get; set; } = 0;
     }
 }
