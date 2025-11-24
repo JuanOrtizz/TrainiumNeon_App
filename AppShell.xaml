@@ -14,11 +14,23 @@
     NavBarHasShadow="False"
     >
 
+    <ShellContent
+        Route="Login"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
+    <ShellContent
+        Route="Registro"
+        ContentTemplate="{DataTemplate local:Registro}"
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
     <TabBar>
-        <ShellContent Title="Inicio" Icon="inicio.png" ContentTemplate="{DataTemplate local:MenuPrincipal}" />
-        <ShellContent Title="Estadisticas" Icon="estadisticas.png" ContentTemplate="{DataTemplate local:Estadisticas}" />
-        <ShellContent Title="Rutinas" Icon="rutinas.png" ContentTemplate="{DataTemplate local:Rutinas}" />
-        <ShellContent Title="Perfil" Icon="perfil.png" ContentTemplate="{DataTemplate local:Perfil}" />
+        <ShellContent Route="MenuPrincipal" Title="Inicio" Icon="inicio.png" ContentTemplate="{DataTemplate local:MenuPrincipal}" />
+        <ShellContent Route="Estadisticas" Title="Estadisticas" Icon="estadisticas.png" ContentTemplate="{DataTemplate local:Estadisticas}" />
+        <ShellContent Route="Rutinas" Title="Rutinas" Icon="rutinas.png" ContentTemplate="{DataTemplate local:Rutinas}" />
+        <ShellContent Route="Perfil" Title="Perfil" Icon="perfil.png" ContentTemplate="{DataTemplate local:Perfil}" />
     </TabBar>
 
 </Shell>

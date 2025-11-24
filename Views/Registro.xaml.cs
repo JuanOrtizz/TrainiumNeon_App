@@ -8,6 +8,5 @@ public partial class Registro : ContentPage
 	{
 		InitializeComponent();
         BindingContext = vm;
-        vm.SetNavigation(Navigation);
     }
 }

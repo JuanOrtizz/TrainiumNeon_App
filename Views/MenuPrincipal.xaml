@@ -24,7 +24,7 @@
                 <Label.FormattedText>
                     <FormattedString>
                         <Span Text="¡Hola " TextColor="White"/>
-                        <Span Text="{Binding Nombre}" TextColor="#00F0FF" FontAttributes="Bold"/>
+                        <Span Text="{Binding NombreUsuario}" TextColor="#00F0FF" FontAttributes="Bold"/>
                         <Span Text="!" TextColor="White"/>
                     </FormattedString>
                 </Label.FormattedText>
@@ -48,7 +48,7 @@
                 <Label.FormattedText>
                     <FormattedString>
                         <Span Text="Tu rutina seleccionada es: " TextColor="Black"/>
-                        <Span Text="{Binding NombreRutina}" TextColor="Black" FontAttributes="Bold"/>
+                        <Span Text="{Binding RutinaSeleccionadaNombre}" TextColor="Black" FontAttributes="Bold"/>
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
@@ -87,29 +87,43 @@
                     />
 
                 <CollectionView 
-                    ItemsSource="{Binding Ejercicios}"
-                    SelectionMode="Single"
+                    ItemsSource="{Binding EjerciciosDelDia}"
+                    SelectionMode="None"
                     Grid.Row="2"
                     >
-                    
+
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Padding="10" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label Text="No hay ejercicios para hoy"
+                               FontAttributes="Bold"
+                               FontSize="16"
+                               TextColor="Gray"/>   
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <HorizontalStackLayout
-                                Margin="5">
-                                <Label 
-                                    FontAttributes="Bold" 
-                                    FontSize="14"
-                                    >
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{Binding Nombre}" TextColor="Black"/>
-                                            <Span Text=" x" TextColor="Black"/>
-                                            <Span Text="{Binding Series}" TextColor="Black" FontAttributes="Bold"/>
-                                            <Span Text="{Binding Repeticiones}" TextColor="Black"/>
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                            </HorizontalStackLayout>
+                            <StackLayout>
+                                <HorizontalStackLayout
+                                    Margin="5">
+                                    <Label 
+                                        FontAttributes="Bold" 
+                                        FontSize="16"
+                                        >
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Ejercicio.Nombre}" TextColor="Black"/>
+                                                <Span Text=" " TextColor="Black" FontAttributes="Bold"/>
+                                                <Span Text="{Binding Series}" TextColor="Black" FontAttributes="Bold"/>
+                                                <Span Text=" x" TextColor="Black"/>
+                                                <Span Text="{Binding Repeticiones}" TextColor="Black" FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </HorizontalStackLayout>
+                                <BoxView HeightRequest="1" BackgroundColor="DarkGray" HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

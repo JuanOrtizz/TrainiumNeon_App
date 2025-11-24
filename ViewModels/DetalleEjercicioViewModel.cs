@@ -1,5 +1,9 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using TrainiumNeon.Data.Repositories;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -8,54 +12,109 @@ namespace TrainiumNeon.ViewModels
     [QueryProperty(nameof(IdEjercicio), "idEjercicio")]
     public class DetalleEjercicioViewModel: INotifyPropertyChanged
     {
-        // Servicios
-        private readonly IApiEjerciciosService _apiEjerciciosService;
+        // Servicio y repositorio
         private readonly IValidacionService _validacionService;
+        private readonly IEjercicioRepositorio _ejercicioRepositorio;
+        private readonly IGrupoMuscularRepositorio _grupoMuscularRepositorio;
+        private readonly IEstadisticasRepositorio _estadisticasRepositorio;
+
         // Propiedades privadas
-        private int idEjercicio;
-        private EjercicioModel ejercicio;
-        private string _personalRecord;
-        private string _errorPersonalRecord;
+        private int _idEjercicio;
+        private EjercicioModel _ejercicio;
+        private string _nombreEjercicio = string.Empty;
+        private string _grupoMuscularEjercicio = string.Empty;
+        private string _ImagenUrlEjercicio = string.Empty;
+        private int _aparicionesEnRutinas;
+        private string _personalRecord = string.Empty;
+        private string _errorPersonalRecord = string.Empty;
         private bool _hayErrorEnPersonalRecord;
+        private bool _isBusy;
+
         // Propiedades publicas
         public int IdEjercicio
         {
-            get => idEjercicio;
+            get => _idEjercicio;
             set
             {
-                if(idEjercicio != value)
+                if(_idEjercicio != value)
                 {
-                    idEjercicio = value;
+                    _idEjercicio = value;
                     _ = CargarEjercicioAsync();
                 } 
             }
         }
         public EjercicioModel Ejercicio
         {
-            get => ejercicio;
+            get => _ejercicio;
             set
             {
-                if(ejercicio != value)
+                if(_ejercicio != value)
                 {
-                    ejercicio = value;
-                    OnPropertyChanged(nameof(Ejercicio));
-                    OnPropertyChanged(nameof(Nombre));
-                    OnPropertyChanged(nameof(GrupoMuscular));
-                    OnPropertyChanged(nameof(ImagenUrl));
+                    _ejercicio = value;
+                    OnPropertyChanged();
                 }
             }
         }
-        public string Nombre => Ejercicio?.Nombre ?? "";
-        public string GrupoMuscular => Ejercicio?.GrupoMuscular ?? "";
-        public string ImagenUrl => Ejercicio?.ImagenUrl ?? "default_ejercicio.webp";
+        public string NombreEjercicio
+        {
+            get => _nombreEjercicio;
+            set
+            {
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_nombreEjercicio != nuevoValor)
+                {
+                    _nombreEjercicio = nuevoValor;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string GrupoMuscularEjercicio
+        {
+            get => _grupoMuscularEjercicio;
+            set
+            {
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_grupoMuscularEjercicio != nuevoValor)
+                {
+                    _grupoMuscularEjercicio = nuevoValor;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string ImagenUrlEjercicio
+        {
+            get => _ImagenUrlEjercicio;
+            set
+            {
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_ImagenUrlEjercicio != nuevoValor)
+                {
+                    _ImagenUrlEjercicio = nuevoValor;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int AparicionesEnRutinas
+        {
+            get => _aparicionesEnRutinas;
+            set
+            {
+                if (_aparicionesEnRutinas != value)
+                {
+                    _aparicionesEnRutinas = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public string PersonalRecord
         {
             get => _personalRecord;
             set
             {
-                if (_personalRecord != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_personalRecord != nuevoValor)
                 {
-                    _personalRecord = value;
+                    _personalRecord = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -65,9 +124,10 @@ namespace TrainiumNeon.ViewModels
             get => _errorPersonalRecord;
             set
             {
-                if (_errorPersonalRecord != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_errorPersonalRecord != nuevoValor)
                 {
-                    _errorPersonalRecord = value;
+                    _errorPersonalRecord = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -84,45 +144,73 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         // Comando
-        public Command GuardarPersonalRecordCommand { get; }
+        public ICommand GuardarPersonalRecordCommand { get; }
 
         // Constructor
-        public DetalleEjercicioViewModel(IApiEjerciciosService apiEjerciciosService, IValidacionService validacionService)
+        public DetalleEjercicioViewModel(IValidacionService validacionService, IEjercicioRepositorio ejercicioRepositorio, IGrupoMuscularRepositorio grupoMuscularRepositorio, IEstadisticasRepositorio estadisticasRepositorio)
         {
-            // Inicializan servicios por DI
-            _apiEjerciciosService = apiEjerciciosService;
+            // Inicializa servicio y repositorio por DI
             _validacionService = validacionService;
+            _ejercicioRepositorio = ejercicioRepositorio;
+            _grupoMuscularRepositorio = grupoMuscularRepositorio;
+            _estadisticasRepositorio = estadisticasRepositorio;
             // Inicializa comando
-            GuardarPersonalRecordCommand = new Command(GuardarPersonalRecord);
+            GuardarPersonalRecordCommand = new Command(async () => await GuardarPersonalRecordAsync());
         }
 
-        // Task privada para cargar ejercicio (detalles) desde API
+        // Task asincrona para cargar detalles del ejercicio
         private async Task CargarEjercicioAsync()
         {
-            try
-            {
-                var ejercicioApi = await _apiEjerciciosService.GetEjercicioByIdAsync(idEjercicio);
-                Ejercicio = ejercicioApi;
-            }
-            catch (Exception ex)
-            {
-                // Mostrar mensaje de error al usuario
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
-            }
+            // Muestro spinner de carga
+            IsBusy = true;
+            // Capturo el ejercicio, su grupo muscular y las apariciones en rutinas de ese ejercicio
+            Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(IdEjercicio);
+            var grupoMuscular = await _grupoMuscularRepositorio.ObtenerGrupoMuscularPorIdAsync(Ejercicio.IdGrupoMuscular);
+            AparicionesEnRutinas = await _estadisticasRepositorio.ObtenerCantidadDeAparicionesEnRutinasAsync(IdEjercicio);
+            //Actualizo propiedades
+            NombreEjercicio = Ejercicio.Nombre;
+            GrupoMuscularEjercicio = grupoMuscular.Nombre;
+            ImagenUrlEjercicio = Ejercicio.ImagenUrl ?? "default_ejercicio.webp";
+            PersonalRecord = Ejercicio.PersonalRecord.ToString();
+            // Oculto spinner de carga
+            IsBusy = false;
+
         }
 
-        // Metodo privado para guardar personal record
-        private void GuardarPersonalRecord()
+        // Task asincrona para guardar personal record
+        private async Task GuardarPersonalRecordAsync()
         {
+            // Muestro el spinner de carga
+            IsBusy = true;
+            // Valido campo
             ErrorPersonalRecord = _validacionService.ValidarPR(PersonalRecord);
             HayErrorEnPersonalRecord = !string.IsNullOrEmpty(ErrorPersonalRecord);
             if (HayErrorEnPersonalRecord)
             {
+                IsBusy = false;
                 return;
             }
-            // Logica para guardar el personal record se agrega despues
+            // Si no hay errores, guarda el PR
+            var nuevoPR = int.Parse(PersonalRecord);
+            await _ejercicioRepositorio.ActualizarPersonalRecordAsync(IdEjercicio, nuevoPR);
+            await Task.Delay(500);
+            IsBusy = false;
+            var toast = Toast.Make("Actualizaste tu Personal Record", ToastDuration.Short);
+            await toast.Show();
         }
 
         // Implementacion de INotifyPropertyChanged

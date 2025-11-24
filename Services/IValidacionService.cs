@@ -2,13 +2,13 @@
 {
     public interface IValidacionService
     {
+        string ValidarCampoVacio(string campo);
+        string ValidarNombreCompleto(string nombreCompleto);
         string ValidarEmail(string email);
         string ValidarContrasenia(string contrasenia);
         string ValidarConfirmarContrasenia(string contrasenia, string confirmarContrasenia);
-        string ValidarNombreCompleto(string nombreCompleto);
-        string ValidarPR(string pr);
         string ValidarNombreRutina(string nombreRutina);
-        string ValidarEjercicioSeleccionado(string ejercicio);
+        string ValidarPR(string pr);
         string ValidarSeries(string series);
         string ValidarRepeticiones(string repeticiones);
 

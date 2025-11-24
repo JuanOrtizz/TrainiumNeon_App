@@ -40,6 +40,7 @@
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="2"
                     >
+                    
                     <Label
                         TextColor="White"
                         Text="Seleccionar rutina actual"
@@ -61,12 +62,16 @@
                     >
 
                     <Picker
+                        Title="Elegí tu rutina"
                         ItemsSource="{Binding Rutinas}"
                         SelectedItem="{Binding RutinaSeleccionada}"
+                        ItemDisplayBinding="{Binding Nombre}"
                         FontSize="16"
+                        TextColor="Black"
                         />
 
                 </Border>
+                
             </Grid>
 
         </Grid>
@@ -94,12 +99,12 @@
                     TextColor="#005A61"
                     VerticalOptions="Center"
                     />
-                
+
                 <Border
                     Grid.Row="0"
                     Grid.Column="1"
                     StrokeShape="RoundRectangle 10"
-                    Stroke="#00A7B3"
+                    Stroke="#00CDDB"
                     WidthRequest="50"
                     HeightRequest="50"
                     StrokeThickness="2"
@@ -128,9 +133,11 @@
                     Grid.ColumnSpan="2"
                     ItemsSource="{Binding Rutinas}"
                     >
-                    
+
                     <CollectionView.ItemTemplate>
+                        
                         <DataTemplate>
+                            
                             <Border
                                 StrokeShape="RoundRectangle 10"
                                 StrokeThickness="0"
@@ -139,33 +146,37 @@
                                 >
 
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding EditarRutinaCommand}"
-                                        CommandParameter="{Binding .}" 
-                                        />
+                                    <TapGestureRecognizer
+                                        Command="{Binding BindingContext.EditarRutinaCommand,
+                                        Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding Id}" />
                                 </Border.GestureRecognizers>
-
+                                
                                 <Label 
                                     Padding="10"
                                     FontSize="16"
                                     >
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="{Binding Id}" />
-                                            <Span Text="- "/>
-                                            <Span Text="{Binding Nombre}" />
+                                            <Span Text="{Binding Id}" FontAttributes="Bold" TextColor="Black"/>
+                                            <Span Text="- " TextColor="Black"/>
+                                            <Span Text="{Binding Nombre}" TextColor="Black"/>
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
+                                
                             </Border>
 
                         </DataTemplate>
+                        
                     </CollectionView.ItemTemplate>
+                    
                 </CollectionView>
 
             </Grid>
+            
         </Border>
 
     </Grid>
-    
+
 </ContentPage>

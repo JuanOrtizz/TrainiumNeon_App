@@ -403,6 +403,23 @@
             </VerticalStackLayout>
         </Grid>
 
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            IsVisible="{Binding IsBusy}"
+            BackgroundColor="#40000000"   
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            >
+            <ActivityIndicator
+                IsRunning="True"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Scale="1.5"
+                Color="White"
+                />
+        </Grid>
+
     </Grid>
 
 </ContentPage>

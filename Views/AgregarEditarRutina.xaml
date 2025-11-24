@@ -1,65 +1,90 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage x:Name="AgregarEditarRutinaPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:TrainiumNeon.ViewModels"
              x:Class="TrainiumNeon.Views.AgregarEditarRutina"
              Shell.NavBarIsVisible="True"
              >
 
-    <Grid
+    <Grid>
+        
+        <Grid
         Padding="30, 10, 30, 30"
         RowDefinitions="Auto, Auto, 8*"
         RowSpacing="30"
         BackgroundColor="#1A2745"
         >
 
-        <Grid
-            Grid.Row="0"
-            RowDefinitions="*,*"
-            ColumnDefinitions="6*, 4*"
-            RowSpacing="30"
-            ColumnSpacing="20"
-            >
-
-            <Label
+            <Grid
                 Grid.Row="0"
-                Grid.Column="0"
-                FontSize="24"
+                RowDefinitions="*,*"
+                ColumnDefinitions="5*, 5*"
+                RowSpacing="30"
+                ColumnSpacing="20"
                 >
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="{Binding Titulo}" FontAttributes="Bold" TextColor="White"/>
-                        <Span Text=" Rutina" FontAttributes="Bold" TextColor="White"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
 
-            <Border
-                Grid.Row="0"
-                Grid.Column="1"
-                StrokeShape="RoundRectangle 5"
-                StrokeThickness="0"
-                >
-                <Button
-                    Text="Guardar"
-                    HorizontalOptions="End"
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    FontSize="24"
                     VerticalOptions="Center"
-                    FontSize="18"
-                    FontAttributes="Bold"
-                    BackgroundColor="#00CDDB"
-                    TextColor="White"
-                    Command="{Binding GuardarRutinaCommand}"
-                    />
-            </Border>
+                    >
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding AccionTitulo}" FontAttributes="Bold" TextColor="White"/>
+                            <Span Text=" Rutina" FontAttributes="Bold" TextColor="White"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
 
-            <VerticalStackLayout
+                <HorizontalStackLayout
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalOptions="End"
+                    Spacing="15"
+                    >
+          
+                    <Border
+                        Grid.Column="0"
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
+                        >
+                        <Button
+                            Text="Guardar"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            BackgroundColor="#00CDDB"
+                            TextColor="White"
+                            Command="{Binding GuardarRutinaCommand}"
+                            />
+                    </Border>
+
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="0"
+                        BackgroundColor="Red"
+                        HeightRequest="50"
+                        WidthRequest="50"
+                        Padding="10"
+                        IsVisible="{Binding EsEditar}">
+
+                        <ImageButton
+                            Source="eliminar.png"
+                            Command="{Binding EliminarRutinaCommand}" />
+                    </Border>
+
+                </HorizontalStackLayout>
+
+
+                <VerticalStackLayout
                 Spacing="5"
                 Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 >
-                
-                <Border
+
+                    <Border
                     StrokeShape="RoundRectangle 5"
                     StrokeThickness="2"
                     Stroke="Gray"
@@ -67,25 +92,25 @@
                     BackgroundColor="White"
                     Padding="5, 0"
                     >
-                    
-                    <Border.Triggers>
-                        <DataTrigger
+
+                        <Border.Triggers>
+                            <DataTrigger
                                 TargetType="Border"
                                 Binding="{Binding Source={x:Reference NombreRutinaEntry}, Path=IsFocused}"
                                 Value="True"
                                 >
-                            <Setter Property="Stroke" Value="#00F0FF" />
-                        </DataTrigger>
-                        <DataTrigger
+                                <Setter Property="Stroke" Value="#00F0FF" />
+                            </DataTrigger>
+                            <DataTrigger
                                 TargetType="Border"
                                 Binding="{Binding HayErrorEnNombreRutina}"
                                 Value="True"
                                 >
-                            <Setter Property="Stroke" Value="Red" />
-                        </DataTrigger>
-                    </Border.Triggers>
+                                <Setter Property="Stroke" Value="Red" />
+                            </DataTrigger>
+                        </Border.Triggers>
 
-                    <Entry
+                        <Entry
                         x:Name="NombreRutinaEntry"
                         Text="{Binding NombreRutina}"
                         Placeholder="Coloca el nombre de la rutina"
@@ -96,20 +121,20 @@
                         TextColor="Black"
                         />
 
-                </Border>
+                    </Border>
 
-                <Label
+                    <Label
                     Text="{Binding ErrorNombreRutina}"
                     FontSize="14"
                     TextColor="Red"
                     IsVisible="{Binding HayErrorEnNombreRutina}"
                     />
 
-            </VerticalStackLayout>
+                </VerticalStackLayout>
 
-        </Grid>
+            </Grid>
 
-        <Grid
+            <Grid
             Grid.Row="1"
             ColumnDefinitions="Auto, *"
             RowDefinitions="*"
@@ -117,7 +142,7 @@
             ColumnSpacing="30"
             >
 
-            <Border
+                <Border
                 Grid.Row="0"
                 Grid.Column="0"
                 Stroke="#00F0FF"
@@ -125,7 +150,7 @@
                 StrokeThickness="2"
                 >
 
-                <Label
+                    <Label
                     TextColor="White"
                     Text="Tu Rutina"
                     VerticalOptions="Center"
@@ -133,10 +158,10 @@
                     FontSize="16"
                     Padding="10"
                     />
-                
-            </Border>
 
-            <Button
+                </Border>
+
+                <Button
                 Grid.Row="0"
                 Grid.Column="1"
                 BackgroundColor="#00CDDB"
@@ -148,116 +173,167 @@
                 Command="{Binding NavegarAgregarEjercicioCommand}"
                 />
 
-        </Grid>
+            </Grid>
 
-        <Border
+            <Border
             Grid.Row="2"
             StrokeShape="RoundRectangle 10"
             StrokeThickness="0"
             BackgroundColor="#C4EEF2"
             >
 
-            <Grid
+                <Grid
                 Padding="20"
                 RowDefinitions="Auto,Auto, 9*"
                 RowSpacing="20"
                 >
 
-                <Border
+                    <Border
                     Grid.Row="0"
                     StrokeShape="RoundRectangle 10"
-                    HorizontalOptions="Center"
+                    HorizontalOptions="Fill"
                     Padding="5"
                     Stroke="#00CDDB"
                     StrokeThickness="2"
                     >
 
-                    <HorizontalStackLayout
-                        HorizontalOptions="Center"
+                        <Grid
+                        ColumnDefinitions="1*, *, 1*"
+                        HorizontalOptions="Fill"
                         VerticalOptions="Center"
-                        Spacing="40"
                         >
 
-                        <Label
+                            <Label
+                            Grid.Column="0"
                             Text="◀"
                             FontSize="18"
                             TextColor="#00CDDB"
                             HorizontalOptions="Center"
                             VerticalOptions="Center"
+                            IsEnabled="{Binding PuedeIrAnterior}"
                             >
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding VolverDiaAnteriorCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                    Binding="{Binding PuedeIrAnterior}"
+                                    Value="False">
+                                        <Setter Property="TextColor" Value="#A0A0A0" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label"
+                                    Binding="{Binding PuedeIrAnterior}"
+                                    Value="True">
+                                        <Setter Property="TextColor" Value="#00CDDB" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding NavegarDiaAnteriorCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
 
-                        <Label
-                            Text="{Binding DiaActualSeleccionado}"
+                            <Label
+                            Grid.Column="1"
+                            Text="{Binding DiaSeleccionado.Nombre}"
                             FontSize="18"
                             VerticalOptions="Center"
                             HorizontalOptions="Center"
-                            TextColor="Black"/>
+                            TextColor="#00A7B3"
+                            FontAttributes="Bold"
+                            />
 
-                        <Label
-                             Text="▶"
-                             FontSize="18"
-                             TextColor="#00CDDB"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             >
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding VolverDiaAnteriorCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                            <Label
+                            Grid.Column="2"
+                            Text="▶"
+                            FontSize="18"
+                            TextColor="#00CDDB"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding PuedeIrSiguiente}"
+                            >
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                     Binding="{Binding PuedeIrSiguiente}"
+                                     Value="False">
+                                        <Setter Property="TextColor" Value="#A0A0A0" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label"
+                                     Binding="{Binding PuedeIrSiguiente}"
+                                     Value="True">
+                                        <Setter Property="TextColor" Value="#00CDDB" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding NavegarDiaSiguienteCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
 
-                    </HorizontalStackLayout>
-                </Border>
+                        </Grid>
+                    </Border>
 
-                <BoxView
+                    <BoxView
                     Grid.Row="1"
                     HeightRequest="1"  
                     BackgroundColor="Black"
                     HorizontalOptions="Fill" />
 
-                <CollectionView 
+                    <CollectionView 
                     Grid.Row="2"
-                    ItemsSource="{Binding Ejercicios}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
+                    ItemsSource="{Binding EjerciciosDiaSeleccionado}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
                                 StrokeShape="RoundRectangle 10"
                                 StrokeThickness="0"
                                 BackgroundColor="#00CDDB"
                                 Margin="0, 5, 0, 5"
                                 >
 
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicio}"
-                                    CommandParameter="{Binding .}" />
-                                </Border.GestureRecognizers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                        Command="{Binding BindingContext.NavegarEditarEjercicioCommand, Source={x:Reference AgregarEditarRutinaPage}}"
+                                        CommandParameter="{Binding Id}" />
+                                    </Border.GestureRecognizers>
 
-                                <Label 
+
+                                    <Label 
                                    Padding="10"
                                    FontSize="16"
                                    >
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{Binding Nombre}" />
-                                            <Span Text=" (PR " />
-                                            <Span Text="{Binding PersonalRecord}" />
-                                            <Span Text="Kg)" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                            </Border>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Ejercicio.Nombre}" TextColor="Black"/>
+                                                <Span Text=" "/>
+                                                <Span Text="{Binding Series}" FontAttributes="Bold" TextColor="Black" />
+                                                <Span Text=" x" FontAttributes="Bold" TextColor="Black"/>
+                                                <Span Text="{Binding Repeticiones}" FontAttributes="Bold" TextColor="Black"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </Border>
 
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-            </Grid>
-        </Border>
+                </Grid>
+            </Border>
 
+        </Grid>
+
+        <Grid
+            IsVisible="{Binding IsBusy}"
+            BackgroundColor="#40000000"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            ZIndex="999">
+
+            <ActivityIndicator
+                IsRunning="True"
+                Scale="1.5"
+                Color="#00F0FF"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
+        </Grid>
+        
     </Grid>
+
 
 </ContentPage>

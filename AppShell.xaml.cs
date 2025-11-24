@@ -9,7 +9,7 @@ namespace TrainiumNeon
             InitializeComponent();
             Routing.RegisterRoute(nameof(DetalleEjercicio), typeof(DetalleEjercicio));
             Routing.RegisterRoute(nameof(AgregarEditarRutina), typeof(AgregarEditarRutina));
-            Routing.RegisterRoute(nameof(AgregarEjercicioRutina), typeof(AgregarEjercicioRutina));
+            Routing.RegisterRoute(nameof(AgregarEditarEjercicioRutina), typeof(AgregarEditarEjercicioRutina));
         }
     }
 }

@@ -65,6 +65,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.90" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="Syncfusion.Maui.Inputs" Version="31.1.22" />
 	</ItemGroup>
 
@@ -77,8 +78,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\AgregarEjercicioRutina.xaml.cs">
-	    <DependentUpon>AgregarEjercicioRutina.xaml</DependentUpon>
+	  <Compile Update="Views\AgregarEditarEjercicioRutina.xaml.cs">
+	    <DependentUpon>AgregarEditarEjercicioRutina.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -86,7 +87,7 @@
 	  <MauiXaml Update="Views\AgregarEditarRutina.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\AgregarEjercicioRutina.xaml">
+	  <MauiXaml Update="Views\AgregarEditarEjercicioRutina.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\DetalleEjercicio.xaml">
