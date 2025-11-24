@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using Plugin.LocalNotification;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -11,15 +12,21 @@ namespace TrainiumNeon.ViewModels
 {
     public class PerfilViewModel : INotifyPropertyChanged
     {
+        // Constante privada para llave de Prefereneces (Notificaciones)
+        private const string NotificacionesKey = "NotificacionesActivas";
+
         // Servicios y repositorios 
         private readonly IValidacionService _validacionService;
         private readonly ISesionService _sesionService;
+        private readonly IPermisosService _permisosService;
+        private readonly INotificacionService _notificacionService;
         private readonly IEstadoContraseniaService _estadoContraseniaService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         // Propiedades privadas
         private int _idUsuarioActivo;
         private UsuarioModel _usuario;
+        private bool _notificacionesActivas;
         private string _nombre = string.Empty;
         private string _email = string.Empty;
         private string _nuevaContrasenia = string.Empty;
@@ -60,6 +67,19 @@ namespace TrainiumNeon.ViewModels
                 if(_usuario != value)
                 {
                     _usuario = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool NotificacionesActivas
+        {
+            get => _notificacionesActivas;
+            set
+            {
+                if (_notificacionesActivas != value)
+                {
+                    _notificacionesActivas = value;
+                    _ = ProcesarCambioNotificacionesAsync();
                     OnPropertyChanged();
                 }
             }
@@ -301,11 +321,13 @@ namespace TrainiumNeon.ViewModels
         public ICommand CerrarSesionCommand { get; }
 
         // Constructor
-        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IUsuarioRepositorio usuarioRepositorio, ISesionService sesionService)
+        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IPermisosService permisosService, INotificacionService notificacionService, IUsuarioRepositorio usuarioRepositorio, ISesionService sesionService)
         {
             // Inicializan servicios y repositorios por DI
             _validacionService = validacionService;
             _estadoContraseniaService = estadoContraseniaService;
+            _permisosService = permisosService;
+            _notificacionService = notificacionService;
             _usuarioRepositorio = usuarioRepositorio;
             _sesionService = sesionService;
             // Inicializan comandos
@@ -314,8 +336,7 @@ namespace TrainiumNeon.ViewModels
             CambiarEstadoNuevaContraseniaCommand = new Command(MostrarUOcultarNuevaContrasenia);
             CambiarEstadoConfirmarNuevaContraseniaCommand = new Command(MostrarUOcultarConfirmarNuevaContrasenia);
             CerrarSesionCommand = new Command(async () => await CerrarSesion());
-            // Carga los datos iniciales del usuario
-            _ = CargarDatosUsuarioAsync();
+            
         }
 
         // Task asincrona para controlar el estado de si puede editar sus datos (Nombre y Email)
@@ -333,10 +354,12 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario y EmailUsuario)
-        private async Task CargarDatosUsuarioAsync()
+        public async Task CargarDatosUsuarioAsync()
         {
             // Capturo el id del usuario activo
             IdUsuarioActivo = _sesionService.ObtenerSesion();
+            NotificacionesActivas = Preferences.Get(NotificacionesKey, false);
+            OnPropertyChanged(nameof(NotificacionesActivas));
             // Si no hay usuario activo salgo y muestro el Login
             if (IdUsuarioActivo <= 0)
             {
@@ -430,13 +453,50 @@ namespace TrainiumNeon.ViewModels
             IconoConfirmarNuevaContrasenia = resultado.iconoContrasenia;
         }
 
-        //Metodo para cerrar sesion y navegar a login
+        //Task asincrona para cerrar sesion y navegar a login
         private async Task CerrarSesion()
         {
             // Borro el IdUsuario de preferences y navego a Login
             _sesionService.CerrarSesion();
             await Shell.Current.GoToAsync("//Login");
         }
+
+        // Task asincrona para solicitar permisos de notificacion al cambiar el valor del switch
+        private async Task ProcesarCambioNotificacionesAsync()
+        {
+            // Cargar valor guardado
+            Preferences.Set(NotificacionesKey, NotificacionesActivas);
+            if (NotificacionesActivas)
+            {
+                if (!await _permisosService.SolicitarPermisosNotificacionesAsync())
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "Permisos requeridos",
+                        "Tenes que permitir el permiso para que la app te envie notificaciones.",
+                        "OK");
+
+                    NotificacionesActivas = false;
+                    return;
+                }
+                else
+                {
+
+                    // Programo la notificacion diaria para las 10 am
+                    var hora = DateTime.Today.AddHours(10);
+                    if (hora < DateTime.Now)
+                    {
+                        hora = hora.AddDays(1);
+                    }
+                    _notificacionService.EnviarNotificacion("¡Vamos a entrenar!","No te olvides de asistir al gimnasio para obtener los mejores resultados", hora, true);
+                }
+            }
+            else
+            {
+                // Cancelar todas sI el usuario las desactiva
+                LocalNotificationCenter.Current.CancelAll();
+            }
+        }
+
 
         // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
