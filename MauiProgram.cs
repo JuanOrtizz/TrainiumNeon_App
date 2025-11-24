@@ -55,6 +55,7 @@ namespace TrainiumNeon
             builder.Services.AddTransient<RegistroViewModel>();
             builder.Services.AddTransient<RutinasViewModel>();
             builder.Services.AddTransient<MainPageViewModel>();
+            builder.Services.AddTransient<GimnasiosViewModel>();
 
             // Views
             builder.Services.AddTransient<DetalleEjercicio>();
@@ -66,6 +67,7 @@ namespace TrainiumNeon
             builder.Services.AddTransient<Registro>();
             builder.Services.AddTransient<Rutinas>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<Gimnasios>();
 
 #if DEBUG
             builder.Logging.AddDebug();
