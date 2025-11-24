@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrainiumNeon.Views.AgregarEditarEjercicioRutina"
+             xmlns:local="clr-namespace:TrainiumNeon.Converters"
+             Shell.NavBarIsVisible="True"
+             >
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:BooleanConverter x:Key="BooleanConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid
+        Padding="30, 10, 30, 30"
+        RowDefinitions="Auto,Auto, Auto, Auto, Auto"
+        RowSpacing="20"
+        BackgroundColor="#1A2745"
+        >
+
+            <Label
+            Grid.Row="0"
+            FontSize="24"
+            >
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding AccionTitulo}" FontAttributes="Bold" TextColor="White"/>
+                        <Span Text=" Ejercicio" FontAttributes="Bold" TextColor="White"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Grid
+            Grid.Row="1"
+            RowDefinitions="*"
+            ColumnDefinitions="Auto, *"
+            ColumnSpacing="10"
+            >
+
+                <Border
+                Grid.Column="0"
+                Stroke="#00F0FF"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                >
+                    <Label
+                    TextColor="White"
+                    Text="Seleccionar Día"
+                    FontAttributes="Bold"
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    Padding="10,0"
+                    />
+
+                </Border>
+
+                <Border
+                 Grid.Column="1"
+                 StrokeShape="RoundRectangle 5"
+                 StrokeThickness="2"
+                 Stroke="Gray"
+                 HeightRequest="50"
+                 BackgroundColor="White"
+                 Padding="5, 0"
+                 >
+
+                    <Picker
+                    Title="Elegí un Día"
+                    TextColor="Black"
+                    FontSize="16"
+                    ItemsSource="{Binding DiasSemana}"
+                    SelectedItem="{Binding DiaSeleccionado}"
+                    ItemDisplayBinding="{Binding Nombre}"
+                    >
+
+                    </Picker>
+                </Border>
+
+            </Grid>
+
+            <Grid
+            Grid.Row="2"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="10"
+            RowDefinitions="*,*,*,*"
+            RowSpacing="20"
+            >
+
+                <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Stroke="#00F0FF"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                >
+
+                    <Label
+                    TextColor="White"
+                    Text="Filtrar por grupo muscular"
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    Padding="10"
+                    FontAttributes="Bold"
+                    />
+
+                </Border>
+
+                <Border
+                Grid.Row="0"
+                Grid.Column="1"
+                StrokeShape="RoundRectangle 5"
+                StrokeThickness="2"
+                Stroke="Gray"
+                HeightRequest="50"
+                BackgroundColor="White"
+                Padding="5, 0"
+                >
+
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding EsEditar}" Value="True">
+                            <Setter Property="BackgroundColor" Value="DarkGray"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+
+                    <Picker
+                    ItemsSource="{Binding GruposMusculares}"
+                    ItemDisplayBinding="{Binding Nombre}"
+                    SelectedItem="{Binding GrupoMuscularSeleccionado}"
+                    TextColor="Black"
+                    FontSize="16"
+                    IsEnabled="{Binding EsEditar, Converter={StaticResource BooleanConverter}}"
+                    />
+
+                </Border>
+
+                <VerticalStackLayout
+                Spacing="5"
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                >
+
+                    <Border
+                        StrokeShape="RoundRectangle 5"
+                        StrokeThickness="2"
+                        Stroke="Gray"
+                        HeightRequest="50"
+                        BackgroundColor="White"
+                        Padding="5, 0"
+                        >
+
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding EsEditar}" Value="True">
+                                <Setter Property="BackgroundColor" Value="DarkGray"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding Source={x:Reference EjercicioSeleccionadoPicker}, Path=IsFocused}" Value="True">
+                                <Setter Property="Stroke" Value="#00F0FF" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding HayErrorEnEjercicioSeleccionado}" Value="True">
+                                <Setter Property="Stroke" Value="Red" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <Picker
+                            x:Name="EjercicioSeleccionadoPicker"
+                            Title="Elegí un Ejercicio"
+                            TextColor="Black"
+                            TitleColor="Black"
+                            ItemsSource="{Binding Ejercicios}"
+                            ItemDisplayBinding="{Binding Nombre}"
+                            SelectedItem="{Binding EjercicioSeleccionado}"
+                            FontSize="16"
+                            IsEnabled="{Binding EsEditar, Converter={StaticResource BooleanConverter}}"
+                            />
+
+                    </Border>
+
+                    <Label
+                    Text="{Binding ErrorEjercicioSeleccionado}"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="{Binding HayErrorEnEjercicioSeleccionado}"
+                    />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"                
+                >
+                    <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="2"
+                    Stroke="Gray"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
+
+                        <Border.Triggers>
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference SeriesEntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                                <Setter Property="Stroke" Value="#00F0FF" />
+                            </DataTrigger>
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnSeries}"
+                                Value="True"
+                                >
+                                <Setter Property="Stroke" Value="Red" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <Entry
+                        x:Name="SeriesEntry"
+                        Placeholder="Colocá las series "
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="2"
+                        BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Text="{Binding Series}"
+                        TextColor="Black"
+                        />
+
+                    </Border>
+
+                    <Label
+                    Text="{Binding ErrorSeries}"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="{Binding HayErrorEnSeries}"
+                    />
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout
+                Spacing="5"
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="2">
+
+                    <Border
+                    StrokeShape="RoundRectangle 5"
+                    StrokeThickness="2"
+                    Stroke="Gray"
+                    HeightRequest="50"
+                    BackgroundColor="White"
+                    Padding="5, 0"
+                    >
+
+                        <Border.Triggers>
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference RepeticionesEntry}, Path=IsFocused}"
+                                Value="True"
+                                >
+                                <Setter Property="Stroke" Value="#00F0FF" />
+                            </DataTrigger>
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding HayErrorEnRepeticiones}"
+                                Value="True"
+                                >
+                                <Setter Property="Stroke" Value="Red" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <Entry
+                        x:Name="RepeticionesEntry"
+                        Placeholder="Colocá las repeticiones (por serie)"
+                        PlaceholderColor="Black"
+                        FontSize="16"
+                        MaxLength="2"
+                        BackgroundColor="Transparent"
+                        Keyboard="Numeric"
+                        Text="{Binding Repeticiones}"
+                        TextColor="Black"
+                        />
+
+                    </Border>
+
+                    <Label
+                    Text="{Binding ErrorRepeticiones}"
+                    FontSize="14"
+                    TextColor="Red"
+                    IsVisible="{Binding HayErrorEnRepeticiones}"
+                    />
+
+                </VerticalStackLayout>
+
+            </Grid>
+
+            <Button
+                CornerRadius="5"
+                Grid.Row="3"
+                Text="Guardar"
+                FontAttributes="Bold"
+                BackgroundColor="#00CDDB"
+                FontSize="18"
+                HeightRequest="50"
+                TextColor="White"
+                Command="{Binding GuardarEjercicioCommand}"
+                />
+
+            <Button
+                CornerRadius="5"
+                Grid.Row="4"
+                Text="Eliminar"
+                FontAttributes="Bold"
+                BackgroundColor="Red"
+                FontSize="18"
+                HeightRequest="50"
+                TextColor="White"
+                Command="{Binding EliminarEjercicioCommand}"
+                IsVisible="{Binding EsEditar}"
+                />
+
+        </Grid>
+
+        <Grid
+            IsVisible="{Binding IsBusy}"
+            BackgroundColor="#40000000"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            ZIndex="999">
+
+            <ActivityIndicator
+                IsRunning="True"
+                Scale="1.5"
+                Color="#00F0FF"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
+        </Grid>
+
+    </Grid>
+
+
+</ContentPage>
