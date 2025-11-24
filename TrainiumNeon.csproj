@@ -78,8 +78,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\AgregarEjercicioRutina.xaml.cs">
-	    <DependentUpon>AgregarEjercicioRutina.xaml</DependentUpon>
+	  <Compile Update="Views\AgregarEditarEjercicioRutina.xaml.cs">
+	    <DependentUpon>AgregarEditarEjercicioRutina.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -87,7 +87,7 @@
 	  <MauiXaml Update="Views\AgregarEditarRutina.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\AgregarEjercicioRutina.xaml">
+	  <MauiXaml Update="Views\AgregarEditarEjercicioRutina.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\DetalleEjercicio.xaml">
