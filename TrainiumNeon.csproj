@@ -63,9 +63,10 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="10.0.10" />
+		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.90" />
+		<PackageReference Include="Plugin.LocalNotification" Version="12.0.2" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="Syncfusion.Maui.Inputs" Version="31.1.22" />
 	</ItemGroup>
@@ -76,15 +77,6 @@
 
 	<ItemGroup>
 	  <None Include=".github\PULL_REQUEST_TEMPLATE.md" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Views\AgregarEditarEjercicioRutina.xaml.cs">
-	    <DependentUpon>AgregarEditarEjercicioRutina.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Gimnasios.xaml.cs">
-	    <DependentUpon>Gimnasios.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
