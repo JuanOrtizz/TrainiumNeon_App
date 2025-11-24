@@ -65,13 +65,14 @@
                     FontSize="16"
                     TextColor="Black"
                     TitleColor="Black"
+                    SelectedItem="{Binding MetodoOrdenamientoSeleccionado}"
                      >
 
                         <Picker.Items>
-                            <x:String>PR Desc</x:String>
-                            <x:String>PR Asc</x:String>
-                            <x:String>Abc Desc</x:String>
                             <x:String>Abc Asc</x:String>
+                            <x:String>Abc Desc</x:String>
+                            <x:String>PR Asc</x:String>
+                            <x:String>PR Desc</x:String>
                         </Picker.Items>
 
                      </Picker>
@@ -113,6 +114,7 @@
 
                     <Picker
                         ItemsSource="{Binding GruposMusculares}"
+                        ItemDisplayBinding="{Binding Nombre}"
                         SelectedItem="{Binding GrupoMuscularSeleccionado}"
                         TextColor="Black"
                         FontSize="16"
@@ -167,7 +169,7 @@
 
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicio}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EstadisticasViewModel}}, Path=VerDetallesEjercicioCommand}"
                                         CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
 
@@ -178,9 +180,9 @@
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding Nombre}" TextColor="Black" />
-                                                <Span Text=" (PR " TextColor="Black"/>
-                                                <Span Text="{Binding PersonalRecord}" TextColor="Black" />
-                                                <Span Text="Kg)" TextColor="Black"/>
+                                                <Span Text=" (PR " TextColor="Black" FontAttributes="Bold"/>
+                                                <Span Text="{Binding PersonalRecord}" TextColor="Black" FontAttributes="Bold"/>
+                                                <Span Text="Kg)" TextColor="Black" FontAttributes="Bold"/>
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
