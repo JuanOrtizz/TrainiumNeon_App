@@ -1,52 +1,93 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
     public class PerfilViewModel : INotifyPropertyChanged
     {
-        // Servicio
+        // Servicios y repositorios 
         private readonly IValidacionService _validacionService;
+        private readonly ISesionService _sesionService;
         private readonly IEstadoContraseniaService _estadoContraseniaService;
+        private readonly IUsuarioRepositorio _usuarioRepositorio;
+
         // Propiedades privadas
-        private string _nuevoNombre;
-        private string _nuevoEmail;
-        private string _nuevaContrasenia;
-        private string _confirmarNuevaContrasenia;
-        private string _errorNuevoNombre;
-        private string _errorNuevoEmail;
-        private string _errorNuevaContrasenia;
-        private string _errorConfirmarNuevaContrasenia;
+        private int _idUsuarioActivo;
+        private UsuarioModel _usuario;
+        private string _nombre = string.Empty;
+        private string _email = string.Empty;
+        private string _nuevaContrasenia = string.Empty;
+        private string _confirmarNuevaContrasenia = string.Empty;
+        private string _errorNuevoNombre = string.Empty;
+        private string _errorNuevoEmail = string.Empty;
+        private string _errorNuevaContrasenia = string.Empty;
+        private string _errorConfirmarNuevaContrasenia = string.Empty;
         private bool _hayErrorEnNombre;
         private bool _hayErrorEnEmail;
         private bool _hayErrorEnNuevaContrasenia;
         private bool _hayErrorEnConfirmarNuevaContrasenia;
         private bool _nuevaContraseniaOculta;
         private bool _confirmarNuevaContraseniaOculta;
-        private string _iconoNuevaContrasenia;
-        private string _iconoConfirmarNuevaContrasenia;
+        private string _iconoNuevaContrasenia = "ver_contrasenia.png";
+        private string _iconoConfirmarNuevaContrasenia = "ver_contrasenia.png";
+        private bool _isBusy;
+        private bool _puedeActualizar = false;
+
         // Propiedades publicas
-        public string NuevoNombre
+        public int IdUsuarioActivo
         {
-            get => _nuevoNombre;
+            get => _idUsuarioActivo;
             set
             {
-                if (_nuevoNombre != value)
+                if (_idUsuarioActivo != value)
                 {
-                    _nuevoNombre = value;
+                    _idUsuarioActivo = value;
                     OnPropertyChanged();
                 }
             }
         }
-        public string NuevoEmail
+        public UsuarioModel Usuario
         {
-            get => _nuevoEmail;
+            get => _usuario;
             set
             {
-                if (_nuevoEmail != value)
+                if(_usuario != value)
                 {
-                    _nuevoEmail = value;
+                    _usuario = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Nombre
+        {
+            get => _nombre;
+            set
+            {
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_nombre != nuevoValor)
+                {
+                    _nombre = nuevoValor;
+                    _ = EstadoEdicionDeDatos();
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Email
+        {
+            get => _email;
+            set
+            {
+                var nuevoValor = value?.ToLower().Trim() ?? string.Empty;
+                if (_email != nuevoValor)
+                {
+                    _email = nuevoValor;
+                    _ = EstadoEdicionDeDatos();
                     OnPropertyChanged();
                 }
             }
@@ -56,9 +97,10 @@ namespace TrainiumNeon.ViewModels
             get => _nuevaContrasenia;
             set
             {
-                if (_nuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_nuevaContrasenia != nuevoValor)
                 {
-                    _nuevaContrasenia = value;
+                    _nuevaContrasenia = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -68,9 +110,10 @@ namespace TrainiumNeon.ViewModels
             get => _confirmarNuevaContrasenia;
             set
             {
-                if (_confirmarNuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_confirmarNuevaContrasenia != nuevoValor)
                 {
-                    _confirmarNuevaContrasenia = value;
+                    _confirmarNuevaContrasenia = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -80,9 +123,10 @@ namespace TrainiumNeon.ViewModels
             get => _errorNuevoNombre;
             set
             {
-                if (_errorNuevoNombre != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_errorNuevoNombre != nuevoValor)
                 {
-                    _errorNuevoNombre = value;
+                    _errorNuevoNombre = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -92,9 +136,10 @@ namespace TrainiumNeon.ViewModels
             get => _errorNuevoEmail;
             set
             {
-                if (_errorNuevoEmail != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_errorNuevoEmail != nuevoValor)
                 {
-                    _errorNuevoEmail = value;
+                    _errorNuevoEmail = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -104,9 +149,10 @@ namespace TrainiumNeon.ViewModels
             get => _errorNuevaContrasenia;
             set
             {
-                if (_errorNuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_errorNuevaContrasenia != nuevoValor)
                 {
-                    _errorNuevaContrasenia = value;
+                    _errorNuevaContrasenia = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -116,9 +162,10 @@ namespace TrainiumNeon.ViewModels
             get => _errorConfirmarNuevaContrasenia;
             set
             {
-                if (_errorConfirmarNuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_errorConfirmarNuevaContrasenia != nuevoValor)
                 {
-                    _errorConfirmarNuevaContrasenia = value;
+                    _errorConfirmarNuevaContrasenia = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -200,9 +247,10 @@ namespace TrainiumNeon.ViewModels
             get => _iconoNuevaContrasenia;
             set
             {
-                if (_iconoNuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_iconoNuevaContrasenia != nuevoValor)
                 {
-                    _iconoNuevaContrasenia = value;
+                    _iconoNuevaContrasenia = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -212,65 +260,158 @@ namespace TrainiumNeon.ViewModels
             get => _iconoConfirmarNuevaContrasenia;
             set
             {
-                if (_iconoConfirmarNuevaContrasenia != value)
+                var nuevoValor = value?.Trim() ?? string.Empty;
+                if (_iconoConfirmarNuevaContrasenia != nuevoValor)
                 {
-                    _iconoConfirmarNuevaContrasenia = value;
+                    _iconoConfirmarNuevaContrasenia = nuevoValor;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool PuedeActualizar
+        {
+            get => _puedeActualizar;
+            set
+            {
+                if(_puedeActualizar != value)
+                {
+                    _puedeActualizar = value;
                     OnPropertyChanged();
                 }
             }
         }
 
         //Comandos
-        public Command CambiarDatosPersonalesCommand { get; }
-        public Command CambiarContraseniaCommand { get; }
-        public Command CambiarEstadoNuevaContraseniaCommand { get; }
-        public Command CambiarEstadoConfirmarNuevaContraseniaCommand { get; }
+        public ICommand CambiarDatosPersonalesCommand { get; }
+        public ICommand CambiarContraseniaCommand { get; }
+        public ICommand CambiarEstadoNuevaContraseniaCommand { get; }
+        public ICommand CambiarEstadoConfirmarNuevaContraseniaCommand { get; }
+        public ICommand CerrarSesionCommand { get; }
 
         // Constructor
-        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService)
+        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IUsuarioRepositorio usuarioRepositorio, ISesionService sesionService)
         {
-            // Inicializa servicio por DI
+            // Inicializan servicios y repositorios por DI
             _validacionService = validacionService;
             _estadoContraseniaService = estadoContraseniaService;
-            // Inicializan iconos por default
-            NuevaContraseniaOculta = true;
-            IconoNuevaContrasenia = "ver_contrasenia.png";
-            ConfirmarNuevaContraseniaOculta = true;
-            IconoConfirmarNuevaContrasenia = "ver_contrasenia.png";
+            _usuarioRepositorio = usuarioRepositorio;
+            _sesionService = sesionService;
             // Inicializan comandos
-            CambiarDatosPersonalesCommand = new Command(CambiarDatosPersonales);
-            CambiarContraseniaCommand = new Command(CambiarContrasenia);
+            CambiarDatosPersonalesCommand = new Command(async () => await CambiarDatosPersonalesAsync());
+            CambiarContraseniaCommand = new Command(async () => await CambiarContraseniaAsync());
             CambiarEstadoNuevaContraseniaCommand = new Command(MostrarUOcultarNuevaContrasenia);
             CambiarEstadoConfirmarNuevaContraseniaCommand = new Command(MostrarUOcultarConfirmarNuevaContrasenia);
+            CerrarSesionCommand = new Command(async () => await CerrarSesion());
+            // Carga los datos iniciales del usuario
+            _ = CargarDatosUsuarioAsync();
         }
 
-        // Metodo privado para cambiar datos personales (Nombre-Email)
-        private void CambiarDatosPersonales()
+        // Task asincrona para controlar el estado de si puede editar sus datos (Nombre y Email)
+        private async Task EstadoEdicionDeDatos()
         {
-            ErrorNuevoNombre = _validacionService.ValidarNombreCompleto(NuevoNombre);
-            ErrorNuevoEmail = _validacionService.ValidarEmail(NuevoEmail);
+            Usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
+            if (Nombre == Usuario.Nombre && Email == Usuario.Email)
+            {
+                PuedeActualizar = false;
+            }
+            else
+            {
+                PuedeActualizar = true;
+            }
+        }
+
+        // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario y EmailUsuario)
+        private async Task CargarDatosUsuarioAsync()
+        {
+            // Capturo el id del usuario activo
+            IdUsuarioActivo = _sesionService.ObtenerSesion();
+            // Si no hay usuario activo salgo y muestro el Login
+            if (IdUsuarioActivo <= 0)
+            {
+                await Shell.Current.GoToAsync("//Login");
+                return;
+            }
+            // Capturo el usuario y cargo los datos iniciales para el VM
+            Usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
+            Nombre = Usuario.Nombre;
+            Email = Usuario.Email;
+        }
+
+        // Task asincrona para cambiar datos personales (Nombre-Email)
+        private async Task CambiarDatosPersonalesAsync()
+        {
+
+            IsBusy = true;
+            // Validaciones de campos
+            ErrorNuevoNombre = _validacionService.ValidarNombreCompleto(Nombre);
+            ErrorNuevoEmail = _validacionService.ValidarEmail(Email);
             HayErrorEnNuevoNombre = !string.IsNullOrEmpty(ErrorNuevoNombre);
             HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
 
-            if (HayErrorEnNuevoNombre || HayErrorEnNuevoNombre)
+            // Verifica si hay errores
+            if (HayErrorEnNuevoNombre || HayErrorEnNuevoEmail)
             {
+                IsBusy = false;
                 return;
             }
 
+
+            // Validacion de si un usuario ya existe con ese email
+            if (Email != Usuario.Email && await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
+            {
+                IsBusy = false;
+                ErrorNuevoEmail = "Ya hay un usuario registrado con ese email.";
+                HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
+                return;
+            }
+
+            // Actualiza los datos del usuario en la DB
+            await _usuarioRepositorio.ActualizarNombreUsuarioAsync(IdUsuarioActivo, Nombre);
+            await _usuarioRepositorio.ActualizarEmailUsuarioAsync(IdUsuarioActivo, Email);
+            await Task.Delay(500);
+            // Actualiza PuedeActualizar y muestra toast de exito
+            PuedeActualizar = false;
+            var toast = Toast.Make("Actualizaste tus datos con éxito.", ToastDuration.Short);
+            await toast.Show();
+            IsBusy = false;
         }
 
-        // Metodo privado para cambiar contraseña
-        private void CambiarContrasenia()
+        // Task asincrona para cambiar contraseña
+        private async Task CambiarContraseniaAsync()
         {
+            IsBusy = true;
+            // Validaciones de campos
             ErrorNuevaContrasenia = _validacionService.ValidarContrasenia(NuevaContrasenia);
             ErrorConfirmarNuevaContrasenia = _validacionService.ValidarConfirmarContrasenia(NuevaContrasenia, ConfirmarNuevaContrasenia);
             HayErrorEnNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorNuevaContrasenia);
             HayErrorEnConfirmarNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorConfirmarNuevaContrasenia);
 
-            if(HayErrorEnNuevaContrasenia || HayErrorEnConfirmarNuevaContrasenia)
+            // Verifica si hay errores. Si hay sale de la funcion, sino sigue el update
+            if (HayErrorEnNuevaContrasenia || HayErrorEnConfirmarNuevaContrasenia)
             {
+                IsBusy = false;
                 return;
             }
+
+            //Actualiza la contraseña del usuario en la DB
+            await _usuarioRepositorio.ActualizarContraseniaUsuarioAsync(IdUsuarioActivo, NuevaContrasenia);
+            await Task.Delay(500);
+            // Muestra toast de éxito
+            var toast = Toast.Make("Actualizaste tu contraseña con éxito.", ToastDuration.Short);
+            await toast.Show();
+            IsBusy = false;
         }
 
         //Metodo para mostrar/ocultar la nueva contraseña
@@ -287,6 +428,14 @@ namespace TrainiumNeon.ViewModels
             var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ConfirmarNuevaContraseniaOculta, IconoConfirmarNuevaContrasenia);
             ConfirmarNuevaContraseniaOculta = resultado.contraseniaOculta;
             IconoConfirmarNuevaContrasenia = resultado.iconoContrasenia;
+        }
+
+        //Metodo para cerrar sesion y navegar a login
+        private async Task CerrarSesion()
+        {
+            // Borro el IdUsuario de preferences y navego a Login
+            _sesionService.CerrarSesion();
+            await Shell.Current.GoToAsync("//Login");
         }
 
         // Implementacion de INotifyPropertyChanged
