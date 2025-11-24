@@ -7,55 +7,30 @@ namespace TrainiumNeon.Services
     public class ApiEjerciciosService : IApiEjerciciosService
     {
 
-        //Variable para el HttpClient
+        //Propiedad privada
         private readonly HttpClient _httpClient;
 
         //Constructor
         public ApiEjerciciosService(HttpClient http)
         {
-            // Inicializo el HttpClient
+            // Inicializa HttpClient por DI
             _httpClient = http;
 
-            // Configuro la URL base del HttpClient
+            // Configuracion de la URL base del HttpClient
             _httpClient.BaseAddress = new Uri("https://68dafade23ebc87faa31b9f9.mockapi.io/");
         }
 
-        //Metodo de la interfaz para obtener un ejercicio por su ID
-        public async Task<EjercicioModel> GetEjercicioByIdAsync(int id)
-        {
-            //Try catch para manejar errores
-            try
-            {
-                var response = await _httpClient.GetAsync($"ejercicios/{id}");
-                return await ProcesarRespuestaAsyncApi<EjercicioModel>(response, "No se encontró el ejercicio. Intentá de nuevo");
-            }
-            catch (HttpRequestException)
-            {
-                throw new Exception("Error de red al obtener el ejercicio. Verificá tu conexión o intenta nuevamente.");
-            }
-            catch (NotSupportedException)
-            {
-                throw new Exception("El formato de respuesta por la API no es soportado");
-            }
-            catch (JsonException)
-            {
-                throw new Exception("No se pudo interpretar la respuesta de la API");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error inesperado al obtener el ejercicio, {ex.Message}");
-            }
-        }
-
-        //Metodo de la interfaz para obtener todos los ejercicios
+        // Task asincrona para obtener todos los ejercicios de la API
         public async Task<IReadOnlyList<EjercicioModel>> GetEjerciciosAsync()
         {
             //Try catch para manejar errores
             try
             {
+                // Capturo la respuesta de la api
                 var response = await _httpClient.GetAsync("ejercicios");
+                // Proceso la respuesta
                 return await ProcesarRespuestaAsyncApi<List<EjercicioModel>>(response, "No se encontraron los ejercicios. Intentá de nuevo");
-            }
+            }// Capturo y lanzo nuevas excepciones para manejarlas desde ViewModel
             catch (HttpRequestException)
             {
                 throw new Exception("Error de red al obtener los ejercicios. Verificá tu conexión o intenta nuevamente.");
@@ -74,36 +49,11 @@ namespace TrainiumNeon.Services
             }
         }
 
-        //Metodo de la interfaz para obtener ejercicios por grupo muscular
-        public async Task<IReadOnlyList<EjercicioModel>> GetEjerciciosByGrupoMuscularAsync(string grupoMuscular)
-        {
-            //Try catch para manejar errores
-            try
-            {
-                var response = await _httpClient.GetAsync($"ejercicios?grupoMuscular={grupoMuscular}");
-                return await ProcesarRespuestaAsyncApi<List<EjercicioModel>>(response, "No se encontraron los ejercicios. Intentá de nuevo");
-            }
-            catch (HttpRequestException)
-            {
-                throw new Exception("Error de red al obtener los ejercicios. Verificá tu conexión o intenta nuevamente.");
-            }
-            catch (NotSupportedException)
-            {
-                throw new Exception("El formato de respuesta por la API no es soportado");
-            }
-            catch (JsonException)
-            {
-                throw new Exception("No se pudo interpretar la respuesta de la API");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error inesperado al obtener los ejercicios" + ex.Message);
-            }
-        }
 
-    //Task privada para reutilizar codigo
-    private async Task<T> ProcesarRespuestaAsyncApi<T>(HttpResponseMessage response, string error404Mensaje)
+        //Task privada para reutilizar codigo
+        private async Task<T> ProcesarRespuestaAsyncApi<T>(HttpResponseMessage response, string error404Mensaje)
         {
+            // Si la respuesta no es exitosa analizo el codigo de Error y lanzo la excepcion
             if (!response.IsSuccessStatusCode)
             {
                 switch (response.StatusCode)
