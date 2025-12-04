@@ -3,6 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
 using TrainiumNeon.Services;
+using CommunityToolkit.Mvvm.Messaging;
+using TrainiumNeon.Messages;
 
 namespace TrainiumNeon.ViewModels
 {
@@ -12,6 +14,7 @@ namespace TrainiumNeon.ViewModels
         private readonly IValidacionService _validacionService;
         private readonly IEstadoContraseniaService _estadoContraseniaService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
+
         // Propiedades privadas
         private string _nombre = string.Empty;
         private string _email = string.Empty;
@@ -305,7 +308,7 @@ namespace TrainiumNeon.ViewModels
             if (exito)
             {
                 //Envia mensaje de registro exitoso a mainpage para mostrar toast
-                MessagingCenter.Send(this, "RegistroExitoso");
+                WeakReferenceMessenger.Default.Send(new UsuarioMessages.RegistroExistosoMessage("Te registraste con éxito. Ahora iniciá Sesión"));
 
                 //Navega a inicio de sesion para que se logee en la app
                 await Shell.Current.GoToAsync("//Login");
