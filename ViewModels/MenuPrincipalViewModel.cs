@@ -1,15 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
-using TrainiumNeon.Views;
+
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MenuPrincipalViewModel : INotifyPropertyChanged
+    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaCreadaMessage>, IRecipient<RutinaMessages.RutinaActualizadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
     {
         //Servicios y repositorios
         private readonly ISesionService _sesionService;
@@ -86,8 +88,8 @@ namespace TrainiumNeon.ViewModels
             _diaRepositorio = diaRepositorio;
             _ejercicioDiaRepositorio = ejercicioDiaRepositorio;
             _ejercicioRepositorio = ejercicioRepositorio;
-            // Inicializan datos iniciales asincronos
-            _ = InicializarAsync();
+            // Suscripcion a mensajeria para actualizar datos al crear, actualizar o eliminar rutina y actualizar usuario
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         // Task asincrona para inicializar los datos del VM
@@ -110,14 +112,24 @@ namespace TrainiumNeon.ViewModels
                 await Shell.Current.GoToAsync("//Login");
                 return;
             }
-            
+
+            await ObtenerInformacionUsuarioAsync();
+
+            await ObtenerInformacionRutinaAsync();
+        }
+
+        private async Task ObtenerInformacionUsuarioAsync()
+        {
             //Si hay usuario activo lo obtengo para capturar su nombre
             var usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
             NombreUsuario = usuario.Nombre;
+        }
 
+        private async Task ObtenerInformacionRutinaAsync()
+        {
             // Obtengo la rutina seleccionada del usuario activo para capturar su nombre, si no hay rutina seleccionada muestra Ninguna
             var rutina = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
-            if(rutina != null)
+            if (rutina != null)
             {
                 RutinaSeleccionadaNombre = rutina.Nombre;
             }
@@ -146,5 +158,33 @@ namespace TrainiumNeon.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+        // Implementacion de IRecipient para recibir mensaje de registro exitoso
+        public async void Receive(RutinaMessages.RutinaCreadaMessage message)
+        {
+            await ObtenerInformacionRutinaAsync() ;
+        }
+
+        public async void Receive(RutinaMessages.RutinaActualizadaMessage message)
+        {
+            await ObtenerInformacionRutinaAsync();
+        }
+
+        public async void Receive(RutinaMessages.RutinaEliminadaMessage message)
+        {
+            await ObtenerInformacionRutinaAsync();
+        }
+
+
+        public async void Receive(RutinaMessages.RutinaSeleccionadaActualizadaMessage message)
+        {
+            await ObtenerInformacionRutinaAsync();
+        }
+
+        public async void Receive(UsuarioMessages.UsuarioActualizadoMessage message)
+        {
+            await ObtenerInformacionUsuarioAsync();
+        }
     }
 }
