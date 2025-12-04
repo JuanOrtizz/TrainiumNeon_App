@@ -1,8 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 using TrainiumNeon.Views;
@@ -73,12 +77,11 @@ namespace TrainiumNeon.ViewModels
             // InicializaN comandoS
             AgregarRutinaCommand = new Command(async () => await NavegarAgregarRutina());
             EditarRutinaCommand = new Command<int>(async (idRutina) => await NavegarEditarRutina(idRutina));
-            //Cargo los datos
-            _ = CargarRutinasAsync();
+
         }
 
         // Task asincrona para cargar las rutinas al iniciar
-        private async Task CargarRutinasAsync()
+        public async Task InicializarAsync()
         {
             // Capturo el Id del usuario activo (logeado)
             IdUsuarioActivo = _sesionService.ObtenerSesion();
@@ -95,7 +98,16 @@ namespace TrainiumNeon.ViewModels
         // Task asincrona para marcar una rutina como seleccionada
         private async Task MarcarRutinaComoSeleccionada()
         {
-            await _rutinaRepositorio.MarcarRutinaSeleccionadaAsync(RutinaSeleccionada.Id);
+            if(await _rutinaRepositorio.MarcarRutinaSeleccionadaAsync(RutinaSeleccionada.Id))
+            {
+                // Muestra un toast de confirmacion
+                var toast = Toast.Make($"Marcaste la rutina {RutinaSeleccionada.Nombre} como seleccionada.", ToastDuration.Short);
+                await toast.Show();
+
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaSeleccionadaActualizadaMessage());
+            }
+
         }
 
         // Task asincrona para navegar a la pagina de agregar rutina
