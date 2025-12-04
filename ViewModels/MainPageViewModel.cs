@@ -1,14 +1,17 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MainPageViewModel: INotifyPropertyChanged
+    public class MainPageViewModel: INotifyPropertyChanged, IRecipient<UsuarioMessages.RegistroExistosoMessage>
     {
 
         // Servicios y repositorio
@@ -160,11 +163,7 @@ namespace TrainiumNeon.ViewModels
             RegistroCommand = new Command(async () => await RegistrarseAsync());
             CambiarEstadoContraseniaCommand = new Command(MostrarUOcultarContrasenia);
             // Suscripcion a mensaje de registro exitoso para mostrar toast
-            MessagingCenter.Subscribe<RegistroViewModel>(this, "RegistroExitoso", async (sender) =>
-            {
-                var toast = Toast.Make("Registro exitoso. Ahora inicia sesión.", ToastDuration.Short);
-                await toast.Show();
-            });
+            WeakReferenceMessenger.Default.Register(this);
         }
 
         // Task asincrona para iniciar sesion
@@ -178,6 +177,7 @@ namespace TrainiumNeon.ViewModels
             HayErrorEnEmail = !string.IsNullOrEmpty(ErrorEmail);
             HayErrorEnContrasenia = !string.IsNullOrEmpty(ErrorContrasenia);
             
+            // Si hay errores oculto el spinner y salgo
             if (HayErrorEnContrasenia || HayErrorEnEmail)
             {
                 IsBusy = false;
@@ -199,6 +199,7 @@ namespace TrainiumNeon.ViewModels
             // Guarda el usuario en preferences
             _sesionService.GuardarSesion(usuarioId);
             IsBusy = false;
+
             // Muestro MenuPrincipal al iniciar sesion
             await Shell.Current.GoToAsync("//MenuPrincipal");
         }
@@ -223,5 +224,11 @@ namespace TrainiumNeon.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Implementacion de IRecipient para recibir mensaje de registro exitoso
+        public async void Receive(UsuarioMessages.RegistroExistosoMessage message)
+        {
+            await Toast.Make(message.mensaje, ToastDuration.Short).Show();
+        }
     }
 }
