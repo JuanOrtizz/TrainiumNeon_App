@@ -1,7 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
 using TrainiumNeon.Messages;
@@ -13,7 +16,7 @@ namespace TrainiumNeon.ViewModels
 {
     [QueryProperty(nameof(AccionTitulo), "accion")]
     [QueryProperty(nameof(IdRutina), "idRutina")]
-    public class AgregarEditarRutinaViewModel: INotifyPropertyChanged
+    public class AgregarEditarRutinaViewModel: INotifyPropertyChanged, IRecipient<EjercicioDiaMessages.EjercicioDiaGuardadoMessage>, IRecipient<EjercicioDiaMessages.EjercicioDiaEliminadoMessage>
     {
         // Servicios y repositorios
         private readonly IValidacionService _validacionService;
@@ -245,7 +248,9 @@ namespace TrainiumNeon.ViewModels
             EliminarRutinaCommand = new Command(async () => await EliminarRutinaAsync());
             NavegarDiaAnteriorCommand = new Command(NavegarDiaAnterior);
             NavegarDiaSiguienteCommand = new Command(NavegarDiaSiguiente);
-            
+
+            // Suscripcion a mensajeria para actualizar datos al guardar o eliminar ejercicio de un dia
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         //Task asincrona para inicializar desde Code-behind con asincronia y evitar referencias null de Query-Property
@@ -310,10 +315,10 @@ namespace TrainiumNeon.ViewModels
             // Si la elimino
             if (eliminado)
             {
-                // Vuelvo a la pagina anterior
                 //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
                 WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaEliminadaMessage("Se eliminó con éxito la rutina."));
 
+                // Vuelvo a la pagina anterior
                 await Shell.Current.GoToAsync("..");
             }
             else
@@ -458,5 +463,28 @@ namespace TrainiumNeon.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Implementacion de IRecipient para EjercicioDia guardado
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaGuardadoMessage message)
+        {
+            // Actualizo la lista de ejercicios del dia seleccionado
+            await CargarEjerciciosDiaSeleccionadoAsync();
+
+            // Muestro un toast de confirmacion
+            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+            await toast.Show();
+        }
+
+        // Implementacion de IRecipient para EjercicioDia eliminado
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaEliminadoMessage message)
+        {
+            // Actualizo la lista de ejercicios del dia seleccionado
+            await CargarEjerciciosDiaSeleccionadoAsync();
+
+            // Muestro un toast de confirmacion
+            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+            await toast.Show();
+        }
+
     }
 }
