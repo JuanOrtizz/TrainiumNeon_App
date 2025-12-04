@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
 using TrainiumNeon.Data;
 using TrainiumNeon.Data.Repositories;
 using TrainiumNeon.Services;
@@ -16,6 +17,7 @@ namespace TrainiumNeon
 
             builder
                 .UseMauiApp<App>()
+                .UseLocalNotification()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
@@ -29,6 +31,8 @@ namespace TrainiumNeon
             builder.Services.AddSingleton<IEstadoContraseniaService, EstadoContraseniaService>();
             builder.Services.AddSingleton<IEjerciciosSyncService, EjerciciosSyncService>();
             builder.Services.AddSingleton<ISesionService, SesionService>();
+            builder.Services.AddSingleton<IPermisosService, PermisosService>();
+            builder.Services.AddSingleton<INotificacionService, NotificacionService>();
 
             // Base de datos y repositorios
             builder.Services.AddSingleton<DatabaseService>(sp =>
@@ -55,6 +59,7 @@ namespace TrainiumNeon
             builder.Services.AddTransient<RegistroViewModel>();
             builder.Services.AddTransient<RutinasViewModel>();
             builder.Services.AddTransient<MainPageViewModel>();
+            builder.Services.AddTransient<GimnasiosViewModel>();
 
             // Views
             builder.Services.AddTransient<DetalleEjercicio>();
@@ -66,6 +71,7 @@ namespace TrainiumNeon
             builder.Services.AddTransient<Registro>();
             builder.Services.AddTransient<Rutinas>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<Gimnasios>();
 
 #if DEBUG
             builder.Logging.AddDebug();

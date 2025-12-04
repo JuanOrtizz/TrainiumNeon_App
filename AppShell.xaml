@@ -30,6 +30,7 @@
         <ShellContent Route="MenuPrincipal" Title="Inicio" Icon="inicio.png" ContentTemplate="{DataTemplate local:MenuPrincipal}" />
         <ShellContent Route="Estadisticas" Title="Estadisticas" Icon="estadisticas.png" ContentTemplate="{DataTemplate local:Estadisticas}" />
         <ShellContent Route="Rutinas" Title="Rutinas" Icon="rutinas.png" ContentTemplate="{DataTemplate local:Rutinas}" />
+        <ShellContent Route="Gimnasios" Title="Gimnasios" Icon="gimnasios.png" ContentTemplate="{DataTemplate local:Gimnasios}" />
         <ShellContent Route="Perfil" Title="Perfil" Icon="perfil.png" ContentTemplate="{DataTemplate local:Perfil}" />
     </TabBar>
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrainiumNeon.Views.Gimnasios"
+             Title="Mapa">
+    <Grid>
+        <Grid
+            Padding="30,40"
+            RowDefinitions="Auto,*"
+            RowSpacing="50"
+            BackgroundColor="#1A2745">
+
+            <Label
+                Grid.Row="0"
+                Text="Gimnasios cercanos"
+                TextColor="White"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                />
+
+
+        </Grid>
+
+        <Grid
+            IsVisible="{Binding IsBusy}"
+            BackgroundColor="#40000000"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            ZIndex="999">
+
+            <ActivityIndicator
+                IsRunning="True"
+                Scale="1.5"
+                Color="#00F0FF"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"/>
+            
+        </Grid>
+    </Grid>
+</ContentPage>

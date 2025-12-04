@@ -28,5 +28,9 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>Necesitamos tu ubicación para mostrar información en tiempo real mientras usas la app.</string>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Queremos enviarte alertas diaras de recodatorio</string>
 </dict>
 </plist>
