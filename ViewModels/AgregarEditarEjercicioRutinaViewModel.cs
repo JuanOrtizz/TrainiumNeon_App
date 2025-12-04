@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -318,6 +320,39 @@ namespace TrainiumNeon.ViewModels
 
         }
 
+        // Task asincrona para cargar los datos de la rutina 
+        public async Task InicializarAsync()
+        {
+            // Obtengo la rutina
+            Rutina = await _rutinaRepositorio.ObtenerRutinaPorIdAsync(IdRutina);
+            // Cargo los dias de la semana asociados a la rutina
+            var dias = await _diaRepositorio.ObtenerDiasPorRutinaAsync(IdRutina);
+            DiasSemana = new ObservableCollection<DiaModel>(dias);
+
+            // Si la accion es agregar
+            if (AccionTitulo == "Agregar")
+            {
+                // Inicializa el dia seleccionado en lunes (Indice 0)
+                DiaSeleccionado = DiasSemana[0];
+                await ObtenerGruposMuscularesAsync();
+            }
+            // Si la accion es editar
+            else if (AccionTitulo == "Editar")
+            {
+                // Obtengo el EjercicioDia y Marco como dia Seleccionado su IdDia que tenga 
+                EjercicioDia = await _ejercicioDiaRepositorio.ObtenerEjercicioDiaPorIdAsync(IdEjercicioDia);
+                DiaSeleccionado = DiasSemana.FirstOrDefault(d => d.Id == EjercicioDia.IdDia);
+                await ObtenerGruposMuscularesAsync();
+                await CargarEjerciciosAsync();
+                // Obtener el ejercicio para conocer su grupo muscular
+                EjercicioSeleccionado = Ejercicios.FirstOrDefault(e => e.Id == EjercicioDia.IdEjercicio);
+
+                // Cargo las series y repeticiones del ejercicio
+                Series = EjercicioDia.Series.ToString();
+                Repeticiones = EjercicioDia.Repeticiones.ToString();
+            }
+        }
+
         // Task asincrona para guardar el ejercicio en la rutina
         private async Task GuardarEjercicioAsync()
         {
@@ -362,6 +397,9 @@ namespace TrainiumNeon.ViewModels
                 await _ejercicioDiaRepositorio.ActualizarEjercicioDiaAsync(EjercicioDia.Id, DiaSeleccionado.Id, seriesInt, repeticionesInt);
             }
 
+            //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+            WeakReferenceMessenger.Default.Send(new EjercicioDiaMessages.EjercicioDiaGuardadoMessage($"Se guardó con éxito el ejercicio en el día {DiaSeleccionado.Nombre}."));
+
             // Oculto el spinner de carga
             await Task.Delay(500);
             IsBusy = false;
@@ -390,44 +428,15 @@ namespace TrainiumNeon.ViewModels
             IsBusy = true;
             // Elimino el ejercicioDia de la DB
             await _ejercicioDiaRepositorio.EliminarEjercicioDiaAsync(EjercicioDia.Id);
+
+            //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+            WeakReferenceMessenger.Default.Send(new EjercicioDiaMessages.EjercicioDiaEliminadoMessage($"Se eliminó con éxito el ejercicio en el día {DiaSeleccionado.Nombre}."));
             await Task.Delay(500);
+
             // Oculto el spinner
             IsBusy = false;
             // Navego para atras al terminar la accion
             await Shell.Current.GoToAsync("..");
-        }
-
-        // Task asincrona para cargar los datos de la rutina 
-        private async Task CargarDatosEjercicioDiaAsync()
-        {
-            // Obtengo la rutina
-            Rutina = await _rutinaRepositorio.ObtenerRutinaPorIdAsync(IdRutina);
-            // Cargo los dias de la semana asociados a la rutina
-            var dias = await _diaRepositorio.ObtenerDiasPorRutinaAsync(IdRutina);
-            DiasSemana = new ObservableCollection<DiaModel>(dias);
-
-            // Si la accion es agregar
-            if (AccionTitulo == "Agregar")
-            {
-                // Inicializa el dia seleccionado en lunes (Indice 0)
-                DiaSeleccionado = DiasSemana[0];
-                await ObtenerGruposMuscularesAsync();
-            }
-            // Si la accion es editar
-            else if (AccionTitulo == "Editar")
-            {
-                // Obtengo el EjercicioDia y Marco como dia Seleccionado su IdDia que tenga 
-                EjercicioDia = await _ejercicioDiaRepositorio.ObtenerEjercicioDiaPorIdAsync(IdEjercicioDia);
-                DiaSeleccionado = DiasSemana.FirstOrDefault(d => d.Id == EjercicioDia.IdDia);
-                await ObtenerGruposMuscularesAsync();
-                await CargarEjerciciosAsync();
-                // Obtener el ejercicio para conocer su grupo muscular
-                EjercicioSeleccionado = Ejercicios.FirstOrDefault(e => e.Id == EjercicioDia.IdEjercicio);
-
-                // Cargo las series y repeticiones del ejercicio
-                Series = EjercicioDia.Series.ToString();
-                Repeticiones = EjercicioDia.Repeticiones.ToString();
-            }
         }
 
         // Task asincrona para obtener los grupos musculares
@@ -474,12 +483,6 @@ namespace TrainiumNeon.ViewModels
             Ejercicios = new ObservableCollection<EjercicioModel>(listaEjercicios);
             // Oculto el spinner
             IsBusy = false;
-        }
-
-        //Task asincrona para inicializar desde Code-behind con asincronia y evitar referencias null de Query-Property
-        public async Task InicializarAsync()
-        {
-            await CargarDatosEjercicioDiaAsync();
         }
 
         // Implementacion de INotifyPropertyChanged
