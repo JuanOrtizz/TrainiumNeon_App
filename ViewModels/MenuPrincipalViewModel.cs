@@ -88,7 +88,7 @@ namespace TrainiumNeon.ViewModels
             _diaRepositorio = diaRepositorio;
             _ejercicioDiaRepositorio = ejercicioDiaRepositorio;
             _ejercicioRepositorio = ejercicioRepositorio;
-            // Suscripcion a mensajeria para actualizar datos al crear, actualizar o eliminar rutina y actualizar usuario
+            // Suscripcion a mensajeria para actualizar datos al guardar o eliminar rutina y actualizar usuario
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
@@ -160,7 +160,7 @@ namespace TrainiumNeon.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        // Implementacion de IRecipient para Rutina actualizada
+        // Implementacion de IRecipient para Rutina guardada
         public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
         {
             await ObtenerInformacionRutinaAsync();
