@@ -13,7 +13,7 @@ using TrainiumNeon.Views;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class RutinasViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaCreadaMessage>, IRecipient<RutinaMessages.RutinaActualizadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>
+    public class RutinasViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaGuardadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>
     {
         // Servicio y repositorio
         private readonly ISesionService _sesionService;
@@ -74,9 +74,11 @@ namespace TrainiumNeon.ViewModels
             // Inicializa servicio y repositorio por DI
             _sesionService = sesionService;
             _rutinaRepositorio = rutinaRepositorio;
-            // InicializaN comandoS
+            // InicializaN comandos
             AgregarRutinaCommand = new Command(async () => await NavegarAgregarRutina());
             EditarRutinaCommand = new Command<int>(async (idRutina) => await NavegarEditarRutina(idRutina));
+            // Suscripcion a mensajeria para actualizar datos al guardar o eliminar rutina 
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         // Task asincrona para cargar las rutinas al iniciar
@@ -131,22 +133,26 @@ namespace TrainiumNeon.ViewModels
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        // Implementacion de IRecipient para Rutina creada
-        public async void Receive(RutinaMessages.RutinaCreadaMessage message)
+        // Implementacion de IRecipient para Rutina Guardada
+        public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
         {
+            // Actualizo la lista de rutinas
             await ObtenerRutinasAsync();
-        }
 
-        // Implementacion de IRecipient para Rutina actualizada
-        public async void Receive(RutinaMessages.RutinaActualizadaMessage message)
-        {
-            await ObtenerRutinasAsync();
+            // Muestro un toast de confirmacion
+            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+            await toast.Show();
         }
 
         // Implementacion de IRecipient para Rutina eliminada
         public async void Receive(RutinaMessages.RutinaEliminadaMessage message)
         {
+            // Actualizo la lista de rutinas
             await ObtenerRutinasAsync();
+
+            // Muestro un toast de confirmacion
+            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+            await toast.Show();
         }
 
     }
