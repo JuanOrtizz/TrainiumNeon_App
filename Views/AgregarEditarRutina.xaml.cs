@@ -4,6 +4,8 @@ namespace TrainiumNeon.Views;
 
 public partial class AgregarEditarRutina : ContentPage
 {
+    private bool _inicializado = false;
+
     public AgregarEditarRutina(AgregarEditarRutinaViewModel vm)
     {
         InitializeComponent();
@@ -14,9 +16,13 @@ public partial class AgregarEditarRutina : ContentPage
     {
         base.OnAppearing();
 
-        if (BindingContext is AgregarEditarRutinaViewModel vm)
+        if (!_inicializado)
         {
-            await vm.InicializarAsync();
+            _inicializado = true;
+            if (BindingContext is AgregarEditarRutinaViewModel vm)
+            {
+                await vm.InicializarAsync();
+            }
         }
     }
 
