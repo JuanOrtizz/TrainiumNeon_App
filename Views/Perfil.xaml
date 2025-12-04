@@ -161,15 +161,16 @@
                             </Border.Triggers>
 
                             <Entry
-                            x:Name="EmailEntry"
-                            PlaceholderColor="Black"
-                            FontSize="16"
-                            MaxLength="254"
-                            Placeholder="Coloca tu nuevo email"
-                            BackgroundColor="Transparent"
-                            Text="{Binding Email}"
-                            TextColor="Black"
-                            />
+                                x:Name="EmailEntry"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="254"
+                                Placeholder="Coloca tu nuevo email"
+                                BackgroundColor="Transparent"
+                                Text="{Binding Email}"
+                                TextColor="Black"
+                                Keyboard="Email"                                
+                                />
 
                         </Border>
 

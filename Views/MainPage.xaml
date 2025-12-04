@@ -110,6 +110,7 @@
                                 BackgroundColor="Transparent"
                                 Text="{Binding Email}"
                                 TextColor="Black"
+                                Keyboard="Email"
                                 />
 
                         </Grid>
