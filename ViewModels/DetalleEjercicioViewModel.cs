@@ -39,7 +39,6 @@ namespace TrainiumNeon.ViewModels
                 if(_idEjercicio != value)
                 {
                     _idEjercicio = value;
-                    _ = CargarEjercicioAsync();
                 } 
             }
         }
@@ -173,7 +172,7 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para cargar detalles del ejercicio
-        private async Task CargarEjercicioAsync()
+        public async Task InicializarAsync()
         {
             // Muestro spinner de carga
             IsBusy = true;
@@ -188,7 +187,6 @@ namespace TrainiumNeon.ViewModels
             PersonalRecord = Ejercicio.PersonalRecord.ToString();
             // Oculto spinner de carga
             IsBusy = false;
-
         }
 
         // Task asincrona para guardar personal record
