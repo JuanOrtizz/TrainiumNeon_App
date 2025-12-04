@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using Plugin.LocalNotification;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -354,9 +356,9 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario y EmailUsuario)
-        public async Task CargarDatosUsuarioAsync()
+        public async Task InicializarAsync()
         {
-            // Capturo el id del usuario activo
+            // Capturo el id del usuario activo y si tiene activas las notificaciones
             IdUsuarioActivo = _sesionService.ObtenerSesion();
             NotificacionesActivas = Preferences.Get(NotificacionesKey, false);
             OnPropertyChanged(nameof(NotificacionesActivas));
@@ -375,7 +377,7 @@ namespace TrainiumNeon.ViewModels
         // Task asincrona para cambiar datos personales (Nombre-Email)
         private async Task CambiarDatosPersonalesAsync()
         {
-
+            // muestro el spinner de carga
             IsBusy = true;
             // Validaciones de campos
             ErrorNuevoNombre = _validacionService.ValidarNombreCompleto(Nombre);
@@ -390,7 +392,6 @@ namespace TrainiumNeon.ViewModels
                 return;
             }
 
-
             // Validacion de si un usuario ya existe con ese email
             if (Email != Usuario.Email && await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
             {
@@ -403,11 +404,17 @@ namespace TrainiumNeon.ViewModels
             // Actualiza los datos del usuario en la DB
             await _usuarioRepositorio.ActualizarNombreUsuarioAsync(IdUsuarioActivo, Nombre);
             await _usuarioRepositorio.ActualizarEmailUsuarioAsync(IdUsuarioActivo, Email);
+
+            //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+            WeakReferenceMessenger.Default.Send(new UsuarioMessages.UsuarioActualizadoMessage());
+
             await Task.Delay(500);
             // Actualiza PuedeActualizar y muestra toast de exito
             PuedeActualizar = false;
             var toast = Toast.Make("Actualizaste tus datos con éxito.", ToastDuration.Short);
             await toast.Show();
+
+            // oculto el spinner de carga
             IsBusy = false;
         }
 
@@ -466,6 +473,7 @@ namespace TrainiumNeon.ViewModels
         {
             // Cargar valor guardado
             Preferences.Set(NotificacionesKey, NotificacionesActivas);
+            // si es true, solicitar permisos y programar notificacion diaria
             if (NotificacionesActivas)
             {
                 if (!await _permisosService.SolicitarPermisosNotificacionesAsync())
@@ -480,23 +488,23 @@ namespace TrainiumNeon.ViewModels
                 }
                 else
                 {
-
                     // Programo la notificacion diaria para las 10 am
                     var hora = DateTime.Today.AddHours(10);
+                    // Si la hora ya paso para hoy, la programo para mañana
                     if (hora < DateTime.Now)
                     {
                         hora = hora.AddDays(1);
                     }
+                    // Envio notificacion diaria
                     _notificacionService.EnviarNotificacion("¡Vamos a entrenar!","No te olvides de asistir al gimnasio para obtener los mejores resultados", hora, true);
                 }
             }
             else
             {
-                // Cancelar todas sI el usuario las desactiva
+                // Cancelar todas Si el usuario las desactiva
                 LocalNotificationCenter.Current.CancelAll();
             }
         }
-
 
         // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
