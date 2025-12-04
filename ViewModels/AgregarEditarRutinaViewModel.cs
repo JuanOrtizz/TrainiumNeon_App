@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 using TrainiumNeon.Views;
@@ -246,16 +248,13 @@ namespace TrainiumNeon.ViewModels
             
         }
 
-        // Task asincrona para navegar a agregar ejercicio
-        private async Task NavegarAgregarEjercicioAsync()
+        //Task asincrona para inicializar desde Code-behind con asincronia y evitar referencias null de Query-Property
+        public async Task InicializarAsync()
         {
-            await Shell.Current.GoToAsync($"{nameof(AgregarEditarEjercicioRutina)}?accion=Agregar&idRutina={IdRutina}");
-        }
-
-        // Task asincrona para navegar a editar ejercicio
-        private async Task NavegarEditarEjercicioAsync(int idEjercicioDia)
-        {
-            await Shell.Current.GoToAsync($"{nameof(AgregarEditarEjercicioRutina)}?accion=Editar&idRutina={IdRutina}&idEjercicioDia={idEjercicioDia}");
+            // Capturo el Id del usuario activo
+            IdUsuarioActivo = _sesionService.ObtenerSesion();
+            // Cargo la rutina
+            await CargarRutinaAsync();
         }
 
         // Task asincrona para guardar la rutina
@@ -281,10 +280,13 @@ namespace TrainiumNeon.ViewModels
                 return;
             }
 
-
             // Actualizo la rutina en la DB
             await _rutinaRepositorio.ActualizarRutinaVaciaAsync(Rutina.Id, IdUsuarioActivo, NombreRutina);
+
+            //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+            WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaGuardadaMessage("Se Guardó con éxito la rutina."));
             await Task.Delay(500);
+
             // Actualiza PuedeActualizar y muestra toast de exito
             PuedeActualizar = false;
             // Oculto el spinner
@@ -309,6 +311,9 @@ namespace TrainiumNeon.ViewModels
             if (eliminado)
             {
                 // Vuelvo a la pagina anterior
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaEliminadaMessage("Se eliminó con éxito la rutina."));
+
                 await Shell.Current.GoToAsync("..");
             }
             else
@@ -319,7 +324,7 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para cargar la accion de la rutina
-        private async Task CargarRutinaAsync()
+        public async Task CargarRutinaAsync()
         {
             // Muestro el spinner de carga
             IsBusy = true;
@@ -385,6 +390,16 @@ namespace TrainiumNeon.ViewModels
             EjerciciosDiaSeleccionado = new ObservableCollection<EjercicioDiaModel>(ejerciciosDia);
         }
 
+        // Task asincrona para obtener los dias de la rutina y asignarlos a las propiedades DiasSemana y DiaSeleccionado
+        private async Task ObtenerDiasRutina()
+        {
+            // Cargo los dias de la semana asociados a la rutina
+            var dias = await _diaRepositorio.ObtenerDiasPorRutinaAsync(IdRutina);
+            DiasSemana = new ObservableCollection<DiaModel>(dias);
+            // Inicializa los dias de la rutina en lunes (Indice 0)
+            DiaSeleccionado = DiasSemana[0];
+        }
+
         // Metodo para navegar al dia anterior de la semana en la rutina
         private void NavegarDiaAnterior()
         {
@@ -427,23 +442,16 @@ namespace TrainiumNeon.ViewModels
             PuedeIrSiguiente = indice < DiasSemana.Count - 1;
         }
 
-        // Task asincrona para obtener los dias de la rutina y asignarlos a las propiedades DiasSemana y DiaSeleccionado
-        private async Task ObtenerDiasRutina()
+        // Task asincrona para navegar a agregar ejercicio
+        private async Task NavegarAgregarEjercicioAsync()
         {
-            // Cargo los dias de la semana asociados a la rutina
-            var dias = await _diaRepositorio.ObtenerDiasPorRutinaAsync(IdRutina);
-            DiasSemana = new ObservableCollection<DiaModel>(dias);
-            // Inicializa los dias de la rutina en lunes (Indice 0)
-            DiaSeleccionado = DiasSemana[0];
+            await Shell.Current.GoToAsync($"{nameof(AgregarEditarEjercicioRutina)}?accion=Agregar&idRutina={IdRutina}");
         }
 
-        //Task asincrona para inicializar desde Code-behind con asincronia y evitar referencias null de Query-Property
-        public async Task InicializarAsync()
+        // Task asincrona para navegar a editar ejercicio
+        private async Task NavegarEditarEjercicioAsync(int idEjercicioDia)
         {
-            // Capturo el Id del usuario activo
-            IdUsuarioActivo = _sesionService.ObtenerSesion();
-            // Cargo la rutina
-            await CargarRutinaAsync();
+            await Shell.Current.GoToAsync($"{nameof(AgregarEditarEjercicioRutina)}?accion=Editar&idRutina={IdRutina}&idEjercicioDia={idEjercicioDia}");
         }
 
         // Implementacion de INotifyPropertyChanged
