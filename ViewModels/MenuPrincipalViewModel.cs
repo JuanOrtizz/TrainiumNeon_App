@@ -11,7 +11,7 @@ using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaCreadaMessage>, IRecipient<RutinaMessages.RutinaActualizadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
+    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaGuardadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
     {
         //Servicios y repositorios
         private readonly ISesionService _sesionService;
@@ -160,28 +160,25 @@ namespace TrainiumNeon.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        // Implementacion de IRecipient para recibir mensaje de registro exitoso
-        public async void Receive(RutinaMessages.RutinaCreadaMessage message)
-        {
-            await ObtenerInformacionRutinaAsync() ;
-        }
-
-        public async void Receive(RutinaMessages.RutinaActualizadaMessage message)
+        // Implementacion de IRecipient para Rutina actualizada
+        public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
         {
             await ObtenerInformacionRutinaAsync();
         }
 
+        // Implementacion de IRecipient para Rutina eliminada
         public async void Receive(RutinaMessages.RutinaEliminadaMessage message)
         {
             await ObtenerInformacionRutinaAsync();
         }
 
-
+        // Implementacion de IRecipient para RutinaSeleccionada actualizada
         public async void Receive(RutinaMessages.RutinaSeleccionadaActualizadaMessage message)
         {
             await ObtenerInformacionRutinaAsync();
         }
 
+        // Implementacion de IRecipient para Usuario actualizado
         public async void Receive(UsuarioMessages.UsuarioActualizadoMessage message)
         {
             await ObtenerInformacionUsuarioAsync();
