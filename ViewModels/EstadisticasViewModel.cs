@@ -96,12 +96,10 @@ namespace TrainiumNeon.ViewModels
             _grupoMuscularRepositorio = grupoMuscularRepositorio;
             // Inicializa comando
             VerDetallesEjercicioCommand = new Command<EjercicioModel>(async (ejercicio) => await NavegarDetallesEjercicioAsync(ejercicio));
-            // Se cargan todos los ejericicos al cargar la pantalla
-            _ = InicializarAsync();
         }
 
         //Task asincrona para cargar datos iniciales (Grupos musculares y Ejercicios)
-        private async Task InicializarAsync()
+        public async Task InicializarAsync()
         {
             // Obtengo los grupos musculares
             var listaGruposMusculares = await _grupoMuscularRepositorio.ObtenerTodoGruposMuscularesAsync();
