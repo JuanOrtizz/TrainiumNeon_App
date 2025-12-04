@@ -13,7 +13,7 @@ using TrainiumNeon.Views;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class RutinasViewModel : INotifyPropertyChanged
+    public class RutinasViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaCreadaMessage>, IRecipient<RutinaMessages.RutinaActualizadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>
     {
         // Servicio y repositorio
         private readonly ISesionService _sesionService;
@@ -77,7 +77,6 @@ namespace TrainiumNeon.ViewModels
             // InicializaN comandoS
             AgregarRutinaCommand = new Command(async () => await NavegarAgregarRutina());
             EditarRutinaCommand = new Command<int>(async (idRutina) => await NavegarEditarRutina(idRutina));
-
         }
 
         // Task asincrona para cargar las rutinas al iniciar
@@ -85,14 +84,7 @@ namespace TrainiumNeon.ViewModels
         {
             // Capturo el Id del usuario activo (logeado)
             IdUsuarioActivo = _sesionService.ObtenerSesion();
-            // Inicializo la lista
-            IReadOnlyList<RutinaModel> listaRutinas;
-            // Obtengo las rutinas del usuario
-            listaRutinas = await _rutinaRepositorio.ObtenerRutinasPorUsuarioAsync(IdUsuarioActivo);
-            Rutinas = new ObservableCollection<RutinaModel>(listaRutinas);
-            // cargo la rutina seleccionada
-            var rutinaSeleccionada = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
-            RutinaSeleccionada = Rutinas.FirstOrDefault(r => r.Id == rutinaSeleccionada.Id);
+            await ObtenerRutinasAsync();
         }
 
         // Task asincrona para marcar una rutina como seleccionada
@@ -122,9 +114,40 @@ namespace TrainiumNeon.ViewModels
             await Shell.Current.GoToAsync($"{nameof(AgregarEditarRutina)}?accion=Editar&idRutina={idRutina}");
         }
 
+        private async Task ObtenerRutinasAsync()
+        {
+            // Inicializo la lista
+            IReadOnlyList<RutinaModel> listaRutinas;
+            // Obtengo las rutinas del usuario
+            listaRutinas = await _rutinaRepositorio.ObtenerRutinasPorUsuarioAsync(IdUsuarioActivo);
+            Rutinas = new ObservableCollection<RutinaModel>(listaRutinas);
+            // cargo la rutina seleccionada
+            var rutinaSeleccionada = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
+            RutinaSeleccionada = Rutinas.FirstOrDefault(r => r.Id == rutinaSeleccionada.Id);
+        }
+
         // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Implementacion de IRecipient para Rutina creada
+        public async void Receive(RutinaMessages.RutinaCreadaMessage message)
+        {
+            await ObtenerRutinasAsync();
+        }
+
+        // Implementacion de IRecipient para Rutina actualizada
+        public async void Receive(RutinaMessages.RutinaActualizadaMessage message)
+        {
+            await ObtenerRutinasAsync();
+        }
+
+        // Implementacion de IRecipient para Rutina eliminada
+        public async void Receive(RutinaMessages.RutinaEliminadaMessage message)
+        {
+            await ObtenerRutinasAsync();
+        }
+
     }
 }
