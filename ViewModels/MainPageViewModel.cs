@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -162,7 +161,7 @@ namespace TrainiumNeon.ViewModels
             IniciarSesionCommand = new Command(async () => await IniciarSesionAsync());
             RegistroCommand = new Command(async () => await RegistrarseAsync());
             CambiarEstadoContraseniaCommand = new Command(MostrarUOcultarContrasenia);
-            // Suscripcion a mensaje de registro exitoso para mostrar toast
+            // Suscripcion a mensajeria de UsuarioMessages
             WeakReferenceMessenger.Default.Register(this);
         }
 
@@ -198,6 +197,7 @@ namespace TrainiumNeon.ViewModels
 
             // Guarda el usuario en preferences
             _sesionService.GuardarSesion(usuarioId);
+            // Oculto el spinner de carga
             IsBusy = false;
 
             // Muestro MenuPrincipal al iniciar sesion
