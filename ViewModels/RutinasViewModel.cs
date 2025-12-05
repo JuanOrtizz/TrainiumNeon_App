@@ -23,6 +23,7 @@ namespace TrainiumNeon.ViewModels
         private int _idUsuarioActivo;
         private ObservableCollection<RutinaModel> _rutinas;
         private RutinaModel _rutinaSeleccionada;
+        private bool _isBusy;
 
         //Propiedades Publicas
         public int IdUsuarioActivo
@@ -55,10 +56,24 @@ namespace TrainiumNeon.ViewModels
             get => _rutinaSeleccionada;
             set
             {
-                if(_rutinaSeleccionada != value)
+                if (_rutinaSeleccionada != value)
                 {
                     _rutinaSeleccionada = value;
-                    _ = MarcarRutinaComoSeleccionada();
+                    OnPropertyChanged();
+
+                    if (!IsBusy && _rutinaSeleccionada != null)
+                        _ = MarcarRutinaComoSeleccionadaAsync();
+                }
+            }
+        }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
                     OnPropertyChanged();
                 }
             }
@@ -74,9 +89,9 @@ namespace TrainiumNeon.ViewModels
             // Inicializa servicio y repositorio por DI
             _sesionService = sesionService;
             _rutinaRepositorio = rutinaRepositorio;
-            // InicializaN comandos
-            AgregarRutinaCommand = new Command(async () => await NavegarAgregarRutina());
-            EditarRutinaCommand = new Command<int>(async (idRutina) => await NavegarEditarRutina(idRutina));
+            // Inicializan comandos
+            AgregarRutinaCommand = new Command(async () => await NavegarAgregarRutinaAsync());
+            EditarRutinaCommand = new Command<int>(async (idRutina) => await NavegarEditarRutinaAsync(idRutina));
             // Suscripcion a mensajeria para actualizar datos al guardar o eliminar rutina 
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
@@ -84,15 +99,19 @@ namespace TrainiumNeon.ViewModels
         // Task asincrona para cargar las rutinas al iniciar
         public async Task InicializarAsync()
         {
+            IsBusy = true;
             // Capturo el Id del usuario activo (logeado)
             IdUsuarioActivo = _sesionService.ObtenerSesion();
             await ObtenerRutinasAsync();
+            await ObtenerRutinaSeleccioandaAsync();
+            IsBusy = false;
         }
 
         // Task asincrona para marcar una rutina como seleccionada
-        private async Task MarcarRutinaComoSeleccionada()
+        private async Task MarcarRutinaComoSeleccionadaAsync()
         {
-            if(await _rutinaRepositorio.MarcarRutinaSeleccionadaAsync(RutinaSeleccionada.Id))
+            var rutinaSeleccionadaActualizada = await _rutinaRepositorio.MarcarRutinaSeleccionadaAsync(RutinaSeleccionada.Id);
+            if (rutinaSeleccionadaActualizada)
             {
                 // Muestra un toast de confirmacion
                 var toast = Toast.Make($"Marcaste la rutina {RutinaSeleccionada.Nombre} como seleccionada.", ToastDuration.Short);
@@ -105,13 +124,13 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para navegar a la pagina de agregar rutina
-        private async Task NavegarAgregarRutina()
+        private async Task NavegarAgregarRutinaAsync()
         {
             await Shell.Current.GoToAsync($"{nameof(AgregarEditarRutina)}?accion=Agregar");
         }
 
         // Task asincrona para navegar a la pagina de editar rutina
-        private async Task NavegarEditarRutina(int idRutina)
+        private async Task NavegarEditarRutinaAsync(int idRutina)
         {
             await Shell.Current.GoToAsync($"{nameof(AgregarEditarRutina)}?accion=Editar&idRutina={idRutina}");
         }
@@ -123,6 +142,11 @@ namespace TrainiumNeon.ViewModels
             // Obtengo las rutinas del usuario
             listaRutinas = await _rutinaRepositorio.ObtenerRutinasPorUsuarioAsync(IdUsuarioActivo);
             Rutinas = new ObservableCollection<RutinaModel>(listaRutinas);
+        }
+
+        // Task asincrona para obtener la rutina seleccionada
+        private async Task ObtenerRutinaSeleccioandaAsync()
+        {
             // cargo la rutina seleccionada
             var rutinaSeleccionada = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
             RutinaSeleccionada = Rutinas.FirstOrDefault(r => r.Id == rutinaSeleccionada.Id);
@@ -136,24 +160,27 @@ namespace TrainiumNeon.ViewModels
         // Implementacion de IRecipient para Rutina Guardada
         public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
         {
+            IsBusy = true;
             // Actualizo la lista de rutinas
             await ObtenerRutinasAsync();
 
             // Muestro un toast de confirmacion
             var toast = Toast.Make(message.mensaje, ToastDuration.Short);
             await toast.Show();
+            IsBusy = false;
         }
 
         // Implementacion de IRecipient para Rutina eliminada
         public async void Receive(RutinaMessages.RutinaEliminadaMessage message)
         {
+            IsBusy = true;
             // Actualizo la lista de rutinas
             await ObtenerRutinasAsync();
 
             // Muestro un toast de confirmacion
             var toast = Toast.Make(message.mensaje, ToastDuration.Short);
             await toast.Show();
+            IsBusy = false;
         }
-
     }
 }
