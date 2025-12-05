@@ -11,7 +11,7 @@ using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<RutinaMessages.RutinaGuardadaMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
+    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<EjercicioDiaMessages.EjercicioDiaGuardadoMessage>, IRecipient<EjercicioDiaMessages.EjercicioDiaEliminadoMessage>, IRecipient<RutinaMessages.RutinaEliminadaMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
     {
         //Servicios y repositorios
         private readonly ISesionService _sesionService;
@@ -160,8 +160,14 @@ namespace TrainiumNeon.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        // Implementacion de IRecipient para Rutina guardada
-        public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
+        // Implementacion de IRecipient para Ejercicio agregado/modificado en un dia
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaGuardadoMessage message)
+        {
+            await ObtenerInformacionRutinaAsync();
+        }
+
+        // Implementacion de IRecipient para Ejercicio eliminado en un dia
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaEliminadoMessage message)
         {
             await ObtenerInformacionRutinaAsync();
         }
