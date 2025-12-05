@@ -33,6 +33,7 @@ namespace TrainiumNeon
             builder.Services.AddSingleton<ISesionService, SesionService>();
             builder.Services.AddSingleton<IPermisosService, PermisosService>();
             builder.Services.AddSingleton<INotificacionService, NotificacionService>();
+            builder.Services.AddSingleton<IDisplayAlertService, DisplayAlertService>();
 
             // Base de datos y repositorios
             builder.Services.AddSingleton<DatabaseService>(sp =>
