@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.Rutinas"
              >
-    
     <ScrollView>
         <Grid>
             <Grid
@@ -160,7 +159,7 @@
                                             >
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Id}" FontAttributes="Bold" TextColor="Black"/>
+                                                    <Span Text="{Binding NumeroRutina}" FontAttributes="Bold" TextColor="Black"/>
                                                     <Span Text="- " TextColor="Black"/>
                                                     <Span Text="{Binding Nombre}" TextColor="Black"/>
                                                 </FormattedString>
