@@ -3,180 +3,198 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrainiumNeon.Views.Rutinas"
              >
-
-    <Grid
-        Padding="30,40"
-        RowDefinitions="Auto,*"
-        RowSpacing="50"
-        BackgroundColor="#1A2745"
-        >
-
-        <Grid
-            Grid.Row="0"
-            RowDefinitions="*,*"
-            ColumnSpacing="20"
-            RowSpacing="20"
-            >
-
-            <Label
-                Grid.Row="0"
-                Text="Tus Rutinas"
-                TextColor="White"
-                FontSize="24"
-                FontAttributes="Bold"
-                HorizontalOptions="Start"
-                VerticalOptions="Center"
-                />
-
+    
+    <ScrollView>
+        <Grid>
             <Grid
-                Grid.Row="1"
-                ColumnDefinitions="Auto,*"
-                ColumnSpacing="10"
+                Padding="30,40"
+                RowDefinitions="Auto,*"
+                RowSpacing="50"
+                BackgroundColor="#1A2745"
                 >
 
-                <Border
-                    Grid.Column="0"
-                    Stroke="#00F0FF"
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="2"
+                <Grid
+                    Grid.Row="0"
+                    RowDefinitions="*,*"
+                    ColumnSpacing="20"
+                    RowSpacing="20"
                     >
-                    
+
                     <Label
+                        Grid.Row="0"
+                        Text="Tus Rutinas"
                         TextColor="White"
-                        Text="Seleccionar rutina actual"
-                        VerticalOptions="Center"
-                        FontSize="16"
-                        Padding="10,0"
+                        FontSize="24"
                         FontAttributes="Bold"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
                         />
 
-                </Border>
+                    <Grid
+                        Grid.Row="1"
+                        ColumnDefinitions="Auto,*"
+                        ColumnSpacing="10"
+                        >
+
+                        <Border
+                            Grid.Column="0"
+                            Stroke="#00F0FF"
+                            StrokeShape="RoundRectangle 5"
+                            StrokeThickness="2"
+                            >
+
+                            <Label
+                                TextColor="White"
+                                Text="Seleccionar rutina actual"
+                                VerticalOptions="Center"
+                                FontSize="16"
+                                Padding="10,0"
+                                FontAttributes="Bold"
+                                />
+
+                        </Border>
+
+                        <Border
+                            Grid.Column="1"
+                            StrokeShape="RoundRectangle 5"
+                            StrokeThickness="0"
+                            HeightRequest="50"
+                            BackgroundColor="White"
+                            Padding="5, 0"
+                            >
+
+                            <Picker
+                                Title="Elegí tu rutina"
+                                ItemsSource="{Binding Rutinas}"
+                                SelectedItem="{Binding RutinaSeleccionada}"
+                                ItemDisplayBinding="{Binding Nombre}"
+                                FontSize="16"
+                                TextColor="Black"
+                                />
+
+                        </Border>
+
+                    </Grid>
+
+                </Grid>
 
                 <Border
-                    Grid.Column="1"
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="0"
-                    HeightRequest="50"
-                    BackgroundColor="White"
-                    Padding="5, 0"
-                    >
-
-                    <Picker
-                        Title="Elegí tu rutina"
-                        ItemsSource="{Binding Rutinas}"
-                        SelectedItem="{Binding RutinaSeleccionada}"
-                        ItemDisplayBinding="{Binding Nombre}"
-                        FontSize="16"
-                        TextColor="Black"
-                        />
-
-                </Border>
-                
-            </Grid>
-
-        </Grid>
-
-        <Border
-            Grid.Row="1"
-            StrokeShape="RoundRectangle 10"
-            StrokeThickness="0"
-            BackgroundColor="#C4EEF2"
-            >
-
-            <Grid
-                Padding="20"
-                RowDefinitions="Auto,Auto, 9*"
-                ColumnDefinitions="8*, 2*"
-                RowSpacing="20"
-                >
-
-                <Label 
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Text="Rutinas"
-                    FontAttributes="Bold"
-                    FontSize="20"
-                    TextColor="#005A61"
-                    VerticalOptions="Center"
-                    />
-
-                <Border
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    StrokeShape="RoundRectangle 10"
-                    Stroke="#00CDDB"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    StrokeThickness="2"
-                    >
-
-                    <ImageButton
-                        Source="agregar.png"
-                        HorizontalOptions="Center"
-                        Padding="10"
-                        Command="{Binding AgregarRutinaCommand}"
-                        />
-
-                </Border>
-
-                <BoxView
                     Grid.Row="1"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    HeightRequest="1"  
-                    BackgroundColor="Black"
-                    HorizontalOptions="Fill" />
-
-                <CollectionView 
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    ItemsSource="{Binding Rutinas}"
+                    StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0"
+                    BackgroundColor="#C4EEF2"
                     >
 
-                    <CollectionView.ItemTemplate>
-                        
-                        <DataTemplate>
-                            
-                            <Border
-                                StrokeShape="RoundRectangle 10"
-                                StrokeThickness="0"
-                                BackgroundColor="#00CDDB"
-                                Margin="0, 5, 0, 5"
-                                >
+                    <Grid
+                        Padding="20"
+                        RowDefinitions="Auto,Auto, 9*"
+                        ColumnDefinitions="8*, 2*"
+                        RowSpacing="20"
+                        >
 
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding BindingContext.EditarRutinaCommand,
-                                        Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                        CommandParameter="{Binding Id}" />
-                                </Border.GestureRecognizers>
-                                
-                                <Label 
-                                    Padding="10"
-                                    FontSize="16"
-                                    >
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{Binding Id}" FontAttributes="Bold" TextColor="Black"/>
-                                            <Span Text="- " TextColor="Black"/>
-                                            <Span Text="{Binding Nombre}" TextColor="Black"/>
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                
-                            </Border>
+                        <Label 
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Rutinas"
+                            FontAttributes="Bold"
+                            FontSize="20"
+                            TextColor="#005A61"
+                            VerticalOptions="Center"
+                            />
 
-                        </DataTemplate>
-                        
-                    </CollectionView.ItemTemplate>
-                    
-                </CollectionView>
+                        <Border
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            StrokeShape="RoundRectangle 10"
+                            Stroke="#00CDDB"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            StrokeThickness="2"
+                            >
+
+                            <ImageButton
+                                Source="agregar.png"
+                                HorizontalOptions="Center"
+                                Padding="10"
+                                Command="{Binding AgregarRutinaCommand}"
+                                />
+
+                        </Border>
+
+                        <BoxView
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            HeightRequest="1"  
+                            BackgroundColor="Black"
+                            HorizontalOptions="Fill" />
+
+                        <CollectionView 
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            ItemsSource="{Binding Rutinas}"
+                            >
+
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Border
+                                        StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="0"
+                                        BackgroundColor="#00CDDB"
+                                        Margin="0, 5, 0, 5"
+                                        >
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding BindingContext.EditarRutinaCommand,
+                                                Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding Id}" />
+                                        </Border.GestureRecognizers>
+
+                                        <Label 
+                                            Padding="10"
+                                            FontSize="16"
+                                            >
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Id}" FontAttributes="Bold" TextColor="Black"/>
+                                                    <Span Text="- " TextColor="Black"/>
+                                                    <Span Text="{Binding Nombre}" TextColor="Black"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                    </Border>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
+
+                    </Grid>
+
+                </Border>
 
             </Grid>
-            
-        </Border>
+            <Grid
+                IsVisible="{Binding IsBusy}"
+                BackgroundColor="#40000000"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"
+                ZIndex="999">
 
-    </Grid>
+                <ActivityIndicator
+                    IsRunning="True"
+                    Scale="1.5"
+                    Color="#00F0FF"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"/>
+            </Grid>
+        </Grid>
+    </ScrollView>
 
 </ContentPage>
