@@ -13,6 +13,7 @@ namespace TrainiumNeon.ViewModels
         // Servicios y repositorio
         private readonly IValidacionService _validacionService;
         private readonly IEstadoContraseniaService _estadoContraseniaService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         // Propiedades privadas
@@ -258,11 +259,12 @@ namespace TrainiumNeon.ViewModels
         public ICommand CambiarEstadoConfirmarContraseniaCommand { get; }
 
         // Constructor
-        public RegistroViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IUsuarioRepositorio usuarioRepositorio)
+        public RegistroViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IDisplayAlertService displayAlertService, IUsuarioRepositorio usuarioRepositorio)
         {
             // Inicializan servicios y repositorio por DI
             _validacionService = validacionService;
             _estadoContraseniaService = estadoContraseniaService;
+            _displayAlertService = displayAlertService;
             _usuarioRepositorio = usuarioRepositorio;
             // Inicializan comandos
             RegistrarseCommand = new Command(async () => await RegistroAsync());
@@ -274,65 +276,92 @@ namespace TrainiumNeon.ViewModels
         //Task para registrar usuario en la DB 
         private async Task RegistroAsync()
         {
-            // Muestro el spinner de carga
-            IsBusy = true;
-            // Validaciones de campos 
-            ErrorNombre = _validacionService.ValidarNombreCompleto(Nombre);
-            ErrorEmail = _validacionService.ValidarEmail(Email);
-            ErrorContrasenia = _validacionService.ValidarContrasenia(Contrasenia);
-            ErrorConfirmarContrasenia = _validacionService.ValidarConfirmarContrasenia(Contrasenia, ConfirmarContrasenia);
-            HayErrorEnNombre = !string.IsNullOrEmpty(ErrorNombre);
-            HayErrorEnEmail = !string.IsNullOrEmpty(ErrorEmail);
-            HayErrorEnContrasenia= !string.IsNullOrEmpty(ErrorContrasenia);
-            HayErrorEnConfirmarContrasenia = !string.IsNullOrEmpty(ErrorConfirmarContrasenia);
-
-            // Verifica si hay errores. Si hay sale de la funcion, sino sigue el registro
-            if (HayErrorEnNombre || HayErrorEnEmail || HayErrorEnContrasenia || HayErrorEnConfirmarContrasenia)
+            try
             {
+                // Muestro el spinner de carga
+                IsBusy = true;
+                // Validaciones de campos 
+                ErrorNombre = _validacionService.ValidarNombreCompleto(Nombre);
+                ErrorEmail = _validacionService.ValidarEmail(Email);
+                ErrorContrasenia = _validacionService.ValidarContrasenia(Contrasenia);
+                ErrorConfirmarContrasenia = _validacionService.ValidarConfirmarContrasenia(Contrasenia, ConfirmarContrasenia);
+                HayErrorEnNombre = !string.IsNullOrEmpty(ErrorNombre);
+                HayErrorEnEmail = !string.IsNullOrEmpty(ErrorEmail);
+                HayErrorEnContrasenia = !string.IsNullOrEmpty(ErrorContrasenia);
+                HayErrorEnConfirmarContrasenia = !string.IsNullOrEmpty(ErrorConfirmarContrasenia);
+
+                // Verifica si hay errores. Si hay sale de la funcion, sino sigue el registro
+                if (HayErrorEnNombre || HayErrorEnEmail || HayErrorEnContrasenia || HayErrorEnConfirmarContrasenia)
+                {
+                    IsBusy = false;
+                    return;
+                }
+
+                //Validacion de si un usuario ya existe con ese email
+                if (await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
+                {
+                    IsBusy = false;
+                    ErrorEmail = "Ya hay un usuario registrado con ese email.";
+                    HayErrorEnEmail = true;
+                    return;
+                }
+
+                //Registro en DB
+                var exito = await _usuarioRepositorio.RegistrarUsuarioAsync(Nombre, Email, Contrasenia);
+                await Task.Delay(500);
+                if (exito)
+                {
+                    //Envia mensaje de registro exitoso a mainpage para mostrar toast
+                    WeakReferenceMessenger.Default.Send(new UsuarioMessages.RegistroExistosoMessage("Te registraste con éxito. Ahora iniciá Sesión"));
+
+                    //Navega a inicio de sesion para que se logee en la app
+                    await Shell.Current.GoToAsync("//Login");
+                }
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "Ocurrió un error inesperado durante el registro. Por favor, intentá nuevamente más tarde.", "Aceptar");
+            }
+            finally
+            {
+                // Oculto el spinner de carga
                 IsBusy = false;
-                return;
             }
-
-            //Validacion de si un usuario ya existe con ese email
-            if (await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
-            {
-                IsBusy = false;
-                ErrorEmail = "Ya hay un usuario registrado con ese email.";
-                HayErrorEnEmail = true;
-                return;
-            }
-
-            //Registro en DB
-            var exito = await _usuarioRepositorio.RegistrarUsuarioAsync(Nombre, Email, Contrasenia);
-            await Task.Delay(500);
-            if (exito)
-            {
-                //Envia mensaje de registro exitoso a mainpage para mostrar toast
-                WeakReferenceMessenger.Default.Send(new UsuarioMessages.RegistroExistosoMessage("Te registraste con éxito. Ahora iniciá Sesión"));
-
-                //Navega a inicio de sesion para que se logee en la app
-                await Shell.Current.GoToAsync("//Login");
-            }
+            
         }
 
         //Metodo para mostrar/ocultar la contraseña
         private void MostrarUOcultarContrasenia()
         {
-            // Capturo el estado actual de la contraseña y el icono a mostrar
-            var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ContraseniaOculta, IconoContrasenia);
-            // Actualizo el estado e icono de la contraseña
-            ContraseniaOculta = resultado.contraseniaOculta;
-            IconoContrasenia = resultado.iconoContrasenia;
+            try
+            {
+                // Capturo el estado actual de la contraseña y el icono a mostrar
+                var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ContraseniaOculta, IconoContrasenia);
+                // Actualizo el estado e icono de la contraseña
+                ContraseniaOculta = resultado.contraseniaOculta;
+                IconoContrasenia = resultado.iconoContrasenia;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cambiar el estado de la contraseña.");
+            }
         }
 
         //Metodo para mostrar/ocultar la confirmacion de la contraseña
         private void MostrarUOcultarConfirmarContrasenia()
         {
-            // Capturo el estado actual de la contraseña y el icono a mostrar
-            var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ConfirmarContraseniaOculta, IconoConfirmarContrasenia);
-            // Actualizo el estado e icono de la contraseña
-            ConfirmarContraseniaOculta = resultado.contraseniaOculta;
-            IconoConfirmarContrasenia = resultado.iconoContrasenia;
+            try
+            {
+                // Capturo el estado actual de la contraseña y el icono a mostrar
+                var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ConfirmarContraseniaOculta, IconoConfirmarContrasenia);
+                // Actualizo el estado e icono de la contraseña
+                ConfirmarContraseniaOculta = resultado.contraseniaOculta;
+                IconoConfirmarContrasenia = resultado.iconoContrasenia;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cambiar el estado de la contraseña.");
+            }
         }
 
         // Implementacion de INotifyPropertyChanged
