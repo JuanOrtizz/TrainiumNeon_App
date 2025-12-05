@@ -103,7 +103,6 @@ namespace TrainiumNeon.ViewModels
             // Capturo el Id del usuario activo (logeado)
             IdUsuarioActivo = _sesionService.ObtenerSesion();
             await ObtenerRutinasAsync();
-            await ObtenerRutinaSeleccioandaAsync();
             IsBusy = false;
         }
 
@@ -141,12 +140,13 @@ namespace TrainiumNeon.ViewModels
             IReadOnlyList<RutinaModel> listaRutinas;
             // Obtengo las rutinas del usuario
             listaRutinas = await _rutinaRepositorio.ObtenerRutinasPorUsuarioAsync(IdUsuarioActivo);
+            var contadorRutinas = 0;
             Rutinas = new ObservableCollection<RutinaModel>(listaRutinas);
-        }
-
-        // Task asincrona para obtener la rutina seleccionada
-        private async Task ObtenerRutinaSeleccioandaAsync()
-        {
+            foreach (var r in listaRutinas)
+            {
+                contadorRutinas++;
+                r.NumeroRutina = contadorRutinas;
+            }
             // cargo la rutina seleccionada
             var rutinaSeleccionada = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
             RutinaSeleccionada = Rutinas.FirstOrDefault(r => r.Id == rutinaSeleccionada.Id);
