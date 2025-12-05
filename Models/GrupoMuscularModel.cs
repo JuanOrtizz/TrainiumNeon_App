@@ -6,6 +6,6 @@ namespace TrainiumNeon.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         [MaxLength(15), Unique]
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
     }
 }

@@ -9,7 +9,7 @@ namespace TrainiumNeon.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         [MaxLength(50)]
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
         // Propiedad para la relacion con el usuario
         [Indexed]
         public int IdUsuario { get; set; } // FK en la DB

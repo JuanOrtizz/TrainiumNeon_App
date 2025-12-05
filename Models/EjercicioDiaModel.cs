@@ -12,7 +12,7 @@ namespace TrainiumNeon.Models
         [Indexed]
         public int IdEjercicio { get; set; } // va a ser la FK en la DB
         [Ignore]
-        public EjercicioModel Ejercicio { get; set; } // Objeto ejercicio al que pertenece el ejercicio del dia
+        public EjercicioModel? Ejercicio { get; set; } // Objeto ejercicio al que pertenece el ejercicio del dia
 
         // Propiedad para la relacion con el dia
         [Indexed]
