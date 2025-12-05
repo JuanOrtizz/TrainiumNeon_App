@@ -15,5 +15,7 @@ namespace TrainiumNeon.Models
         public int IdUsuario { get; set; } // FK en la DB
         public bool EsSeleccionada { get; set; }
         public bool EsBorrador { get; set; }
+        [Ignore]
+        public int NumeroRutina { get; set; }
     }
 }
