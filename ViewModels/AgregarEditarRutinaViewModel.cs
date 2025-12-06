@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
 using TrainiumNeon.Messages;
@@ -21,6 +20,7 @@ namespace TrainiumNeon.ViewModels
         // Servicios y repositorios
         private readonly IValidacionService _validacionService;
         private readonly ISesionService _sesionService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IRutinaRepositorio _rutinaRepositorio;
         private readonly IDiaRepositorio _diaRepositorio;
         private readonly IEjercicioRepositorio _ejercicioRepositorio;
@@ -33,17 +33,16 @@ namespace TrainiumNeon.ViewModels
         private int _idUsuarioActivo;
         private string _accionTitulo = string.Empty;
         private int _idRutina;
-        private RutinaModel _rutina;
+        private RutinaModel? _rutina;
         private string _nombreRutina = string.Empty;
         private string _errorNombreRutina = string.Empty;
         private bool _hayErrorEnNombreRutina;
         private ObservableCollection<DiaModel> _diasSemana = new ObservableCollection<DiaModel>();
-        private DiaModel _diaSeleccionado;
+        private DiaModel? _diaSeleccionado;
         private bool _puedeIrAnterior;
         private bool _puedeIrSiguiente;
         private ObservableCollection<EjercicioDiaModel> _ejerciciosDiaSeleccionado = new ObservableCollection<EjercicioDiaModel>();
         private bool _isBusy;
-        private bool _puedeActualizar = false;
         private bool _alertMostrado = false;
 
         // Propiedades publicas
@@ -85,7 +84,7 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
-        public RutinaModel Rutina
+        public RutinaModel? Rutina
         {
             get => _rutina;
             set 
@@ -147,17 +146,17 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
-        public DiaModel DiaSeleccionado
+        public DiaModel? DiaSeleccionado
         {
             get => _diaSeleccionado;
             set
             {
                 if(_diaSeleccionado != value)
                 {
-                    _diaSeleccionado = value;
-                    _ = CargarEjerciciosDiaSeleccionadoAsync();
+                    _diaSeleccionado = value; 
                     OnPropertyChanged();
                     ActualizarEstadosNavegacionDias();
+                    CargarEjerciciosDiaSeleccionadoCommand.Execute(null);
                 }
             }
         }
@@ -209,18 +208,6 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
-        public bool PuedeActualizar
-        {
-            get => _puedeActualizar;
-            set
-            {
-                if (_puedeActualizar != value)
-                {
-                    _puedeActualizar = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         //Comandos
         public ICommand NavegarAgregarEjercicioCommand { get; }
@@ -229,13 +216,15 @@ namespace TrainiumNeon.ViewModels
         public ICommand EliminarRutinaCommand { get; }
         public ICommand NavegarDiaAnteriorCommand { get; }
         public ICommand NavegarDiaSiguienteCommand { get; }
+        public ICommand CargarEjerciciosDiaSeleccionadoCommand { get; }
 
         // Constructor
-        public AgregarEditarRutinaViewModel(IValidacionService validacionService, ISesionService sesionService, IRutinaRepositorio rutinaRepositorio, IDiaRepositorio diaRepositorio, IEjercicioRepositorio ejercicioRepositorio, IEjercicioDiaRepositorio ejercicioDiaRepositorio)
+        public AgregarEditarRutinaViewModel(IValidacionService validacionService, ISesionService sesionService, IDisplayAlertService displayAlertService, IRutinaRepositorio rutinaRepositorio, IDiaRepositorio diaRepositorio, IEjercicioRepositorio ejercicioRepositorio, IEjercicioDiaRepositorio ejercicioDiaRepositorio)
         {
             // Inicializan servicios y repositorios por DI
             _validacionService = validacionService;
             _sesionService = sesionService;
+            _displayAlertService = displayAlertService;
             _rutinaRepositorio = rutinaRepositorio;
             _diaRepositorio = diaRepositorio;
             _ejercicioRepositorio = ejercicioRepositorio;
@@ -248,6 +237,7 @@ namespace TrainiumNeon.ViewModels
             EliminarRutinaCommand = new Command(async () => await EliminarRutinaAsync());
             NavegarDiaAnteriorCommand = new Command(NavegarDiaAnterior);
             NavegarDiaSiguienteCommand = new Command(NavegarDiaSiguiente);
+            CargarEjerciciosDiaSeleccionadoCommand = new Command(async () => await CargarEjerciciosDiaSeleccionadoAsync());
 
             // Suscripcion a mensajeria para actualizar datos al guardar o eliminar ejercicio de un dia
             WeakReferenceMessenger.Default.RegisterAll(this);
@@ -256,75 +246,99 @@ namespace TrainiumNeon.ViewModels
         //Task asincrona para inicializar desde Code-behind con asincronia y evitar referencias null de Query-Property
         public async Task InicializarAsync()
         {
-            // Capturo el Id del usuario activo
-            IdUsuarioActivo = _sesionService.ObtenerSesion();
-            // Cargo la rutina
-            await CargarRutinaAsync();
+            try
+            {
+                // Capturo el Id del usuario activo
+                IdUsuarioActivo = _sesionService.ObtenerSesion();
+                // Cargo la rutina
+                await CargarRutinaAsync();
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo inicializar la informacion de la rutina. Intentá mas tarde.", "OK");
+            }
         }
 
         // Task asincrona para guardar la rutina
         private async Task GuardarRutinaAsync()
         {
-            // Muestro el spinner 
-            IsBusy = true;
-            // Valida campos
-            ErrorNombreRutina = _validacionService.ValidarNombreRutina(NombreRutina);
-            HayErrorEnNombreRutina = !string.IsNullOrEmpty(ErrorNombreRutina);
-            // Si hay errores salgo de la funcion y oculto el spinner
-            if (HayErrorEnNombreRutina)
+            try
             {
-                IsBusy = false;
-                return;
-            }
-
-            if(NombreRutina != Rutina.Nombre && await _rutinaRepositorio.ExisteRutinaConNombreAsync(IdUsuarioActivo, NombreRutina))
-            {
-                IsBusy = false;
-                ErrorNombreRutina = "Ya existe una rutina con este nombre.";
+                // Muestro el spinner 
+                IsBusy = true;
+                // Valida campos
+                ErrorNombreRutina = _validacionService.ValidarNombreRutina(NombreRutina);
                 HayErrorEnNombreRutina = !string.IsNullOrEmpty(ErrorNombreRutina);
-                return;
+                // Si hay errores salgo de la funcion y oculto el spinner
+                if (HayErrorEnNombreRutina)
+                {
+                    IsBusy = false;
+                    return;
+                }
+
+                if (NombreRutina != Rutina!.Nombre && await _rutinaRepositorio.ExisteRutinaConNombreAsync(IdUsuarioActivo, NombreRutina))
+                {
+                    IsBusy = false;
+                    ErrorNombreRutina = "Ya existe una rutina con este nombre.";
+                    HayErrorEnNombreRutina = !string.IsNullOrEmpty(ErrorNombreRutina);
+                    return;
+                }
+
+                // Actualizo la rutina en la DB
+                await _rutinaRepositorio.ActualizarRutinaVaciaAsync(Rutina!.Id, IdUsuarioActivo, NombreRutina);
+
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaGuardadaMessage("Se Guardó con éxito la rutina."));
+                await Task.Delay(500);
+
+                // Vuelvo para atras al guardar
+                await Shell.Current.GoToAsync("..");
             }
-
-            // Actualizo la rutina en la DB
-            await _rutinaRepositorio.ActualizarRutinaVaciaAsync(Rutina.Id, IdUsuarioActivo, NombreRutina);
-
-            //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
-            WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaGuardadaMessage("Se Guardó con éxito la rutina."));
-            await Task.Delay(500);
-
-            // Actualiza PuedeActualizar y muestra toast de exito
-            PuedeActualizar = false;
-            // Oculto el spinner
-            IsBusy = false;
-
-            // Vuelvo para atras al guardar
-            await Shell.Current.GoToAsync("..");
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo guardar la rutina. Intentá mas tarde", "OK");
+            }
+            finally
+            {
+                // Oculto el spinner
+                IsBusy = false;
+            }          
         }
 
         // Task asincrona para eliminar la rutina
         private async Task EliminarRutinaAsync()
         {
-            if (await _rutinaRepositorio.EsRutinaSeleccionada(IdUsuarioActivo, IdRutina))
+            try
             {
-                // Si no la elimino muestro mensaje de error
-                await Application.Current.MainPage.DisplayAlert("Error", "No se puede eliminar una rutina seleccionada, cambia de rutina seleccionada para poder eliminarla.", "OK");
-                return;
-            }
-            // Elimino la rutina
-            bool eliminado = await _rutinaRepositorio.EliminarRutinaAsync(IdRutina);
-            // Si la elimino
-            if (eliminado)
-            {
-                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
-                WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaEliminadaMessage("Se eliminó con éxito la rutina."));
+                // Muestro spinner de carga
+                IsBusy = true;
+                // Valido si la rutina es seleccionada
+                if (Rutina!.EsSeleccionada)
+                {
+                    // Si no la elimino muestro mensaje de error
+                    await _displayAlertService.MostrarAlertAsync("Error", "No se puede eliminar una rutina seleccionada, cambia de rutina seleccionada para poder eliminarla.", "OK");
+                    return;
+                }
+                // Elimino la rutina
+                bool eliminado = await _rutinaRepositorio.EliminarRutinaAsync(IdRutina);
+                // Si la elimino
+                if (eliminado)
+                {
+                    //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                    WeakReferenceMessenger.Default.Send(new RutinaMessages.RutinaEliminadaMessage("Se eliminó con éxito la rutina."));
 
-                // Vuelvo a la pagina anterior
-                await Shell.Current.GoToAsync("..");
+                    // Vuelvo a la pagina anterior
+                    await Shell.Current.GoToAsync("..");
+                }
             }
-            else
+            catch (Exception)
             {
-                // Si no la elimino muestro mensaje de error
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo eliminar la rutina.", "OK");
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo eliminar la rutina. Intentá de mas tarde.", "OK");
+            }
+            finally
+            {
+                // Oculto spinner de carga
+                IsBusy = false;
             }
         }
 
@@ -352,7 +366,7 @@ namespace TrainiumNeon.ViewModels
                     if (!_alertMostrado)
                     {
                         _alertMostrado = true;
-                        await Application.Current.MainPage.DisplayAlert("Borrador Rutina", "Se cargó con exito el borrador de la rutina que no guardaste.", "OK");
+                        await _displayAlertService.MostrarAlertAsync("Borrador Rutina", "Se cargó con exito el borrador de la rutina que no guardaste.", "OK");
                     }
                     
                     // Salgo de la funcion
@@ -384,15 +398,27 @@ namespace TrainiumNeon.ViewModels
         // Task asincrona para cargar los ejercicios del dia seleccionado
         private async Task CargarEjerciciosDiaSeleccionadoAsync()
         {
-            // Inicializo la lista de ejercicios
-            IReadOnlyList<EjercicioDiaModel> ejerciciosDia;
-            // Capturo los ejercicios del dia y recorro la lista para agregarle el ejercicio y poder acceder a su nombre
-            ejerciciosDia = await _ejercicioDiaRepositorio.ObtenerEjerciciosPorDiaAsync(DiaSeleccionado.Id);
-            foreach(var ed in ejerciciosDia)
+            try
             {
-                ed.Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(ed.IdEjercicio);
+                IsBusy = true;
+                // Inicializo la lista de ejercicios
+                IReadOnlyList<EjercicioDiaModel> ejerciciosDia;
+                // Capturo los ejercicios del dia y recorro la lista para agregarle el ejercicio y poder acceder a su nombre
+                ejerciciosDia = await _ejercicioDiaRepositorio.ObtenerEjerciciosPorDiaAsync(DiaSeleccionado!.Id);
+                foreach (var ed in ejerciciosDia)
+                {
+                    ed.Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(ed.IdEjercicio);
+                }
+                EjerciciosDiaSeleccionado = new ObservableCollection<EjercicioDiaModel>(ejerciciosDia);
             }
-            EjerciciosDiaSeleccionado = new ObservableCollection<EjercicioDiaModel>(ejerciciosDia);
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cargar los ejercicios del dia seleccionado.");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         // Task asincrona para obtener los dias de la rutina y asignarlos a las propiedades DiasSemana y DiaSeleccionado
@@ -408,43 +434,64 @@ namespace TrainiumNeon.ViewModels
         // Metodo para navegar al dia anterior de la semana en la rutina
         private void NavegarDiaAnterior()
         {
-            // Capturo el indice del dia seleccionado
-            var indiceDiaSeleccionado = DiasSemana.IndexOf(DiaSeleccionado);
-            if (indiceDiaSeleccionado > 0)
+            try
             {
-                // Cambio el dia seleccionado al dia anterior 
-                DiaSeleccionado = DiasSemana[indiceDiaSeleccionado - 1];
+                // Capturo el indice del dia seleccionado
+                var indiceDiaSeleccionado = DiasSemana.IndexOf(DiaSeleccionado!);
+                if (indiceDiaSeleccionado > 0)
+                {
+                    // Cambio el dia seleccionado al dia anterior 
+                    DiaSeleccionado = DiasSemana[indiceDiaSeleccionado - 1];
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al navegar al dia anterior.");
             }
         }
 
         // Metodo para navegar al dia siguiente de la semana en la rutina
         private void NavegarDiaSiguiente()
         {
-            // Capturo el indice del dia seleccionado
-            var indiceDiaSeleccionado = DiasSemana.IndexOf(DiaSeleccionado);
-            if (indiceDiaSeleccionado < DiasSemana.Count - 1)
+            try
             {
-                // Cambio el dia seleccionado al dia siguiente 
-                DiaSeleccionado = DiasSemana[indiceDiaSeleccionado + 1];
+                // Capturo el indice del dia seleccionado
+                var indiceDiaSeleccionado = DiasSemana.IndexOf(DiaSeleccionado!);
+                if (indiceDiaSeleccionado < DiasSemana.Count - 1)
+                {
+                    // Cambio el dia seleccionado al dia siguiente 
+                    DiaSeleccionado = DiasSemana[indiceDiaSeleccionado + 1];
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al navegar al dia siguiente.");
             }
         }
 
         // Metodo para actualizar el estado de los botones de navegacion de los dias
         private void ActualizarEstadosNavegacionDias()
         {
-            // Si los dias no son null, 0 o no hay dia seleccionado, retorno
-            if (DiasSemana == null || DiasSemana.Count == 0 || DiaSeleccionado == null)
+            try
             {
-                PuedeIrAnterior = false;
-                PuedeIrSiguiente = false;
-                return;
-            }
+                // Si los dias no son null, 0 o no hay dia seleccionado, retorno
+                if (DiasSemana == null || DiasSemana.Count == 0 || DiaSeleccionado == null)
+                {
+                    PuedeIrAnterior = false;
+                    PuedeIrSiguiente = false;
+                    return;
+                }
 
-            // Capturo el indice del dia seleccionado
-            var indice = DiasSemana.IndexOf(DiaSeleccionado);
-            // Devuelvo si puede volver o avanzar en los dias de la rutina
-            PuedeIrAnterior = indice > 0;
-            PuedeIrSiguiente = indice < DiasSemana.Count - 1;
+                // Capturo el indice del dia seleccionado
+                var indice = DiasSemana.IndexOf(DiaSeleccionado);
+                // Devuelvo si puede volver o avanzar en los dias de la rutina
+                PuedeIrAnterior = indice > 0;
+                PuedeIrSiguiente = indice < DiasSemana.Count - 1;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al actualizar los estados de navegacion de los dias.");
+            }
         }
 
         // Task asincrona para navegar a agregar ejercicio
@@ -467,23 +514,36 @@ namespace TrainiumNeon.ViewModels
         // Implementacion de IRecipient para EjercicioDia guardado
         public async void Receive(EjercicioDiaMessages.EjercicioDiaGuardadoMessage message)
         {
-            // Actualizo la lista de ejercicios del dia seleccionado
-            await CargarEjerciciosDiaSeleccionadoAsync();
+            try
+            {
+                // Actualizo la lista de ejercicios del dia seleccionado
+                await CargarEjerciciosDiaSeleccionadoAsync();
 
-            // Muestro un toast de confirmacion
-            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
-            await toast.Show();
+                // Muestro un toast de confirmacion
+                var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+                await toast.Show();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cargar los ejercicios del dia despues de EjercicioDia guardado.");
+            }
         }
 
         // Implementacion de IRecipient para EjercicioDia eliminado
         public async void Receive(EjercicioDiaMessages.EjercicioDiaEliminadoMessage message)
         {
-            // Actualizo la lista de ejercicios del dia seleccionado
-            await CargarEjerciciosDiaSeleccionadoAsync();
-
-            // Muestro un toast de confirmacion
-            var toast = Toast.Make(message.mensaje, ToastDuration.Short);
-            await toast.Show();
+            try
+            {
+                // Actualizo la lista de ejercicios del dia seleccionado
+                await CargarEjerciciosDiaSeleccionadoAsync();
+                // Muestro un toast de confirmacion
+                var toast = Toast.Make(message.mensaje, ToastDuration.Short);
+                await toast.Show();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cargar los ejercicios del dia despues de EjercicioDia eliminado.");
+            }
         }
 
     }
