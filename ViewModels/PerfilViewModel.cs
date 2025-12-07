@@ -42,8 +42,8 @@ namespace TrainiumNeon.ViewModels
         private bool _hayErrorEnEmail;
         private bool _hayErrorEnNuevaContrasenia;
         private bool _hayErrorEnConfirmarNuevaContrasenia;
-        private bool _nuevaContraseniaOculta;
-        private bool _confirmarNuevaContraseniaOculta;
+        private bool _nuevaContraseniaOculta = true;
+        private bool _confirmarNuevaContraseniaOculta = true;
         private string _iconoNuevaContrasenia = "ver_contrasenia.png";
         private string _iconoConfirmarNuevaContrasenia = "ver_contrasenia.png";
         private bool _isBusy;
@@ -454,6 +454,8 @@ namespace TrainiumNeon.ViewModels
                 //Actualiza la contraseña del usuario en la DB
                 await _usuarioRepositorio.ActualizarContraseniaUsuarioAsync(IdUsuarioActivo, NuevaContrasenia);
                 await Task.Delay(500);
+                NuevaContrasenia = string.Empty;
+                ConfirmarNuevaContrasenia = string.Empty;
                 // Muestra toast de éxito
                 var toast = Toast.Make("Actualizaste tu contraseña con éxito.", ToastDuration.Short);
                 await toast.Show();
