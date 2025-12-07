@@ -319,6 +319,11 @@ namespace TrainiumNeon.ViewModels
                     await _displayAlertService.MostrarAlertAsync("Error", "No se puede eliminar una rutina seleccionada, cambia de rutina seleccionada para poder eliminarla.", "OK");
                     return;
                 }
+                var confirmacion = await _displayAlertService.MostrarAlertConConfirmacionAsync("Eliminar Rutina", "¿Estás seguro que deseas eliminar esta rutina?", "Sí", "No");
+                if (!confirmacion)
+                {
+                    return;
+                }
                 // Elimino la rutina
                 bool eliminado = await _rutinaRepositorio.EliminarRutinaAsync(IdRutina);
                 // Si la elimino
