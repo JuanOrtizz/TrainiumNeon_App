@@ -4,187 +4,189 @@
              x:Class="TrainiumNeon.Views.DetalleEjercicio"
              Shell.NavBarIsVisible="True"
              >
+    <ScrollView>
 
-    <Grid>
-
-        <Grid
-        Padding="30,20"
-        RowDefinitions="Auto,Auto, Auto"
-        RowSpacing="50"
-        BackgroundColor="#1A2745">
+        <Grid>
 
             <Grid
-            Grid.Row="0"
-            RowDefinitions="*,*"
-            ColumnDefinitions="Auto,*"
-            ColumnSpacing="20"
-            >
-
-                <Border
-                StrokeShape="RoundRectangle 5"
-                HeightRequest="150"
-                WidthRequest="150"
-                Grid.Row="0"
-                Grid.RowSpan="2"
-                Grid.Column="0"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
+                Padding="30,20"
+                RowDefinitions="Auto,Auto, Auto"
+                RowSpacing="50"
+                BackgroundColor="#1A2745"
                 >
 
-                    <Image>
-                        <Image.Source>
-                            <UriImageSource 
-                            Uri="{Binding ImagenUrlEjercicio}"
-                            CachingEnabled="True"
-                            CacheValidity="30.00:00:00"
-                            />
-                        </Image.Source>
-                    </Image>
-
-                </Border>
-
-                <Label
-                Grid.Row="0"
-                Grid.Column="1"
-                Text="{Binding NombreEjercicio}"
-                FontSize="18"
-                TextColor="White"
-                FontAttributes="Bold"
-                />
-
-                <Label
-                x:Name="LabelGrupoMuscular"
-                Grid.Row="1"
-                Grid.Column="1"
-                FontSize="16">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="Grupo Muscular: " TextColor="White" FontAttributes="Bold"/>
-                            <Span Text="{Binding BindingContext.GrupoMuscularEjercicio, Source={x:Reference LabelGrupoMuscular}}" TextColor="#00F0FF" FontAttributes="Bold"/>
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-
-            </Grid>
-
-            <Label
-            Grid.Row="1"
-            FontSize="18"
-            HorizontalOptions="Center"
-            >
-
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Incluido en " 
-                          TextColor="White"/>
-                        <Span Text="{Binding AparicionesEnRutinas}" 
-                          TextColor="#00CDDB"/>
-                        <Span Text=" rutina/s" 
-                          TextColor="White"/>
-                    </FormattedString>
-                </Label.FormattedText>
-
-            </Label>
-
-            <Grid
-            Grid.Row="2"
-            RowDefinitions="Auto, Auto, Auto"
-            RowSpacing="20">
-
-                <Label
-                Grid.Row="0"
-                Text="Personal Record (PR)"
-                FontSize="20"
-                FontAttributes="Bold"
-                TextColor="White"
-                />
-
-                <VerticalStackLayout
-                Spacing="5"
-                Grid.Row="1"
-                >
+                <Grid
+                    Grid.Row="0"
+                    RowDefinitions="*,*"
+                    ColumnDefinitions="Auto,*"
+                    ColumnSpacing="20"
+                    >
 
                     <Border
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 5"
-                    StrokeThickness="2"
-                    Stroke="Gray"
-                    HeightRequest="50"
-                    Padding="5,0,5,0"
-                    >
-                        <Border.Triggers>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding Source={x:Reference PREntry}, Path=IsFocused}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding HayErrorEnPersonalRecord}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                        StrokeShape="RoundRectangle 5"
+                        HeightRequest="150"
+                        WidthRequest="150"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        >
 
-
-                        <Entry
-                        x:Name="PREntry"
-                        Grid.Row="1"
-                        Placeholder="Ingresa tu Personal Record"
-                        Text="{Binding PersonalRecord}"
-                        PlaceholderColor="Black"
-                        FontSize="16"
-                        MaxLength="3"
-                        BackgroundColor="Transparent"
-                        Keyboard="Numeric"
-                        TextColor="Black"
-                        />
+                        <Image>
+                            <Image.Source>
+                                <UriImageSource 
+                                Uri="{Binding ImagenUrlEjercicio}"
+                                CachingEnabled="True"
+                                CacheValidity="30.00:00:00"
+                                />
+                            </Image.Source>
+                        </Image>
 
                     </Border>
 
                     <Label
-                    Text="{Binding ErrorPersonalRecord}"
-                    FontSize="14"
-                    TextColor="Red"
-                    IsVisible="{Binding HayErrorEnPersonalRecord}"
-                    />
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Text="{Binding NombreEjercicio}"
+                        FontSize="18"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        />
 
-                </VerticalStackLayout>
+                    <Label
+                        x:Name="LabelGrupoMuscular"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        FontSize="16">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Grupo Muscular: " TextColor="White" FontAttributes="Bold"/>
+                                <Span Text="{Binding BindingContext.GrupoMuscularEjercicio, Source={x:Reference LabelGrupoMuscular}}" TextColor="#00F0FF" FontAttributes="Bold"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
-                <Button
-                    CornerRadius="5"
-                    Grid.Row="2"
-                    Text="Guardar"
-                    FontAttributes="Bold"
-                    BackgroundColor="#00CDDB"
+                </Grid>
+
+                <Label
+                    Grid.Row="1"
                     FontSize="18"
-                    HeightRequest="50"
-                    TextColor="Black"
-                    Command="{Binding GuardarPersonalRecordCommand}"
-                    />
+                    HorizontalOptions="Center"
+                    >
 
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Incluido en " 
+                              TextColor="White"/>
+                            <Span Text="{Binding AparicionesEnRutinas}" 
+                              TextColor="#00CDDB"/>
+                            <Span Text=" rutina/s" 
+                              TextColor="White"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+
+                </Label>
+
+                <Grid
+                    Grid.Row="2"
+                    RowDefinitions="Auto, Auto, Auto"
+                    RowSpacing="20">
+
+                    <Label
+                        Grid.Row="0"
+                        Text="Personal Record (PR)"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        />
+
+                    <VerticalStackLayout
+                        Spacing="5"
+                        Grid.Row="1"
+                        >
+
+                        <Border
+                            BackgroundColor="White"
+                            StrokeShape="RoundRectangle 5"
+                            StrokeThickness="2"
+                            Stroke="Gray"
+                            HeightRequest="50"
+                            Padding="5,0,5,0"
+                            >
+                            <Border.Triggers>
+                                <DataTrigger
+                                    TargetType="Border"
+                                    Binding="{Binding Source={x:Reference PREntry}, Path=IsFocused}"
+                                    Value="True"
+                                    >
+                                    <Setter Property="Stroke" Value="#00F0FF" />
+                                </DataTrigger>
+                                <DataTrigger
+                                    TargetType="Border"
+                                    Binding="{Binding HayErrorEnPersonalRecord}"
+                                    Value="True"
+                                    >
+                                    <Setter Property="Stroke" Value="Red" />
+                                </DataTrigger>
+                            </Border.Triggers>
+
+
+                            <Entry
+                                x:Name="PREntry"
+                                Grid.Row="1"
+                                Placeholder="Ingresa tu Personal Record"
+                                Text="{Binding PersonalRecord}"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="3"
+                                BackgroundColor="Transparent"
+                                Keyboard="Numeric"
+                                TextColor="Black"
+                                />
+
+                        </Border>
+
+                        <Label
+                            Text="{Binding ErrorPersonalRecord}"
+                            FontSize="14"
+                            TextColor="Red"
+                            IsVisible="{Binding HayErrorEnPersonalRecord}"
+                            />
+
+                    </VerticalStackLayout>
+
+                    <Button
+                        CornerRadius="5"
+                        Grid.Row="2"
+                        Text="Guardar"
+                        FontAttributes="Bold"
+                        BackgroundColor="#00CDDB"
+                        FontSize="18"
+                        HeightRequest="50"
+                        TextColor="Black"
+                        Command="{Binding GuardarPersonalRecordCommand}"
+                        />
+
+                </Grid>
             </Grid>
+
+            <Grid
+                IsVisible="{Binding IsBusy}"
+                BackgroundColor="#40000000"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"
+                ZIndex="999">
+
+                <ActivityIndicator
+                    IsRunning="True"
+                    Scale="1.5"
+                    Color="#00F0FF"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"/>
+            </Grid>
+
         </Grid>
-
-        <Grid
-            IsVisible="{Binding IsBusy}"
-            BackgroundColor="#40000000"
-            VerticalOptions="Fill"
-            HorizontalOptions="Fill"
-            ZIndex="999">
-
-            <ActivityIndicator
-                IsRunning="True"
-                Scale="1.5"
-                Color="#00F0FF"
-                VerticalOptions="Center"
-                HorizontalOptions="Center"/>
-        </Grid>
-
-
-    </Grid>
-
+    </ScrollView>
+    
 </ContentPage>
