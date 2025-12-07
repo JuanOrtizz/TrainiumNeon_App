@@ -10,7 +10,7 @@ using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<EjercicioDiaMessages.EjercicioDiaGuardadoMessage>, IRecipient<EjercicioDiaMessages.EjercicioDiaEliminadoMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>
+    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<EjercicioDiaMessages.EjercicioDiaGuardadoMessage>, IRecipient<EjercicioDiaMessages.EjercicioDiaEliminadoMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>, IRecipient<RutinaMessages.RutinaGuardadaMessage>
     {
         //Servicios y repositorios
         private readonly ISesionService _sesionService;
@@ -174,7 +174,6 @@ namespace TrainiumNeon.ViewModels
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-
         // Implementacion de IRecipient para Ejercicio agregado/modificado en un dia
         public async void Receive(EjercicioDiaMessages.EjercicioDiaGuardadoMessage message)
         {
@@ -224,6 +223,19 @@ namespace TrainiumNeon.ViewModels
             catch
             {
                 Console.WriteLine("No se pudo actualizar la informacion del usuario en el Menu Principal");
+            }
+        }
+
+        // Implementacion de IRecipient para RutinaSeleccionada actualizada
+        public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionRutinaAsync();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("No se pudo actualizar la rutina guardada en el Menu Principal");
             }
         }
     }
