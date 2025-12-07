@@ -432,7 +432,7 @@ namespace TrainiumNeon.ViewModels
                     }
                     else
                     {
-                        var toast = Toast.Make("No se realizaste modificaciones.", ToastDuration.Short);
+                        var toast = Toast.Make("No realizaste modificaciones.", ToastDuration.Short);
                         await toast.Show();
                         return;
                     }
