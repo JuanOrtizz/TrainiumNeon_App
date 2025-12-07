@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -415,7 +417,26 @@ namespace TrainiumNeon.ViewModels
                 // Si es editar, lo actualizo en la DB
                 else if (AccionTitulo == "Editar")
                 {
-                    await _ejercicioDiaRepositorio.ActualizarEjercicioDiaAsync(EjercicioDia!.Id, DiaSeleccionado!.Id, seriesInt, repeticionesInt);
+                    if (DiaSeleccionado!.Id != EjercicioDia!.IdDia || seriesInt != EjercicioDia.Series || repeticionesInt != EjercicioDia.Repeticiones)
+                    {
+                        if (DiaSeleccionado.Id != EjercicioDia.IdDia)
+                        {
+                            if (await _ejercicioDiaRepositorio.ExisteEjercicioDiaEnDiaAsync(DiaSeleccionado.Id, EjercicioSeleccionado.Id))
+                            {
+                                ErrorEjercicioSeleccionado = $"Ya existe este ejercicio en el dia {DiaSeleccionado.Nombre}";
+                                HayErrorEnEjercicioSeleccionado = !string.IsNullOrEmpty(ErrorEjercicioSeleccionado);
+                                return;
+                            }
+                        }
+                        await _ejercicioDiaRepositorio.ActualizarEjercicioDiaAsync(EjercicioDia!.Id, DiaSeleccionado!.Id, seriesInt, repeticionesInt);
+                    }
+                    else
+                    {
+                        var toast = Toast.Make("No se realizaste modificaciones.", ToastDuration.Short);
+                        await toast.Show();
+                        return;
+                    }
+                    
                 }
 
                 //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
