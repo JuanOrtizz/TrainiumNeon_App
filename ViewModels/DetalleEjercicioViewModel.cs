@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -228,6 +230,10 @@ namespace TrainiumNeon.ViewModels
                 }
                 // Actualizo el PR en la base de datos
                 await _ejercicioRepositorio.ActualizarPersonalRecordAsync(IdEjercicio, nuevoPR);
+
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new EjercicioMessages.PRActualizadoMessage());
+
                 await Task.Delay(500);
                 // Muestro toast de exito
                 var toast = Toast.Make("Actualizaste tu Personal Record", ToastDuration.Short);
