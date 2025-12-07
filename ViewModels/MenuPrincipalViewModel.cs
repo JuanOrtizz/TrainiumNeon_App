@@ -27,6 +27,7 @@ namespace TrainiumNeon.ViewModels
         private string _nombreUsuario = string.Empty;
         private string _rutinaSeleccionadaNombre = string.Empty;
         private ObservableCollection<EjercicioDiaModel> _ejerciciosDelDia = new ObservableCollection<EjercicioDiaModel>();
+        private bool _isBusy;
 
         // Propiedades publicas
         public int IdUsuarioActivo
@@ -79,6 +80,18 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         //Constructor
         public MenuPrincipalViewModel(ISesionService sesionService, IDisplayAlertService displayAlertService, IUsuarioRepositorio usuarioRepositorio, IRutinaRepositorio rutinaRepositorio, IDiaRepositorio diaRepositorio, IEjercicioDiaRepositorio ejercicioDiaRepositorio,IEjerciciosSyncService ejerciciosSyncService, IEjercicioRepositorio ejercicioRepositorio)
@@ -101,6 +114,8 @@ namespace TrainiumNeon.ViewModels
         {
             try
             {
+                // Muestro spinner de carga
+                IsBusy = true;
                 // Sincroniza los ejercicios al cargar menu principal (Si hay internet)
                 await _ejerciciosSyncService.SincronizarEjerciciosAsync();
                 // Carga los datos iniciales (UsuarioActivo, NombreUsuario, RutinaSeleccionada y EjerciciosDelDia)
@@ -109,6 +124,11 @@ namespace TrainiumNeon.ViewModels
             catch (Exception)
             {
                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo inicializar el menú principal", "OK");
+            }
+            finally
+            {
+                // Oculto spinner de carga
+                IsBusy = false;
             }
         }
 
