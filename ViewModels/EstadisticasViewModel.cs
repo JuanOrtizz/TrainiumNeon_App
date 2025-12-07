@@ -1,15 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 using TrainiumNeon.Views;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class EstadisticasViewModel : INotifyPropertyChanged
+    public class EstadisticasViewModel : INotifyPropertyChanged, IRecipient<EjercicioMessages.PRActualizadoMessage>
     {
         // Servicio y Repositorios
         private readonly IDisplayAlertService _displayAlertService;
@@ -102,6 +104,8 @@ namespace TrainiumNeon.ViewModels
             // Inicializa comando
             ActualizarEjerciciosCommand = new Command(async () => await ActualizarEjerciciosAsync());
             VerDetallesEjercicioCommand = new Command<EjercicioModel>(async (ejercicio) => await NavegarDetallesEjercicioAsync(ejercicio));
+            // Suscripcion a mensajeria de EjercicioMessages
+            WeakReferenceMessenger.Default.Register(this);
         }
 
         //Task asincrona para cargar datos iniciales (Grupos musculares y Ejercicios)
@@ -203,5 +207,19 @@ namespace TrainiumNeon.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+        // Implementacion de IRecipient para recibir mensaje de PR actualizado
+        public async void Receive(EjercicioMessages.PRActualizadoMessage message)
+        {
+            try
+            {
+                await ActualizarEjerciciosAsync();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al actualizar la lista despues de actualizar PR de ejercicio.");
+            }
+        }
     }
 }
