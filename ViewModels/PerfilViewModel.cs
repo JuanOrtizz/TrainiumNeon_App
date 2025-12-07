@@ -520,9 +520,16 @@ namespace TrainiumNeon.ViewModels
                     // Si no se otorgaron los permisos, aviso y desactivo el switch
                     if (!await _permisosService.SolicitarPermisosNotificacionesAsync())
                     {
-                        await _displayAlertService.MostrarAlertAsync("Permisos requeridos", "Tenes que permitir el permiso para que la app te envie notificaciones.", "OK");
-                        NotificacionesActivas = false;
-                        return;
+                        // Aviso al usuario que debe activar los permisos en configuracion
+                        var confirmacion = await _displayAlertService.MostrarAlertConConfirmacionAsync("Permiso denegado", "Debes otorgar permiso para que la app te envie notificaciones.", "Ir a permisos", "OK");
+                        // Si el usuario no quiere ir a configuracion, salgo
+                        if (!confirmacion)
+                        {
+                            NotificacionesActivas = false;
+                            return;
+                        }
+                        // Abro la configuracion de la app
+                        AppInfo.ShowSettingsUI();
                     }
                     // Si se otorgaron los permisos, programo la notificacion diaria
                     else
