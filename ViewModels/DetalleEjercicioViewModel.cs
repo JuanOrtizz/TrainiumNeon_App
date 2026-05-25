@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -12,18 +14,19 @@ namespace TrainiumNeon.ViewModels
     [QueryProperty(nameof(IdEjercicio), "idEjercicio")]
     public class DetalleEjercicioViewModel: INotifyPropertyChanged
     {
-        // Servicio y repositorio
+        // Servicios y repositorios
         private readonly IValidacionService _validacionService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IEjercicioRepositorio _ejercicioRepositorio;
         private readonly IGrupoMuscularRepositorio _grupoMuscularRepositorio;
         private readonly IEstadisticasRepositorio _estadisticasRepositorio;
 
         // Propiedades privadas
         private int _idEjercicio;
-        private EjercicioModel _ejercicio;
+        private EjercicioModel? _ejercicio;
         private string _nombreEjercicio = string.Empty;
         private string _grupoMuscularEjercicio = string.Empty;
-        private string _ImagenUrlEjercicio = string.Empty;
+        private string _imagenUrlEjercicio = string.Empty;
         private int _aparicionesEnRutinas;
         private string _personalRecord = string.Empty;
         private string _errorPersonalRecord = string.Empty;
@@ -39,11 +42,11 @@ namespace TrainiumNeon.ViewModels
                 if(_idEjercicio != value)
                 {
                     _idEjercicio = value;
-                    _ = CargarEjercicioAsync();
+                    OnPropertyChanged();
                 } 
             }
         }
-        public EjercicioModel Ejercicio
+        public EjercicioModel? Ejercicio
         {
             get => _ejercicio;
             set
@@ -83,13 +86,13 @@ namespace TrainiumNeon.ViewModels
         }
         public string ImagenUrlEjercicio
         {
-            get => _ImagenUrlEjercicio;
+            get => _imagenUrlEjercicio;
             set
             {
                 var nuevoValor = value?.Trim() ?? string.Empty;
-                if (_ImagenUrlEjercicio != nuevoValor)
+                if (_imagenUrlEjercicio != nuevoValor)
                 {
-                    _ImagenUrlEjercicio = nuevoValor;
+                    _imagenUrlEjercicio = nuevoValor;
                     OnPropertyChanged();
                 }
             }
@@ -161,10 +164,11 @@ namespace TrainiumNeon.ViewModels
         public ICommand GuardarPersonalRecordCommand { get; }
 
         // Constructor
-        public DetalleEjercicioViewModel(IValidacionService validacionService, IEjercicioRepositorio ejercicioRepositorio, IGrupoMuscularRepositorio grupoMuscularRepositorio, IEstadisticasRepositorio estadisticasRepositorio)
+        public DetalleEjercicioViewModel(IValidacionService validacionService, IDisplayAlertService displayAlertService , IEjercicioRepositorio ejercicioRepositorio, IGrupoMuscularRepositorio grupoMuscularRepositorio, IEstadisticasRepositorio estadisticasRepositorio)
         {
-            // Inicializa servicio y repositorio por DI
+            // Inicializa servicio y repositorios por DI
             _validacionService = validacionService;
+            _displayAlertService = displayAlertService;
             _ejercicioRepositorio = ejercicioRepositorio;
             _grupoMuscularRepositorio = grupoMuscularRepositorio;
             _estadisticasRepositorio = estadisticasRepositorio;
@@ -173,44 +177,76 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Task asincrona para cargar detalles del ejercicio
-        private async Task CargarEjercicioAsync()
+        public async Task InicializarAsync()
         {
-            // Muestro spinner de carga
-            IsBusy = true;
-            // Capturo el ejercicio, su grupo muscular y las apariciones en rutinas de ese ejercicio
-            Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(IdEjercicio);
-            var grupoMuscular = await _grupoMuscularRepositorio.ObtenerGrupoMuscularPorIdAsync(Ejercicio.IdGrupoMuscular);
-            AparicionesEnRutinas = await _estadisticasRepositorio.ObtenerCantidadDeAparicionesEnRutinasAsync(IdEjercicio);
-            //Actualizo propiedades
-            NombreEjercicio = Ejercicio.Nombre;
-            GrupoMuscularEjercicio = grupoMuscular.Nombre;
-            ImagenUrlEjercicio = Ejercicio.ImagenUrl ?? "default_ejercicio.webp";
-            PersonalRecord = Ejercicio.PersonalRecord.ToString();
-            // Oculto spinner de carga
-            IsBusy = false;
-
+            try
+            {
+                // Muestro spinner de carga
+                IsBusy = true;
+                // Capturo el ejercicio, su grupo muscular y las apariciones en rutinas de ese ejercicio
+                Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(IdEjercicio);
+                var grupoMuscular = await _grupoMuscularRepositorio.ObtenerGrupoMuscularPorIdAsync(Ejercicio.IdGrupoMuscular);
+                AparicionesEnRutinas = await _estadisticasRepositorio.ObtenerCantidadDeAparicionesEnRutinasAsync(IdEjercicio);
+                //Actualizo propiedades
+                NombreEjercicio = Ejercicio.Nombre;
+                GrupoMuscularEjercicio = grupoMuscular.Nombre;
+                ImagenUrlEjercicio = Ejercicio.ImagenUrl ?? "default_ejercicio.webp";
+                PersonalRecord = Ejercicio.PersonalRecord.ToString();
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudieron cargar los detalles del ejercicio. Intentá mas tarde.", "OK");
+            }
+            finally
+            {
+                // Oculto spinner de carga
+                IsBusy = false;
+            }
         }
 
         // Task asincrona para guardar personal record
         private async Task GuardarPersonalRecordAsync()
         {
-            // Muestro el spinner de carga
-            IsBusy = true;
-            // Valido campo
-            ErrorPersonalRecord = _validacionService.ValidarPR(PersonalRecord);
-            HayErrorEnPersonalRecord = !string.IsNullOrEmpty(ErrorPersonalRecord);
-            if (HayErrorEnPersonalRecord)
+            try
+            {
+                // Muestro el spinner de carga
+                IsBusy = true;
+                // Valido campo
+                ErrorPersonalRecord = _validacionService.ValidarPR(PersonalRecord);
+                HayErrorEnPersonalRecord = !string.IsNullOrEmpty(ErrorPersonalRecord);
+                if (HayErrorEnPersonalRecord)
+                {
+                    return;
+                }
+                // Si no hay errors parseo el PR y verifico si hubo cambios
+                if (!int.TryParse(PersonalRecord, out var nuevoPR))
+                {
+                    Console.WriteLine("Error al parsear el Personal Record.");
+                    return;
+                }
+                if (nuevoPR == Ejercicio?.PersonalRecord)
+                {
+                    return; // No hay cambios y salgo de la funcion para evitar llamada innecesaria a la base de datos
+                }
+                // Actualizo el PR en la base de datos
+                await _ejercicioRepositorio.ActualizarPersonalRecordAsync(IdEjercicio, nuevoPR);
+
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new EjercicioMessages.PRActualizadoMessage());
+
+                await Task.Delay(500);
+                // Muestro toast de exito
+                var toast = Toast.Make("Actualizaste tu Personal Record", ToastDuration.Short);
+                await toast.Show();
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo actualizar el PR del ejercicio.", "OK");
+            }
+            finally
             {
                 IsBusy = false;
-                return;
             }
-            // Si no hay errores, guarda el PR
-            var nuevoPR = int.Parse(PersonalRecord);
-            await _ejercicioRepositorio.ActualizarPersonalRecordAsync(IdEjercicio, nuevoPR);
-            await Task.Delay(500);
-            IsBusy = false;
-            var toast = Toast.Make("Actualizaste tu Personal Record", ToastDuration.Short);
-            await toast.Show();
         }
 
         // Implementacion de INotifyPropertyChanged

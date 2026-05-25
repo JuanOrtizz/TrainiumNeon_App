@@ -6,14 +6,15 @@ namespace TrainiumNeon.ViewModels
 {
     public class GimnasiosViewModel : INotifyPropertyChanged
     {
-        // Servicio
+        // Servicios
         private readonly IPermisosService _permisosService;
+        private readonly IDisplayAlertService _displayAlertService;
 
         //Propiedades privadas
         private bool _isBusy;
 
         // Propiedades publicas
-        private bool IsBusy
+        public bool IsBusy
         {
             get => _isBusy;
             set
@@ -27,14 +28,14 @@ namespace TrainiumNeon.ViewModels
         }
 
         // Constructor
-        public GimnasiosViewModel(IPermisosService permisosService)
+        public GimnasiosViewModel(IPermisosService permisosService, IDisplayAlertService displayAlertService)
         {
-            // Inicializa servicio por DI
+            // Inicializan servicios por DI
             _permisosService = permisosService;
-            _ = InicializarAsync();
+            _displayAlertService = displayAlertService;
         }
 
-        private async Task InicializarAsync()
+        public async Task InicializarAsync()
         {
             // Pido el permiso de ubicacion
             if (await _permisosService.SolicitarUbicacionAsync())
@@ -42,38 +43,51 @@ namespace TrainiumNeon.ViewModels
                 try
                 {
                     IsBusy = true;
-                    // Capturo 
+                    // solicito la ubicacion con precision media y timeout de 10 segundos
                     var ubicacionRequest = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
-                    // Capturo la ubicacion
-                    var ubicacion = await Geolocation.GetLocationAsync(ubicacionRequest);
-                    // Si la ubicacion no es null
-                    if (ubicacion != null)
+                    if (ubicacionRequest != null)
                     {
-                        
-                    }
-                }// Manejo excepciones
+                        // Capturo la ubicacion
+                        var ubicacion = await Geolocation.GetLocationAsync(ubicacionRequest);
+                        // Si la ubicacion no es null
+                        if (ubicacion != null)
+                        {
+                            // Uso la ubicacion para el radar de gimnasios
+                            Console.WriteLine($"Latitud: {ubicacion.Latitude}, Longitud: {ubicacion.Longitude}");
+                        }
+                    }  
+                }
                 catch (FeatureNotSupportedException)
                 {
-                    await App.Current.MainPage.DisplayAlert("Error", "GPS no disponible en este dispositivo.", "Aceptar");
+                    await _displayAlertService.MostrarAlertAsync("Error", "GPS no disponible en este dispositivo.", "OK");
                 }
                 catch (PermissionException)
                 {
-                    // Capturo si el usuario apreta ir a permisos
-                    var abrirAjustes = await App.Current.MainPage.DisplayAlert("Permiso denegado", "Debe otorgar acceso a ubicación.", "Ir a permisos", "Cancelar");
-                    // Si abrirAjustes es true navega a la pantalla de ajustes de la app
-                    if (abrirAjustes)
-                    {
-                        AppInfo.ShowSettingsUI();
-                    }
+                    await SolicitarPermisosUbicacionAlertAsync();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    await App.Current.MainPage.DisplayAlert("Error", ex.Message, "Aceptar");
+                    await _displayAlertService.MostrarAlertAsync("Error", "No se pudieron conceder los permisos de ubicación. Revisa los permisos de la app e intentá nuevamente.", "Aceptar");
                 }
                 finally
                 {
                     IsBusy = false;
                 }
+            }
+            else
+            {
+                await SolicitarPermisosUbicacionAlertAsync();
+            }
+        }
+
+        private async Task SolicitarPermisosUbicacionAlertAsync()
+        {
+            // Capturo si el usuario apreta ir a permisos
+            var abrirAjustes = await _displayAlertService.MostrarAlertConConfirmacionAsync("Permiso denegado", "Debes otorgar acceso a ubicación para encontrar los gimnasios mas cercanos.", "Ir a permisos", "OK");
+            // Si abrirAjustes es true navega a la pantalla de ajustes de la app
+            if (abrirAjustes)
+            {
+                AppInfo.ShowSettingsUI();
             }
         }
 

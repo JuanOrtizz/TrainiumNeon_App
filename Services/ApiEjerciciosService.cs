@@ -29,8 +29,8 @@ namespace TrainiumNeon.Services
                 // Capturo la respuesta de la api
                 var response = await _httpClient.GetAsync("ejercicios");
                 // Proceso la respuesta
-                return await ProcesarRespuestaAsyncApi<List<EjercicioModel>>(response, "No se encontraron los ejercicios. Intentá de nuevo");
-            }// Capturo y lanzo nuevas excepciones para manejarlas desde ViewModel
+                return await ProcesarRespuestaAsyncApi<List<EjercicioModel>>(response);
+            }// Capturo y lanzo nuevas excepciones para manejarlas desde el servicio de sincronizacion
             catch (HttpRequestException)
             {
                 throw new Exception("Error de red al obtener los ejercicios. Verificá tu conexión o intenta nuevamente.");
@@ -43,15 +43,15 @@ namespace TrainiumNeon.Services
             {
                 throw new Exception("No se pudo interpretar la respuesta de la API");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Error inesperado al obtener los ejercicios");
+                throw new Exception($"Error: {ex.Message}");
             }
         }
 
 
         //Task privada para reutilizar codigo
-        private async Task<T> ProcesarRespuestaAsyncApi<T>(HttpResponseMessage response, string error404Mensaje)
+        private async Task<T> ProcesarRespuestaAsyncApi<T>(HttpResponseMessage response)
         {
             // Si la respuesta no es exitosa analizo el codigo de Error y lanzo la excepcion
             if (!response.IsSuccessStatusCode)
@@ -59,19 +59,19 @@ namespace TrainiumNeon.Services
                 switch (response.StatusCode)
                 {
                     case System.Net.HttpStatusCode.NotFound: // 404
-                        throw new Exception(error404Mensaje);
+                        throw new Exception("No se encontraron los ejercicios. Intentá mas tarde.");
 
                     case System.Net.HttpStatusCode.BadRequest: // 400
-                        throw new Exception("Solicitud inválida. Verificá los parámetros enviados");
+                        throw new Exception("Solicitud inválida. Verificá los parámetros enviados.");
 
                     case System.Net.HttpStatusCode.Unauthorized: // 401
-                        throw new Exception("No autorizado. Verificá tus credenciales");
+                        throw new Exception("No autorizado. Verificá tus credenciales.");
 
                     case System.Net.HttpStatusCode.InternalServerError: // 500
-                        throw new Exception("Error del servidor. Intenta nuevamente más tarde");
+                        throw new Exception("Error del servidor. Intentá mas tarde.");
 
                     default: // Cualquier otro codigo http
-                        throw new Exception($"Error inesperado. Intentá de nuevo");
+                        throw new Exception($"Error inesperado. Intentá mas tarde.");
                 }
             }
 

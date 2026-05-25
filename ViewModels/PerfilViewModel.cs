@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using Plugin.LocalNotification;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
 
@@ -17,15 +19,16 @@ namespace TrainiumNeon.ViewModels
 
         // Servicios y repositorios 
         private readonly IValidacionService _validacionService;
-        private readonly ISesionService _sesionService;
+        private readonly IEstadoContraseniaService _estadoContraseniaService;
         private readonly IPermisosService _permisosService;
         private readonly INotificacionService _notificacionService;
-        private readonly IEstadoContraseniaService _estadoContraseniaService;
+        private readonly ISesionService _sesionService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         // Propiedades privadas
         private int _idUsuarioActivo;
-        private UsuarioModel _usuario;
+        private UsuarioModel? _usuario;
         private bool _notificacionesActivas;
         private string _nombre = string.Empty;
         private string _email = string.Empty;
@@ -39,8 +42,8 @@ namespace TrainiumNeon.ViewModels
         private bool _hayErrorEnEmail;
         private bool _hayErrorEnNuevaContrasenia;
         private bool _hayErrorEnConfirmarNuevaContrasenia;
-        private bool _nuevaContraseniaOculta;
-        private bool _confirmarNuevaContraseniaOculta;
+        private bool _nuevaContraseniaOculta = true;
+        private bool _confirmarNuevaContraseniaOculta = true;
         private string _iconoNuevaContrasenia = "ver_contrasenia.png";
         private string _iconoConfirmarNuevaContrasenia = "ver_contrasenia.png";
         private bool _isBusy;
@@ -59,7 +62,7 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
-        public UsuarioModel Usuario
+        public UsuarioModel? Usuario
         {
             get => _usuario;
             set
@@ -79,8 +82,8 @@ namespace TrainiumNeon.ViewModels
                 if (_notificacionesActivas != value)
                 {
                     _notificacionesActivas = value;
-                    _ = ProcesarCambioNotificacionesAsync();
                     OnPropertyChanged();
+                    ProcesarCambioNotificacionesCommand.Execute(null);
                 }
             }
         }
@@ -93,8 +96,8 @@ namespace TrainiumNeon.ViewModels
                 if (_nombre != nuevoValor)
                 {
                     _nombre = nuevoValor;
-                    _ = EstadoEdicionDeDatos();
                     OnPropertyChanged();
+                    EstadoEdicionDeDatosCommand.Execute(null);
                 }
             }
         }
@@ -107,8 +110,8 @@ namespace TrainiumNeon.ViewModels
                 if (_email != nuevoValor)
                 {
                     _email = nuevoValor;
-                    _ = EstadoEdicionDeDatos();
                     OnPropertyChanged();
+                    EstadoEdicionDeDatosCommand.Execute(null);
                 }
             }
         }
@@ -314,6 +317,8 @@ namespace TrainiumNeon.ViewModels
         }
 
         //Comandos
+        public ICommand ProcesarCambioNotificacionesCommand { get; }
+        public ICommand EstadoEdicionDeDatosCommand { get; }
         public ICommand CambiarDatosPersonalesCommand { get; }
         public ICommand CambiarContraseniaCommand { get; }
         public ICommand CambiarEstadoNuevaContraseniaCommand { get; }
@@ -321,22 +326,237 @@ namespace TrainiumNeon.ViewModels
         public ICommand CerrarSesionCommand { get; }
 
         // Constructor
-        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IPermisosService permisosService, INotificacionService notificacionService, IUsuarioRepositorio usuarioRepositorio, ISesionService sesionService)
+        public PerfilViewModel(IValidacionService validacionService, IEstadoContraseniaService estadoContraseniaService, IPermisosService permisosService, INotificacionService notificacionService, ISesionService sesionService, IDisplayAlertService displayAlertService, IUsuarioRepositorio usuarioRepositorio)
         {
             // Inicializan servicios y repositorios por DI
             _validacionService = validacionService;
             _estadoContraseniaService = estadoContraseniaService;
             _permisosService = permisosService;
             _notificacionService = notificacionService;
-            _usuarioRepositorio = usuarioRepositorio;
             _sesionService = sesionService;
+            _displayAlertService = displayAlertService;
+            _usuarioRepositorio = usuarioRepositorio;
             // Inicializan comandos
+            ProcesarCambioNotificacionesCommand = new Command(async () => await ProcesarCambioNotificacionesAsync());
+            EstadoEdicionDeDatosCommand = new Command(async () => await EstadoEdicionDeDatos());
             CambiarDatosPersonalesCommand = new Command(async () => await CambiarDatosPersonalesAsync());
             CambiarContraseniaCommand = new Command(async () => await CambiarContraseniaAsync());
             CambiarEstadoNuevaContraseniaCommand = new Command(MostrarUOcultarNuevaContrasenia);
             CambiarEstadoConfirmarNuevaContraseniaCommand = new Command(MostrarUOcultarConfirmarNuevaContrasenia);
             CerrarSesionCommand = new Command(async () => await CerrarSesion());
             
+        }
+
+        // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario y EmailUsuario)
+        public async Task InicializarAsync()
+        {
+            try
+            {
+                // muestro el spinner de carga
+                IsBusy = true;
+                // Capturo el id del usuario activo y si tiene activas las notificaciones
+                IdUsuarioActivo = _sesionService.ObtenerSesion();
+                NotificacionesActivas = Preferences.Get(NotificacionesKey, false);
+                OnPropertyChanged(nameof(NotificacionesActivas));
+                // Si no hay usuario activo salgo y muestro el Login
+                if (IdUsuarioActivo <= 0)
+                {
+                    await Shell.Current.GoToAsync("//Login");
+                    return;
+                }
+                // Capturo el usuario y cargo los datos iniciales para el VM
+                Usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
+                Nombre = Usuario.Nombre;
+                Email = Usuario.Email;
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudieron cargar tus datos. Intentá mas tarde.", "OK");
+            }
+            finally
+            {
+                // oculto el spinner de carga
+                IsBusy = false;
+            }
+           
+        }
+
+        // Task asincrona para cambiar datos personales (Nombre-Email)
+        private async Task CambiarDatosPersonalesAsync()
+        {
+            try
+            {
+                // muestro el spinner de carga
+                IsBusy = true;
+                // Validaciones de campos
+                ErrorNuevoNombre = _validacionService.ValidarNombreCompleto(Nombre);
+                ErrorNuevoEmail = _validacionService.ValidarEmail(Email);
+                HayErrorEnNuevoNombre = !string.IsNullOrEmpty(ErrorNuevoNombre);
+                HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
+
+                // Verifica si hay errores
+                if (HayErrorEnNuevoNombre || HayErrorEnNuevoEmail)
+                {
+                    return;
+                }
+
+                // Validacion de si un usuario ya existe con ese email
+                if (Email != Usuario?.Email && await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
+                {
+                    ErrorNuevoEmail = "Ya hay un usuario registrado con ese email.";
+                    HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
+                    return;
+                }
+
+                // Actualiza los datos del usuario en la DB
+                await _usuarioRepositorio.ActualizarNombreUsuarioAsync(IdUsuarioActivo, Nombre);
+                await _usuarioRepositorio.ActualizarEmailUsuarioAsync(IdUsuarioActivo, Email);
+
+                //Envia mensaje de actualizacion para que se actualicen los datos en otros viewModels
+                WeakReferenceMessenger.Default.Send(new UsuarioMessages.UsuarioActualizadoMessage());
+
+                await Task.Delay(500);
+                // Actualiza PuedeActualizar y muestra toast de exito
+                PuedeActualizar = false;
+                var toast = Toast.Make("Actualizaste tus datos con éxito.", ToastDuration.Short);
+                await toast.Show();
+
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudieron actualizar tus datos. Intentá mas tarde.", "OK");
+            }
+            finally
+            {       
+                // oculto el spinner de carga
+                IsBusy = false;
+            }
+        }
+
+        // Task asincrona para cambiar contraseña
+        private async Task CambiarContraseniaAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                // Validaciones de campos
+                ErrorNuevaContrasenia = _validacionService.ValidarContrasenia(NuevaContrasenia);
+                ErrorConfirmarNuevaContrasenia = _validacionService.ValidarConfirmarContrasenia(NuevaContrasenia, ConfirmarNuevaContrasenia);
+                HayErrorEnNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorNuevaContrasenia);
+                HayErrorEnConfirmarNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorConfirmarNuevaContrasenia);
+
+                // Verifica si hay errores. Si hay sale de la funcion, sino sigue el update
+                if (HayErrorEnNuevaContrasenia || HayErrorEnConfirmarNuevaContrasenia)
+                {
+                    return;
+                }
+
+                //Actualiza la contraseña del usuario en la DB
+                await _usuarioRepositorio.ActualizarContraseniaUsuarioAsync(IdUsuarioActivo, NuevaContrasenia);
+                await Task.Delay(500);
+                NuevaContrasenia = string.Empty;
+                ConfirmarNuevaContrasenia = string.Empty;
+                // Muestra toast de éxito
+                var toast = Toast.Make("Actualizaste tu contraseña con éxito.", ToastDuration.Short);
+                await toast.Show();
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo cambiar la contraseña. Intentá mas tarde.", "OK");
+            }
+            finally
+            {
+                // Oculta el spinner de carga
+                IsBusy = false;
+            } 
+        }
+
+        //Metodo para mostrar/ocultar la nueva contraseña
+        private void MostrarUOcultarNuevaContrasenia()
+        {
+            try
+            {
+                var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(NuevaContraseniaOculta, IconoNuevaContrasenia);
+                NuevaContraseniaOculta = resultado.contraseniaOculta;
+                IconoNuevaContrasenia = resultado.iconoContrasenia;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cambiar el estado de la nueva contrasenia.");
+            }
+        }
+
+        //Metodo para mostrar/ocultar la confirmacion de la nueva contraseña
+        private void MostrarUOcultarConfirmarNuevaContrasenia()
+        {
+            try
+            {
+                var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ConfirmarNuevaContraseniaOculta, IconoConfirmarNuevaContrasenia);
+                ConfirmarNuevaContraseniaOculta = resultado.contraseniaOculta;
+                IconoConfirmarNuevaContrasenia = resultado.iconoContrasenia;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al cambiar el estado de la confirmacion de la nueva contrasenia.");
+            }
+        }
+
+        //Task asincrona para cerrar sesion y navegar a login
+        private async Task CerrarSesion()
+        {
+            // Borro el IdUsuario de preferences y navego a Login
+            _sesionService.CerrarSesion();
+            await Shell.Current.GoToAsync("//Login");
+        }
+
+        // Task asincrona para solicitar permisos de notificacion al cambiar el valor del switch
+        private async Task ProcesarCambioNotificacionesAsync()
+        {
+            try
+            {
+                // Cargar valor guardado
+                Preferences.Set(NotificacionesKey, NotificacionesActivas);
+                // si es true, solicitar permisos y programar notificacion diaria
+                if (NotificacionesActivas)
+                {
+                    // Si no se otorgaron los permisos, aviso y desactivo el switch
+                    if (!await _permisosService.SolicitarPermisosNotificacionesAsync())
+                    {
+                        // Aviso al usuario que debe activar los permisos en configuracion
+                        var confirmacion = await _displayAlertService.MostrarAlertConConfirmacionAsync("Permiso denegado", "Debes otorgar permiso para que la app te envie notificaciones.", "Ir a permisos", "OK");
+                        // Si el usuario no quiere ir a configuracion, salgo
+                        if (!confirmacion)
+                        {
+                            NotificacionesActivas = false;
+                            return;
+                        }
+                        // Abro la configuracion de la app
+                        AppInfo.ShowSettingsUI();
+                    }
+                    // Si se otorgaron los permisos, programo la notificacion diaria
+                    else
+                    {
+                        // Programo la notificacion diaria para las 10 am
+                        var hora = DateTime.Today.AddHours(10);
+                        // Si la hora ya paso para hoy, la programo para mañana
+                        if (hora < DateTime.Now)
+                        {
+                            hora = hora.AddDays(1);
+                        }
+                        // Envio notificacion diaria
+                        _notificacionService.EnviarNotificacion("¡Vamos a entrenar!", "No te olvides de asistir al gimnasio para obtener los mejores resultados", hora, true);
+                    }
+                }
+                else
+                {
+                    // Cancelar todas Si el usuario las desactiva
+                    LocalNotificationCenter.Current.CancelAll();
+                }
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo activar el sistema de notificaciones. Intentá mas tarde.", "OK");
+            }
         }
 
         // Task asincrona para controlar el estado de si puede editar sus datos (Nombre y Email)
@@ -352,151 +572,6 @@ namespace TrainiumNeon.ViewModels
                 PuedeActualizar = true;
             }
         }
-
-        // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario y EmailUsuario)
-        public async Task CargarDatosUsuarioAsync()
-        {
-            // Capturo el id del usuario activo
-            IdUsuarioActivo = _sesionService.ObtenerSesion();
-            NotificacionesActivas = Preferences.Get(NotificacionesKey, false);
-            OnPropertyChanged(nameof(NotificacionesActivas));
-            // Si no hay usuario activo salgo y muestro el Login
-            if (IdUsuarioActivo <= 0)
-            {
-                await Shell.Current.GoToAsync("//Login");
-                return;
-            }
-            // Capturo el usuario y cargo los datos iniciales para el VM
-            Usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
-            Nombre = Usuario.Nombre;
-            Email = Usuario.Email;
-        }
-
-        // Task asincrona para cambiar datos personales (Nombre-Email)
-        private async Task CambiarDatosPersonalesAsync()
-        {
-
-            IsBusy = true;
-            // Validaciones de campos
-            ErrorNuevoNombre = _validacionService.ValidarNombreCompleto(Nombre);
-            ErrorNuevoEmail = _validacionService.ValidarEmail(Email);
-            HayErrorEnNuevoNombre = !string.IsNullOrEmpty(ErrorNuevoNombre);
-            HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
-
-            // Verifica si hay errores
-            if (HayErrorEnNuevoNombre || HayErrorEnNuevoEmail)
-            {
-                IsBusy = false;
-                return;
-            }
-
-
-            // Validacion de si un usuario ya existe con ese email
-            if (Email != Usuario.Email && await _usuarioRepositorio.ExisteUsuarioConEmailAsync(Email))
-            {
-                IsBusy = false;
-                ErrorNuevoEmail = "Ya hay un usuario registrado con ese email.";
-                HayErrorEnNuevoEmail = !string.IsNullOrEmpty(ErrorNuevoEmail);
-                return;
-            }
-
-            // Actualiza los datos del usuario en la DB
-            await _usuarioRepositorio.ActualizarNombreUsuarioAsync(IdUsuarioActivo, Nombre);
-            await _usuarioRepositorio.ActualizarEmailUsuarioAsync(IdUsuarioActivo, Email);
-            await Task.Delay(500);
-            // Actualiza PuedeActualizar y muestra toast de exito
-            PuedeActualizar = false;
-            var toast = Toast.Make("Actualizaste tus datos con éxito.", ToastDuration.Short);
-            await toast.Show();
-            IsBusy = false;
-        }
-
-        // Task asincrona para cambiar contraseña
-        private async Task CambiarContraseniaAsync()
-        {
-            IsBusy = true;
-            // Validaciones de campos
-            ErrorNuevaContrasenia = _validacionService.ValidarContrasenia(NuevaContrasenia);
-            ErrorConfirmarNuevaContrasenia = _validacionService.ValidarConfirmarContrasenia(NuevaContrasenia, ConfirmarNuevaContrasenia);
-            HayErrorEnNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorNuevaContrasenia);
-            HayErrorEnConfirmarNuevaContrasenia = !string.IsNullOrWhiteSpace(ErrorConfirmarNuevaContrasenia);
-
-            // Verifica si hay errores. Si hay sale de la funcion, sino sigue el update
-            if (HayErrorEnNuevaContrasenia || HayErrorEnConfirmarNuevaContrasenia)
-            {
-                IsBusy = false;
-                return;
-            }
-
-            //Actualiza la contraseña del usuario en la DB
-            await _usuarioRepositorio.ActualizarContraseniaUsuarioAsync(IdUsuarioActivo, NuevaContrasenia);
-            await Task.Delay(500);
-            // Muestra toast de éxito
-            var toast = Toast.Make("Actualizaste tu contraseña con éxito.", ToastDuration.Short);
-            await toast.Show();
-            IsBusy = false;
-        }
-
-        //Metodo para mostrar/ocultar la nueva contraseña
-        private void MostrarUOcultarNuevaContrasenia()
-        {
-            var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(NuevaContraseniaOculta, IconoNuevaContrasenia);
-            NuevaContraseniaOculta = resultado.contraseniaOculta;
-            IconoNuevaContrasenia = resultado.iconoContrasenia;
-        }
-
-        //Metodo para mostrar/ocultar la confirmacion de la nueva contraseña
-        private void MostrarUOcultarConfirmarNuevaContrasenia()
-        {
-            var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ConfirmarNuevaContraseniaOculta, IconoConfirmarNuevaContrasenia);
-            ConfirmarNuevaContraseniaOculta = resultado.contraseniaOculta;
-            IconoConfirmarNuevaContrasenia = resultado.iconoContrasenia;
-        }
-
-        //Task asincrona para cerrar sesion y navegar a login
-        private async Task CerrarSesion()
-        {
-            // Borro el IdUsuario de preferences y navego a Login
-            _sesionService.CerrarSesion();
-            await Shell.Current.GoToAsync("//Login");
-        }
-
-        // Task asincrona para solicitar permisos de notificacion al cambiar el valor del switch
-        private async Task ProcesarCambioNotificacionesAsync()
-        {
-            // Cargar valor guardado
-            Preferences.Set(NotificacionesKey, NotificacionesActivas);
-            if (NotificacionesActivas)
-            {
-                if (!await _permisosService.SolicitarPermisosNotificacionesAsync())
-                {
-                    await Application.Current.MainPage.DisplayAlert(
-                        "Permisos requeridos",
-                        "Tenes que permitir el permiso para que la app te envie notificaciones.",
-                        "OK");
-
-                    NotificacionesActivas = false;
-                    return;
-                }
-                else
-                {
-
-                    // Programo la notificacion diaria para las 10 am
-                    var hora = DateTime.Today.AddHours(10);
-                    if (hora < DateTime.Now)
-                    {
-                        hora = hora.AddDays(1);
-                    }
-                    _notificacionService.EnviarNotificacion("¡Vamos a entrenar!","No te olvides de asistir al gimnasio para obtener los mejores resultados", hora, true);
-                }
-            }
-            else
-            {
-                // Cancelar todas sI el usuario las desactiva
-                LocalNotificationCenter.Current.CancelAll();
-            }
-        }
-
 
         // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,20 +1,23 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Services;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MainPageViewModel: INotifyPropertyChanged
+    public class MainPageViewModel: INotifyPropertyChanged, IRecipient<UsuarioMessages.RegistroExistosoMessage>
     {
 
         // Servicios y repositorio
         private readonly IEstadoContraseniaService _estadoContraseniaService;
         private readonly ISesionService _sesionService;
         private readonly IValidacionService _validacionService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         // Propiedades privadas
@@ -148,59 +151,69 @@ namespace TrainiumNeon.ViewModels
         public ICommand RegistroCommand { get; }
         public ICommand CambiarEstadoContraseniaCommand { get; }
 
-        public MainPageViewModel(IEstadoContraseniaService estadoContraseniaService, ISesionService sesionService, IValidacionService validacionService, IUsuarioRepositorio usuarioRepositorio)
+        public MainPageViewModel(IEstadoContraseniaService estadoContraseniaService, ISesionService sesionService, IValidacionService validacionService, IDisplayAlertService displayAlertService, IUsuarioRepositorio usuarioRepositorio)
         {
             // Inicializan servicios y repositorio por DI
             _estadoContraseniaService = estadoContraseniaService;
             _sesionService = sesionService;
             _validacionService = validacionService;
+            _displayAlertService = displayAlertService;
             _usuarioRepositorio = usuarioRepositorio;
             // Inicializan comandos
             IniciarSesionCommand = new Command(async () => await IniciarSesionAsync());
             RegistroCommand = new Command(async () => await RegistrarseAsync());
             CambiarEstadoContraseniaCommand = new Command(MostrarUOcultarContrasenia);
-            // Suscripcion a mensaje de registro exitoso para mostrar toast
-            MessagingCenter.Subscribe<RegistroViewModel>(this, "RegistroExitoso", async (sender) =>
-            {
-                var toast = Toast.Make("Registro exitoso. Ahora inicia sesión.", ToastDuration.Short);
-                await toast.Show();
-            });
+            // Suscripcion a mensajeria de UsuarioMessages
+            WeakReferenceMessenger.Default.Register(this);
         }
 
         // Task asincrona para iniciar sesion
         private async Task IniciarSesionAsync()
         {
-            // Muestro spinner de carga
-            IsBusy = true;
-            // Valido que los campos no esten vacios
-            ErrorEmail = _validacionService.ValidarCampoVacio(Email);
-            ErrorContrasenia = _validacionService.ValidarCampoVacio(Contrasenia);
-            HayErrorEnEmail = !string.IsNullOrEmpty(ErrorEmail);
-            HayErrorEnContrasenia = !string.IsNullOrEmpty(ErrorContrasenia);
-            
-            if (HayErrorEnContrasenia || HayErrorEnEmail)
+            try
             {
+                // Muestro spinner de carga
+                IsBusy = true;
+                // Valido que los campos no esten vacios
+                ErrorEmail = _validacionService.ValidarCampoVacio(Email);
+                ErrorContrasenia = _validacionService.ValidarCampoVacio(Contrasenia);
+                HayErrorEnEmail = !string.IsNullOrEmpty(ErrorEmail);
+                HayErrorEnContrasenia = !string.IsNullOrEmpty(ErrorContrasenia);
+
+                // Si hay errores oculto el spinner y salgo
+                if (HayErrorEnContrasenia || HayErrorEnEmail)
+                {
+                    IsBusy = false;
+                    return;
+                }
+
+                // Obtengo el idUsuario, si es 0 no se pudo iniciar sesion, sino inicia sesion 
+                var usuarioId = await _usuarioRepositorio.IniciarSesionAsync(Email, Contrasenia);
+                await Task.Delay(500);
+                if (usuarioId == 0)
+                {
+                    IsBusy = false; // Oculto el spinner de carga 
+                    ErrorEmail = "Correo electrónico o contraseña incorrectos.";
+                    HayErrorEnEmail = true;
+                    HayErrorEnContrasenia = true;
+                    return;
+                }
+
+                // Guarda el usuario en preferences
+                _sesionService.GuardarSesion(usuarioId);
+
+                // Muestro MenuPrincipal al iniciar sesion
+                await Shell.Current.GoToAsync("//MenuPrincipal");
+            }
+            catch (Exception)
+            {
+                await _displayAlertService.MostrarAlertAsync("Error", "No se pudo iniciar sesión. Inténtalo de nuevo más tarde.", "OK");
+            }
+            finally
+            {
+                // Oculto el spinner de carga
                 IsBusy = false;
-                return;
             }
-
-            // Obtengo el idUsuario, si es 0 no se pudo iniciar sesion, sino inicia sesion 
-            var usuarioId = await _usuarioRepositorio.IniciarSesionAsync(Email, Contrasenia);
-            await Task.Delay(500);
-            if (usuarioId == 0)
-            {
-                IsBusy = false; // Oculto el spinner de carga 
-                ErrorEmail = "Correo electrónico o contraseña incorrectos.";
-                HayErrorEnEmail = true;
-                HayErrorEnContrasenia = true;
-                return;
-            }
-
-            // Guarda el usuario en preferences
-            _sesionService.GuardarSesion(usuarioId);
-            IsBusy = false;
-            // Muestro MenuPrincipal al iniciar sesion
-            await Shell.Current.GoToAsync("//MenuPrincipal");
         }
 
         // Task privada para navegar a pagina de registro
@@ -212,16 +225,37 @@ namespace TrainiumNeon.ViewModels
         //Metodo para mostrar/ocultar la contraseña
         private void MostrarUOcultarContrasenia()
         {
-            // Obtengo el estado de la contraseña
-            var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ContraseniaOculta, IconoContrasenia);
-            // Actualizo los valores en el viewModel
-            ContraseniaOculta = resultado.contraseniaOculta;
-            IconoContrasenia = resultado.iconoContrasenia;
+            try
+            {
+                // Obtengo el estado de la contraseña
+                var resultado = _estadoContraseniaService.CambiarEstadoContrasenia(ContraseniaOculta, IconoContrasenia);
+                // Actualizo los valores en el viewModel
+                ContraseniaOculta = resultado.contraseniaOculta;
+                IconoContrasenia = resultado.iconoContrasenia;
+            }
+            catch
+            {
+                Console.WriteLine("No se pudo cambiar el estado de la contraseña");
+            }
         }
 
         // Implementacion de INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Implementacion de IRecipient para recibir mensaje de registro exitoso
+        public async void Receive(UsuarioMessages.RegistroExistosoMessage message)
+        {
+            try
+            {
+                await Toast.Make(message.mensaje, ToastDuration.Short).Show();
+            }
+            catch
+            {
+                Console.WriteLine("No se pudo mostrar toast de confirmación de registro exitoso");
+            }
+
+        }
     }
 }

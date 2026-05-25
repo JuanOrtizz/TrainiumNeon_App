@@ -6,19 +6,25 @@ namespace TrainiumNeon.Services
     {
         public void EnviarNotificacion(string titulo, string mensaje, DateTime? programarHorario = null, bool repetirDiariamente = false)
         {
-            var programarNotificacion = programarHorario.HasValue ? new NotificationRequestSchedule
-            {
-                NotifyTime = programarHorario.Value,
-                RepeatType = repetirDiariamente ? NotificationRepeat.Daily : NotificationRepeat.No
-            }: null;
 
+            // creo la notificacion
             var notification = new NotificationRequest
             {
                 Title = titulo,
                 Description = mensaje,
-                Schedule = programarNotificacion
             };
 
+            // programo la notificacion si se especifica un horario
+            if (programarHorario.HasValue)
+            {
+                notification.Schedule = new NotificationRequestSchedule
+                {
+                    NotifyTime = programarHorario.Value,
+                    RepeatType = repetirDiariamente ? NotificationRepeat.Daily : NotificationRepeat.No
+                };
+            }
+
+            // envio la notificacion al sistema
             LocalNotificationCenter.Current.Show(notification);
         }
     }

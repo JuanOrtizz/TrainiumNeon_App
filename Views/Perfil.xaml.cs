@@ -4,7 +4,9 @@ namespace TrainiumNeon.Views;
 
 public partial class Perfil : ContentPage
 {
-	public Perfil(PerfilViewModel vm)
+    private bool _inicializado = false;
+
+    public Perfil(PerfilViewModel vm)
 	{
 		InitializeComponent();
         BindingContext = vm;
@@ -13,8 +15,14 @@ public partial class Perfil : ContentPage
     {
         base.OnAppearing();
 
-        if (BindingContext is PerfilViewModel vm)
-            await vm.CargarDatosUsuarioAsync();
+        if (!_inicializado)
+        {
+            _inicializado = true;
+            if (BindingContext is PerfilViewModel vm)
+            {
+                await vm.InicializarAsync();
+            }
+        }
     }
 
 }

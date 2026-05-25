@@ -33,6 +33,7 @@ namespace TrainiumNeon
             builder.Services.AddSingleton<ISesionService, SesionService>();
             builder.Services.AddSingleton<IPermisosService, PermisosService>();
             builder.Services.AddSingleton<INotificacionService, NotificacionService>();
+            builder.Services.AddSingleton<IDisplayAlertService, DisplayAlertService>();
 
             // Base de datos y repositorios
             builder.Services.AddSingleton<DatabaseService>(sp =>
@@ -80,18 +81,19 @@ namespace TrainiumNeon
             // Construyo la app e inicio la DB y registros de datos iniciales.
             var app = builder.Build();
 
+            // Inicialización async de la base de datos
+            _ = InicializarAsync(app);
+
             //Patron observer para que DiaRepositorio se suscriba a RutinaRepositorio
             // capturo los repos
             var rutinaRepo = app.Services.GetRequiredService<IRutinaRepositorio>();
             var diaRepo = app.Services.GetRequiredService<IDiaRepositorio>();
-            //Suscribo el metodo CrearDiasAsync (diaRepo) al evento CreandoRutina (rutinaRepo)
-            rutinaRepo.CreandoRutina += async (idRutina) =>
-            {
-                await diaRepo.CrearDiasAsync(idRutina);
-            };
 
-            // Inicialización async de la base de datos
-            _ = InicializarAsync(app);
+            //Suscribo el metodo CrearDiasAsync (diaRepo) al evento CreandoRutina (rutinaRepo)
+            rutinaRepo.CreandoRutina += (idRutina) =>
+            {
+               return diaRepo.CrearDiasAsync(idRutina);
+            };
 
             return app;
         }

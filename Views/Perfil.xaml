@@ -33,30 +33,43 @@
                     <Border
                         Grid.Row="1"
                         Grid.Column="0"
+                        Grid.ColumnSpan="2"
                         Stroke="#00F0FF"
                         StrokeShape="RoundRectangle 5"
                         StrokeThickness="2"
-                        Padding="10"
-                        HorizontalOptions="Start"
+                        Padding="10,5"
+                        HorizontalOptions="Fill"
                         VerticalOptions="Center"
                         >
+
+                        <Grid
+                            ColumnDefinitions="*, Auto"
+                            ColumnSpacing="15">
+                            
                             <Label
-                            Text="Permitir notificaciones"
-                            FontSize="16"
-                            FontAttributes="Bold"
-                            />
-                        
+                                Grid.Column="0"
+                                Text="Permitir notificaciones"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                TextColor="White"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                />
+
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding NotificacionesActivas, Mode=TwoWay}"
+                                OnColor="#00CDDB"
+                                Scale="1.2"
+                                ThumbColor="White"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"/>
+                            
+                        </Grid>
+
                     </Border>
 
-                    <Switch
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        IsToggled="{Binding NotificacionesActivas, Mode=TwoWay}"
-                        OnColor="#00CDDB"
-                        Scale="1.2"
-                        ThumbColor="White"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"/>
+                    
 
                 </Grid>
                 
@@ -161,15 +174,16 @@
                             </Border.Triggers>
 
                             <Entry
-                            x:Name="EmailEntry"
-                            PlaceholderColor="Black"
-                            FontSize="16"
-                            MaxLength="254"
-                            Placeholder="Coloca tu nuevo email"
-                            BackgroundColor="Transparent"
-                            Text="{Binding Email}"
-                            TextColor="Black"
-                            />
+                                x:Name="EmailEntry"
+                                PlaceholderColor="Black"
+                                FontSize="16"
+                                MaxLength="254"
+                                Placeholder="Coloca tu nuevo email"
+                                BackgroundColor="Transparent"
+                                Text="{Binding Email}"
+                                TextColor="Black"
+                                Keyboard="Email"                                
+                                />
 
                         </Border>
 

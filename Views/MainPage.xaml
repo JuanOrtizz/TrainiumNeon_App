@@ -5,259 +5,265 @@
              NavigationPage.HasNavigationBar="False"
              >
 
-    <Grid
-        BackgroundColor="#3D4245"
-        RowDefinitions="2.5*,7.5*"
-        ColumnDefinitions="*"
-        RowSpacing="20"
-        >
-
-        <Border
-            StrokeShape="RoundRectangle 0,0, 100, 100"
-            StrokeThickness="0"
-            >
-            <Grid 
-               Grid.Row="0"
-               BackgroundColor="#00A7B3"
-               >
-                <VerticalStackLayout
-                    Padding="10"
-                    Spacing="20"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    >
-
-                    <Label Text="¡Bienvenido!"
-                       FontSize="32"
-                       TextColor="White"
-                       FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"
-                       />
-
-                    <Label Text="Inicia Sesión"
-                       FontSize="24"
-                       TextColor="White"
-                       FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"
-                       />
-
-                </VerticalStackLayout>
-            </Grid>
-        </Border>
-
-        <Grid 
-           Grid.Row="1"
-           Padding="30,20"
-           >
-            <VerticalStackLayout
-                Spacing="20"
-                VerticalOptions="Start"
+    <ScrollView>
+        <Grid>
+            <Grid
+                BackgroundColor="#3D4245"
+                RowDefinitions="2.5*,7.5*"
+                ColumnDefinitions="*"
+                RowSpacing="20"
                 >
-
-                <VerticalStackLayout
-                    Spacing="5">
-
-                    <Border
-                        StrokeShape="RoundRectangle 5"
-                        StrokeThickness="2"
-                        Stroke="Gray"
-                        >
-                        <Border.Triggers>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding Source={x:Reference EmailEntry}, Path=IsFocused}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding HayErrorEnEmail}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
-
-                        <Grid
-                            Padding="10"
-                            RowDefinitions="*"
-                            ColumnDefinitions="1*, 9*"
-                            RowSpacing="200"
-                            BackgroundColor="#f0f0f0"
-                            VerticalOptions="Center"
-                            HorizontalOptions="Fill"
-                            HeightRequest="50"
-                            >
-
-                            <Image
-                                Grid.Column="0"
-                                Source="email.png"
-                                WidthRequest="20"
-                                HeightRequest="20"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                />
-
-                            <Entry
-                                x:Name="EmailEntry"
-                                Grid.Column="1"
-                                Placeholder="Email"
-                                PlaceholderColor="Black"
-                                FontSize="16"
-                                MaxLength="254"
-                                HeightRequest="50"
-                                BackgroundColor="Transparent"
-                                Text="{Binding Email}"
-                                TextColor="Black"
-                                />
-
-                        </Grid>
-
-                    </Border>
-
-                    <Label
-                        Text="{Binding ErrorEmail}"
-                        FontSize="14"
-                        TextColor="Red"
-                        IsVisible="{Binding HayErrorEnEmail}"
-                        />
-
-                </VerticalStackLayout>
-
-                <VerticalStackLayout
-                    Spacing="5">
-                    
-                    <Border
-                        StrokeShape="RoundRectangle 5"
-                        StrokeThickness="2"
-                        Stroke="Gray"
-                        >
-                        <Border.Triggers>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding Source={x:Reference ContraseniaEntry}, Path=IsFocused}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="#00F0FF" />
-                            </DataTrigger>
-                            <DataTrigger
-                                TargetType="Border"
-                                Binding="{Binding HayErrorEnContrasenia}"
-                                Value="True"
-                                >
-                                <Setter Property="Stroke" Value="Red" />
-                            </DataTrigger>
-                        </Border.Triggers>
-
-                        <Grid
-                            Padding="10"
-                            RowDefinitions="*"
-                            ColumnDefinitions="1*, 8*, 1*"
-                            RowSpacing="200"
-                            BackgroundColor="#f0f0f0"
-                            VerticalOptions="Center"
-                            HorizontalOptions="Fill"
-                            HeightRequest="50"
-                            >
-
-                            <Image
-                                Grid.Column="0"
-                                Source="contrasenia.png"
-                                WidthRequest="20"
-                                HeightRequest="20"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                />
-
-                            <Entry
-                                x:Name="ContraseniaEntry"
-                                Grid.Column="1"
-                                Placeholder="Contraseña"
-                                PlaceholderColor="Black"
-                                FontSize="16"
-                                IsPassword="{Binding ContraseniaOculta}"
-                                MaxLength="25"
-                                HeightRequest="50"
-                                BackgroundColor="Transparent"
-                                Text="{Binding Contrasenia}"
-                                TextColor="Black"
-                                />
-
-                            <Image
-                                Grid.Column="2"
-                                Source="{Binding IconoContrasenia}"
-                                WidthRequest="25"
-                                HeightRequest="25"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                >
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding CambiarEstadoContraseniaCommand}" />
-                                </Image.GestureRecognizers>
-                            </Image>
-
-                        </Grid>
-                    </Border>
-
-                    <Label
-                        Text="{Binding ErrorContrasenia}"
-                        FontSize="14"
-                        TextColor="Red"
-                        IsVisible="{Binding HayErrorEnContrasenia}"
-                        />
-
-            </VerticalStackLayout>
-
-                <VerticalStackLayout
-                    Spacing="20"
+                
+                <Border
+                    StrokeShape="RoundRectangle 0,0, 100, 100"
+                    StrokeThickness="0"
                     >
+                    <Grid 
+                       Grid.Row="0"
+                       BackgroundColor="#00A7B3"
+                       >
+                        <VerticalStackLayout
+                            Padding="10"
+                            Spacing="20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            >
 
-                    <Button
-                        CornerRadius="5"
-                        Text="Ingresar"
-                        FontAttributes="Bold"
-                        BackgroundColor="#00CDDB"
-                        FontSize="18"
-                        HeightRequest="50"
-                        TextColor="Black"
-                        Command="{Binding IniciarSesionCommand}"
-                        />
+                            <Label Text="¡Bienvenido!"
+                               FontSize="32"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               />
 
-                    <Button
-                        CornerRadius="5"
-                        Text="Crear Cuenta"
-                        FontAttributes="Bold"
-                        BackgroundColor="#C4EEF2"
-                        FontSize="18"
-                        HeightRequest="50"
-                        TextColor="Black"
-                        Command="{Binding RegistroCommand}"
-                        />
+                            <Label Text="Inicia Sesión"
+                               FontSize="24"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               />   
 
-                </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
 
-            </VerticalStackLayout>
-            
+                <Grid 
+                   Grid.Row="1"
+                   Padding="30,20"
+                   >
+                    <VerticalStackLayout
+                        Spacing="20"
+                        VerticalOptions="Start"
+                        >
+
+                        <VerticalStackLayout
+                            Spacing="5">
+
+                            <Border
+                                StrokeShape="RoundRectangle 5"
+                                StrokeThickness="2"
+                                Stroke="Gray"
+                                >
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        TargetType="Border"
+                                        Binding="{Binding Source={x:Reference EmailEntry}, Path=IsFocused}"
+                                        Value="True"
+                                        >
+                                        <Setter Property="Stroke" Value="#00F0FF" />
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        TargetType="Border"
+                                        Binding="{Binding HayErrorEnEmail}"
+                                        Value="True"
+                                        >
+                                        <Setter Property="Stroke" Value="Red" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <Grid
+                                    Padding="10"
+                                    RowDefinitions="*"
+                                    ColumnDefinitions="1*, 9*"
+                                    RowSpacing="200"
+                                    BackgroundColor="#f0f0f0"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Fill"
+                                    HeightRequest="50"
+                                    >
+
+                                    <Image
+                                        Grid.Column="0"
+                                        Source="email.png"
+                                        WidthRequest="20"
+                                        HeightRequest="20"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        />
+
+                                    <Entry
+                                        x:Name="EmailEntry"
+                                        Grid.Column="1"
+                                        Placeholder="Email"
+                                        PlaceholderColor="Black"
+                                        FontSize="16"
+                                        MaxLength="254"
+                                        HeightRequest="50"
+                                        BackgroundColor="Transparent"
+                                        Text="{Binding Email}"
+                                        TextColor="Black"
+                                        Keyboard="Email"
+                                        />
+
+                                </Grid>
+
+                            </Border>
+
+                            <Label
+                                Text="{Binding ErrorEmail}"
+                                FontSize="14"
+                                TextColor="Red"
+                                IsVisible="{Binding HayErrorEnEmail}"
+                                />
+
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout
+                            Spacing="5">
+
+                            <Border
+                                StrokeShape="RoundRectangle 5"
+                                StrokeThickness="2"
+                                Stroke="Gray"
+                                >
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        TargetType="Border"
+                                        Binding="{Binding Source={x:Reference ContraseniaEntry}, Path=IsFocused}"
+                                        Value="True"
+                                        >
+                                        <Setter Property="Stroke" Value="#00F0FF" />
+                                    </DataTrigger>
+                                    <DataTrigger
+                                        TargetType="Border"
+                                        Binding="{Binding HayErrorEnContrasenia}"
+                                        Value="True"
+                                        >
+                                        <Setter Property="Stroke" Value="Red" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <Grid
+                                    Padding="10"
+                                    RowDefinitions="*"
+                                    ColumnDefinitions="1*, 8*, 1*"
+                                    RowSpacing="200"
+                                    BackgroundColor="#f0f0f0"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Fill"
+                                    HeightRequest="50"
+                                    >
+
+                                    <Image
+                                        Grid.Column="0"
+                                        Source="contrasenia.png"
+                                        WidthRequest="20"
+                                        HeightRequest="20"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        />
+
+                                    <Entry
+                                        x:Name="ContraseniaEntry"
+                                        Grid.Column="1"
+                                        Placeholder="Contraseña"
+                                        PlaceholderColor="Black"
+                                        FontSize="16"
+                                        IsPassword="{Binding ContraseniaOculta}"
+                                        MaxLength="25"
+                                        HeightRequest="50"
+                                        BackgroundColor="Transparent"
+                                        Text="{Binding Contrasenia}"
+                                        TextColor="Black"
+                                        />
+
+                                    <Image
+                                        Grid.Column="2"
+                                        Source="{Binding IconoContrasenia}"
+                                        WidthRequest="25"
+                                        HeightRequest="25"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        >
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding CambiarEstadoContraseniaCommand}" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
+
+                                </Grid>
+                            </Border>
+
+                            <Label
+                                Text="{Binding ErrorContrasenia}"
+                                FontSize="14"
+                                TextColor="Red"
+                                IsVisible="{Binding HayErrorEnContrasenia}"
+                                />
+
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout
+                            Spacing="20"
+                            >   
+
+                            <Button
+                                CornerRadius="5"
+                                Text="Ingresar"
+                                FontAttributes="Bold"
+                                BackgroundColor="#00CDDB"
+                                FontSize="18"
+                                HeightRequest="50"
+                                TextColor="Black"
+                                Command="{Binding IniciarSesionCommand}"
+                                />
+
+                            <Button
+                                CornerRadius="5"
+                                Text="Crear Cuenta"
+                                FontAttributes="Bold"
+                                BackgroundColor="#C4EEF2"
+                                FontSize="18"
+                                HeightRequest="50"
+                                TextColor="Black"
+                                Command="{Binding RegistroCommand}"
+                                />
+
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
+            </Grid>
+
+            <Grid
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                IsVisible="{Binding IsBusy}"
+                BackgroundColor="#40000000"   
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"
+                >
+                <ActivityIndicator
+                    IsRunning="True"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    Scale="1.5"
+                    Color="White"
+                    />
+            </Grid>
         </Grid>
+    </ScrollView>
 
-        <Grid
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            IsVisible="{Binding IsBusy}"
-            BackgroundColor="#40000000"   
-            VerticalOptions="Fill"
-            HorizontalOptions="Fill"
-            >
-            <ActivityIndicator
-                IsRunning="True"
-                VerticalOptions="Center"
-                HorizontalOptions="Center"
-                Scale="1.5"
-                Color="White"
-                />
-        </Grid>
 
-    </Grid>
-    
 </ContentPage>

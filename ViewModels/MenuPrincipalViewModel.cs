@@ -1,29 +1,34 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using TrainiumNeon.Data.Repositories;
+using TrainiumNeon.Messages;
 using TrainiumNeon.Models;
 using TrainiumNeon.Services;
-using TrainiumNeon.Views;
 
 namespace TrainiumNeon.ViewModels
 {
-    public class MenuPrincipalViewModel : INotifyPropertyChanged
+    public class MenuPrincipalViewModel : INotifyPropertyChanged, IRecipient<EjercicioDiaMessages.EjercicioDiaGuardadoMessage>, IRecipient<EjercicioDiaMessages.EjercicioDiaEliminadoMessage>, IRecipient<RutinaMessages.RutinaSeleccionadaActualizadaMessage>, IRecipient<UsuarioMessages.UsuarioActualizadoMessage>, IRecipient<RutinaMessages.RutinaGuardadaMessage>
     {
         //Servicios y repositorios
         private readonly ISesionService _sesionService;
+        private readonly IDisplayAlertService _displayAlertService;
         private readonly IEjerciciosSyncService _ejerciciosSyncService;
         private readonly IUsuarioRepositorio _usuarioRepositorio;
         private readonly IRutinaRepositorio _rutinaRepositorio;
         private readonly IDiaRepositorio _diaRepositorio;
         private readonly IEjercicioDiaRepositorio _ejercicioDiaRepositorio;
         private readonly IEjercicioRepositorio _ejercicioRepositorio;
+
         // Propiedades privadas
         private int _idUsuarioActivo;
         private string _nombreUsuario = string.Empty;
         private string _rutinaSeleccionadaNombre = string.Empty;
         private ObservableCollection<EjercicioDiaModel> _ejerciciosDelDia = new ObservableCollection<EjercicioDiaModel>();
+        private bool _isBusy;
+
         // Propiedades publicas
         public int IdUsuarioActivo
         {
@@ -75,28 +80,56 @@ namespace TrainiumNeon.ViewModels
                 }
             }
         }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public MenuPrincipalViewModel(ISesionService sesionService, IUsuarioRepositorio usuarioRepositorio, IRutinaRepositorio rutinaRepositorio, IDiaRepositorio diaRepositorio, IEjercicioDiaRepositorio ejercicioDiaRepositorio,IEjerciciosSyncService ejerciciosSyncService, IEjercicioRepositorio ejercicioRepositorio)
+        //Constructor
+        public MenuPrincipalViewModel(ISesionService sesionService, IDisplayAlertService displayAlertService, IUsuarioRepositorio usuarioRepositorio, IRutinaRepositorio rutinaRepositorio, IDiaRepositorio diaRepositorio, IEjercicioDiaRepositorio ejercicioDiaRepositorio,IEjerciciosSyncService ejerciciosSyncService, IEjercicioRepositorio ejercicioRepositorio)
         {
             // Inicializan los servicios y repositorios por DI
             _sesionService = sesionService;
+            _displayAlertService = displayAlertService;
             _ejerciciosSyncService = ejerciciosSyncService;
             _usuarioRepositorio = usuarioRepositorio;
             _rutinaRepositorio = rutinaRepositorio;
             _diaRepositorio = diaRepositorio;
             _ejercicioDiaRepositorio = ejercicioDiaRepositorio;
             _ejercicioRepositorio = ejercicioRepositorio;
-            // Inicializan datos iniciales asincronos
-            _ = InicializarAsync();
+            // Suscripcion a mensajeria para actualizar datos al guardar o eliminar rutina y actualizar usuario
+            WeakReferenceMessenger.Default.RegisterAll(this);
         }
 
         // Task asincrona para inicializar los datos del VM
         public async Task InicializarAsync()
         {
-            // Sincroniza los ejercicios al cargar menu principal (Si hay internet)
-            await _ejerciciosSyncService.SincronizarEjerciciosAsync();
-            // Carga los datos iniciales (UsuarioActivo, NombreUsuario, RutinaSeleccionada y EjerciciosDelDia)
-            await CargarDatosAsync();
+            try
+            {
+                // Muestro spinner de carga
+                IsBusy = true;
+                // Sincroniza los ejercicios al cargar menu principal (Si hay internet)
+                await _ejerciciosSyncService.SincronizarEjerciciosAsync();
+                // Carga los datos iniciales (UsuarioActivo, NombreUsuario, RutinaSeleccionada y EjerciciosDelDia)
+                await CargarDatosAsync();
+            }
+            catch (Exception)
+            {
+               await _displayAlertService.MostrarAlertAsync("Error", "No se pudo inicializar el menú principal", "OK");
+            }
+            finally
+            {
+                // Oculto spinner de carga
+                IsBusy = false;
+            }
         }
 
         // Task asincrona para cargar los datos iniciales (UsuarioActivo, NombreUsuario, RutinaSeleccionada y EjerciciosDelDia)
@@ -110,14 +143,28 @@ namespace TrainiumNeon.ViewModels
                 await Shell.Current.GoToAsync("//Login");
                 return;
             }
-            
-            //Si hay usuario activo lo obtengo para capturar su nombre
+
+            // Obtengo la informacion del usuario activo
+            await ObtenerInformacionUsuarioAsync();
+
+            // Obtengo la informacion de la rutina seleccionada y los ejercicios del dia
+            await ObtenerInformacionRutinaAsync();
+        }
+
+        // Task asincrona para obtener la informacion del usuario (Nombre)
+        private async Task ObtenerInformacionUsuarioAsync()
+        {
+            //obtengo el usuario para capturar su nombre
             var usuario = await _usuarioRepositorio.ObtenerUsuarioPorIdAsync(IdUsuarioActivo);
             NombreUsuario = usuario.Nombre;
+        }
 
+        // Task asincrona para obtener la informacion de la rutina seleccionada y los ejercicios del dia
+        private async Task ObtenerInformacionRutinaAsync()
+        {
             // Obtengo la rutina seleccionada del usuario activo para capturar su nombre, si no hay rutina seleccionada muestra Ninguna
             var rutina = await _rutinaRepositorio.ObtenerRutinaSeleccionadaAsync(IdUsuarioActivo);
-            if(rutina != null)
+            if (rutina != null)
             {
                 RutinaSeleccionadaNombre = rutina.Nombre;
             }
@@ -138,7 +185,7 @@ namespace TrainiumNeon.ViewModels
             {
                 ed.Ejercicio = await _ejercicioRepositorio.ObtenerEjercicioPorIdAsync(ed.IdEjercicio);
             }
-
+            // Asigno la coleccion observable para bindear en la vista
             EjerciciosDelDia = new ObservableCollection<EjercicioDiaModel>(ejerciciosDia);
         }
 
@@ -146,5 +193,70 @@ namespace TrainiumNeon.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Implementacion de IRecipient para Ejercicio agregado/modificado en un dia
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaGuardadoMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionRutinaAsync();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("No se pudo actualizar los ejercicios del dia en el Menu Principal");
+            }
+        }
+
+        // Implementacion de IRecipient para Ejercicio eliminado en un dia
+        public async void Receive(EjercicioDiaMessages.EjercicioDiaEliminadoMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionRutinaAsync();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("No se pudo actualizar los ejercicios del dia en el Menu Principal");
+            }
+        }
+
+        // Implementacion de IRecipient para RutinaSeleccionada actualizada
+        public async void Receive(RutinaMessages.RutinaSeleccionadaActualizadaMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionRutinaAsync();
+            }
+            catch (Exception) 
+            {
+                Console.WriteLine("No se pudo actualizar la rutina seleccionada en el Menu Principal");
+            }
+        }
+
+        // Implementacion de IRecipient para Usuario actualizado
+        public async void Receive(UsuarioMessages.UsuarioActualizadoMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionUsuarioAsync();
+            }
+            catch
+            {
+                Console.WriteLine("No se pudo actualizar la informacion del usuario en el Menu Principal");
+            }
+        }
+
+        // Implementacion de IRecipient para RutinaSeleccionada actualizada
+        public async void Receive(RutinaMessages.RutinaGuardadaMessage message)
+        {
+            try
+            {
+                await ObtenerInformacionRutinaAsync();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("No se pudo actualizar la rutina guardada en el Menu Principal");
+            }
+        }
     }
 }
